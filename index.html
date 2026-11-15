@@ -102,7 +102,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary)}
   padding-top:calc(10px + env(safe-area-inset-top));
   background:var(--header);color:#fff;flex:0 0 auto;box-shadow:0 2px 8px rgba(0,0,0,.1);
 }
-.page-header h1{margin:0;font-size:18px;font-weight:500;flex:1}
+.page-header h1{margin:0;font-size:18px;font-weight:500;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .page-header .logo{
   width:38px;height:38px;border-radius:50%;
   background:linear-gradient(135deg,#0A84FF,#06b6d4);
@@ -116,6 +116,11 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary)}
 }
 .hbtn button:hover{background:rgba(255,255,255,.12)}
 .hbtn button:active{background:rgba(255,255,255,.2)}
+.iconBtn-header{
+  width:38px;height:38px;border-radius:50%;border:none;background:transparent;color:#fff;
+  cursor:pointer;display:grid;place-items:center;font-size:22px;flex:0 0 auto;
+}
+.iconBtn-header:hover{background:rgba(255,255,255,.12)}
 
 .page-body{flex:1;overflow-y:auto;min-height:0}
 .page-footer{flex:0 0 auto}
@@ -161,21 +166,33 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary)}
 .news-card-meta{font-size:11px;color:var(--text-3);display:flex;gap:8px}
 .news-empty{padding:40px 20px;text-align:center;color:var(--text-2)}
 
-/* ===== Chat page (reuses old classes) ===== */
-#chatTabs{display:flex;gap:4px;padding:8px 10px;background:var(--surface);border-bottom:1px solid var(--divider);overflow:auto;flex:0 0 auto}
-.tab{flex:1;min-width:70px;padding:9px 10px;border:none;border-radius:999px;cursor:pointer;font-weight:500;background:var(--surface-2);color:var(--text-2);font-size:13px;font-family:inherit;transition:all .15s;white-space:nowrap}
-.tab.active{background:var(--primary);color:#fff}
+/* ===== Conversation list (WhatsApp-style) ===== */
+.conv-row{display:flex;gap:12px;padding:12px 14px;border-bottom:1px solid var(--divider);cursor:pointer;align-items:center;transition:background .1s}
+.conv-row:hover{background:var(--surface-2)}
+.conv-row:active{background:var(--surface-2)}
+.conv-avatar{width:50px;height:50px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;font-weight:500;font-size:18px;flex:0 0 auto;overflow:hidden;position:relative}
+.conv-avatar img{width:100%;height:100%;object-fit:cover}
+.conv-avatar .online-dot{position:absolute;bottom:1px;right:1px;width:12px;height:12px;border-radius:50%;background:var(--read);border:2px solid var(--surface)}
+.conv-body{flex:1;min-width:0}
+.conv-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:3px}
+.conv-name{font-weight:500;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conv-time{font-size:11px;color:var(--text-3);white-space:nowrap;flex:0 0 auto}
+.conv-preview{font-size:13px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conv-preview.unread{color:var(--text);font-weight:500}
+.conv-unread-badge{background:var(--primary);color:#fff;font-size:11px;font-weight:600;min-width:20px;height:20px;border-radius:10px;display:grid;place-items:center;padding:0 6px;flex:0 0 auto}
+.conv-empty{padding:60px 20px;text-align:center;color:var(--text-2)}
+.conv-empty .big{font-size:52px;margin-bottom:14px}
+.conv-empty p{margin:0 0 20px;font-size:14px}
+
+/* ===== Chat view (individual conversation) ===== */
+#chatListView{flex:1;overflow-y:auto;min-height:0}
+#chatView{display:none;flex-direction:column;flex:1;min-height:0}
+
 #searchBar{display:none;padding:8px 10px;background:var(--surface);border-bottom:1px solid var(--divider)}
 #searchBar input{margin:0;background:var(--surface-2);border-radius:999px}
 #pinBar{display:none;background:var(--surface-2);color:var(--text);padding:8px 12px;font-size:13px;align-items:center;gap:8px;border-bottom:1px solid var(--divider)}
 #pinBar button{margin-left:auto;border:none;background:transparent;cursor:pointer;color:var(--text-2);font-size:16px}
-#onlineBar,#groupBar{display:flex;gap:6px;overflow:auto;padding:8px 10px;background:var(--surface);border-bottom:1px solid var(--divider);white-space:nowrap;flex:0 0 auto}
-#groupBar{display:none}
-.pill,.gpill{display:flex;align-items:center;gap:6px;background:var(--surface-2);padding:6px 12px;border-radius:999px;font-size:12px;font-weight:500;cursor:pointer;border:2px solid transparent;color:var(--text);transition:border-color .15s,background .15s}
-.pill.active{border-color:var(--primary);background:rgba(10,132,255,.15)}
-.gpill.active{border-color:var(--primary-dark);background:var(--primary);color:#fff}
-.pill i{width:8px;height:8px;background:var(--read);border-radius:50%;display:block;flex:0 0 auto}
-.pill i.off{background:var(--text-3)}
+
 #chatArea{position:relative;flex:1;min-height:0;background:var(--canvas);overflow:hidden}
 #chatArea::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'%3E%3Cg fill='none' stroke='%23000' stroke-opacity='.07' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 40c5-8 14-8 18 0s-6 12-18 12'/%3E%3Ccircle cx='170' cy='30' r='9'/%3E%3Cpath d='M60 110v8c0 5 9 5 9 0v-8c0-5-9-5-9 0z'/%3E%3Cpath d='M130 70l8 8m0-8l-8 8'/%3E%3Crect x='20' y='160' width='20' height='14' rx='2'/%3E%3Cpath d='M170 130c5 0 5 8 0 8s-5-8 0-8z'/%3E%3Cpath d='M100 180c8-6 14 2 9 7s-14-2-9-7z'/%3E%3Ccircle cx='50' cy='200' r='4'/%3E%3Cpath d='M180 190h22M180 200h15'/%3E%3C/g%3E%3C/svg%3E");
@@ -235,32 +252,16 @@ body:not(.light) .replyQuote{background:rgba(0,0,0,.2)}
 .status-section{padding:12px}
 .status-section h3{margin:0 0 10px;font-size:14px;font-weight:500;color:var(--text-2);text-transform:uppercase;letter-spacing:.5px}
 .status-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px}
-.status-circle{
-  display:flex;flex-direction:column;align-items:center;gap:6px;
-  cursor:pointer;flex:0 0 auto;width:78px;
-}
-.status-ring{
-  width:64px;height:64px;border-radius:50%;padding:3px;
-  background:linear-gradient(135deg,#0A84FF,#06b6d4);display:grid;place-items:center;
-}
+.status-circle{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;flex:0 0 auto;width:78px}
+.status-ring{width:64px;height:64px;border-radius:50%;padding:3px;background:linear-gradient(135deg,#0A84FF,#06b6d4);display:grid;place-items:center}
 .status-ring.viewed{background:var(--divider)}
 .status-ring.mine{background:var(--primary);position:relative}
-.status-ring.mine::after{
-  content:"+";position:absolute;bottom:-4px;right:-4px;width:22px;height:22px;
-  border-radius:50%;background:var(--primary);color:#fff;font-weight:600;
-  display:grid;place-items:center;font-size:16px;border:2px solid var(--surface);
-}
-.status-inner{
-  width:100%;height:100%;border-radius:50%;background:var(--surface);
-  display:grid;place-items:center;overflow:hidden;font-size:24px;color:#fff;font-weight:500;
-}
+.status-ring.mine::after{content:"+";position:absolute;bottom:-4px;right:-4px;width:22px;height:22px;border-radius:50%;background:var(--primary);color:#fff;font-weight:600;display:grid;place-items:center;font-size:16px;border:2px solid var(--surface)}
+.status-inner{width:100%;height:100%;border-radius:50%;background:var(--surface);display:grid;place-items:center;overflow:hidden;font-size:24px;color:#fff;font-weight:500}
 .status-inner img{width:100%;height:100%;object-fit:cover}
 .status-circle small{font-size:11px;color:var(--text);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:78px}
 
-/* Status viewer */
-#statusViewer{
-  position:fixed;inset:0;background:#000;z-index:150;display:none;flex-direction:column;
-}
+#statusViewer{position:fixed;inset:0;background:#000;z-index:150;display:none;flex-direction:column}
 #statusViewer.show{display:flex}
 .sv-progress{display:flex;gap:3px;padding:8px 8px 0;padding-top:calc(8px + env(safe-area-inset-top))}
 .sv-progress div{flex:1;height:3px;background:rgba(255,255,255,.3);border-radius:2px;overflow:hidden}
@@ -271,39 +272,22 @@ body:not(.light) .replyQuote{background:rgba(0,0,0,.2)}
 .sv-header .av img{width:100%;height:100%;object-fit:cover}
 .sv-header .name{flex:1;font-weight:500;font-size:14px}
 .sv-header button{border:none;background:transparent;color:#fff;font-size:24px;cursor:pointer}
-.sv-content{
-  flex:1;display:grid;place-items:center;padding:20px;text-align:center;
-  color:#fff;font-size:24px;font-weight:500;line-height:1.3;position:relative;
-}
+.sv-content{flex:1;display:grid;place-items:center;padding:20px;text-align:center;color:#fff;font-size:24px;font-weight:500;line-height:1.3;position:relative}
 .sv-content img{max-width:100%;max-height:100%;border-radius:8px;object-fit:contain}
 .sv-content .bg-text{position:absolute;inset:0;display:grid;place-items:center;padding:20px;font-size:26px;font-weight:500;text-align:center}
 .sv-nav{position:absolute;top:0;bottom:0;width:40%;cursor:pointer;z-index:1}
 .sv-nav.prev{left:0}.sv-nav.next{right:0}
 
 /* ===== Reels page ===== */
-#reelsScroll{
-  flex:1;overflow-y:scroll;scroll-snap-type:y mandatory;background:#000;
-  scrollbar-width:none;
-}
+#reelsScroll{flex:1;overflow-y:scroll;scroll-snap-type:y mandatory;background:#000;scrollbar-width:none}
 #reelsScroll::-webkit-scrollbar{display:none}
-.reel{
-  height:100%;width:100%;scroll-snap-align:start;position:relative;
-  display:grid;place-items:center;background:#000;flex:0 0 100%;
-}
+.reel{height:100%;width:100%;scroll-snap-align:start;position:relative;display:grid;place-items:center;background:#000;flex:0 0 100%}
 .reel video{width:100%;height:100%;object-fit:contain;background:#000}
-.reel-info{
-  position:absolute;left:0;right:60px;bottom:20px;padding:14px;color:#fff;
-  background:linear-gradient(transparent,rgba(0,0,0,.7));
-}
+.reel-info{position:absolute;left:0;right:60px;bottom:20px;padding:14px;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.7))}
 .reel-info .uname{font-weight:600;font-size:14px;margin-bottom:4px}
 .reel-info .cap{font-size:13px;line-height:1.4;opacity:.95}
-.reel-actions{
-  position:absolute;right:12px;bottom:80px;display:flex;flex-direction:column;gap:16px;color:#fff;
-}
-.reel-actions button{
-  border:none;background:rgba(0,0,0,.4);color:#fff;width:44px;height:44px;border-radius:50%;
-  cursor:pointer;font-size:20px;display:grid;place-items:center;backdrop-filter:blur(8px);
-}
+.reel-actions{position:absolute;right:12px;bottom:80px;display:flex;flex-direction:column;gap:16px;color:#fff}
+.reel-actions button{border:none;background:rgba(0,0,0,.4);color:#fff;width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:20px;display:grid;place-items:center;backdrop-filter:blur(8px)}
 .reel-actions button.liked{background:rgba(239,68,68,.8)}
 .reel-empty{color:#fff;text-align:center;padding:40px;font-size:15px}
 .reel-count{position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);font-size:11px;color:#fff;font-weight:500}
@@ -331,22 +315,14 @@ body:not(.light) .replyQuote{background:rgba(0,0,0,.2)}
 .profileHead .bigAv{width:70px;height:70px;border-radius:50%;display:grid;place-items:center;font-size:28px;font-weight:500;color:#fff;margin:0 auto;overflow:hidden}
 .profileHead .bigAv img{width:100%;height:100%;object-fit:cover}
 
-/* Friends modal */
+/* Friend result (used in New Chat search) */
 .friend-result{display:flex;align-items:center;gap:10px;padding:10px;background:var(--surface-2);border-radius:10px;margin-top:8px}
 .friend-result .av{width:40px;height:40px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;font-weight:500;flex:0 0 auto;overflow:hidden}
 .friend-result .av img{width:100%;height:100%;object-fit:cover}
 .friend-result .info{flex:1;min-width:0}
 .friend-result .info b{font-weight:500;display:block;font-size:14px}
 .friend-result .info small{font-size:12px;color:var(--text-2)}
-.friend-req{display:flex;align-items:center;gap:10px;padding:10px;background:var(--surface-2);border-radius:10px;margin-top:8px}
-.friend-req .av{width:40px;height:40px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;font-weight:500;flex:0 0 auto;overflow:hidden}
-.friend-req .av img{width:100%;height:100%;object-fit:cover}
-.friend-req .info{flex:1;min-width:0}
-.friend-req .info b{font-weight:500;font-size:14px;display:block}
-.friend-req .info small{font-size:12px;color:var(--text-2)}
-.friend-req button{padding:6px 12px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:12px;font-family:inherit}
-.friend-req button.accept{background:var(--primary);color:#fff}
-.friend-req button.decline{background:var(--surface);color:var(--text-2)}
+.friend-result button{padding:6px 12px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:12px;font-family:inherit}
 
 /* Status composer */
 .status-color-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:10px 0}
@@ -433,33 +409,32 @@ body:not(.light) .replyQuote{background:rgba(0,0,0,.2)}
     <!-- CHATS -->
     <div id="page-chats" class="page">
       <div class="page-header">
-        <div class="logo" id="chatAvatar" onclick="showPage('profile')">💬</div>
-        <h1>Dabz</h1>
-        <div class="hbtn">
-          <button onclick="toggleSearch()" title="Search">🔍</button>
-          <button onclick="openAddFriend()" title="Add Friend">＋</button>
-          <button onclick="showPage('profile')" title="Profile">👤</button>
+        <button id="chatBackBtn" class="iconBtn-header" style="display:none" onclick="backToChatList()" aria-label="Back">←</button>
+        <div class="logo" id="chatAvatar">💬</div>
+        <h1 id="chatTitle">Dabz</h1>
+        <div class="hbtn" id="chatHeaderActions">
+          <button onclick="openNewChatMenu()" title="New">＋</button>
         </div>
       </div>
-      <div id="chatTabs">
-        <button class="tab active" id="tabGlobal" onclick="switchTab('global')">🌍 Global</button>
-        <button class="tab" id="tabFriends" onclick="switchTab('friends')">👥 Friends</button>
-        <button class="tab" id="tabGroup" onclick="switchTab('group')">💠 Groups</button>
+
+      <div id="chatListView">
+        <div id="conversationList"></div>
       </div>
-      <div id="searchBar"><input id="searchInput" placeholder="Search messages…" oninput="renderMsgs()"></div>
-      <div id="pinBar"><span id="pinText"></span><button onclick="unpin()">✕</button></div>
-      <div id="groupBar"></div>
-      <div id="onlineBar"></div>
-      <div id="chatArea"><div id="msgs"></div></div>
-      <div id="typing"></div>
-      <div id="replyBar"><span id="replyText"></span><button onclick="cancelReply()">✕</button></div>
-      <div id="emojiBar"></div>
-      <div id="composer">
-        <button class="iconBtn" onclick="toggleEmoji()" aria-label="Emoji">😊</button>
-        <input id="msgInput" placeholder="Type a message…" oninput="onTyping()" onkeydown="if(event.key==='Enter')sendMsg()">
-        <label class="iconBtn" aria-label="Photo" style="cursor:pointer">📷<input type="file" id="imgInput" accept="image/*" style="display:none" onchange="sendImage(this)"></label>
-        <button class="iconBtn" id="voiceBtn" onclick="toggleVoice()" aria-label="Voice">🎤</button>
-        <button class="sendBtn" onclick="sendMsg()" aria-label="Send">➤</button>
+
+      <div id="chatView">
+        <div id="searchBar"><input id="searchInput" placeholder="Search messages…" oninput="renderMsgs()"></div>
+        <div id="pinBar"><span id="pinText"></span><button onclick="unpin()">✕</button></div>
+        <div id="chatArea"><div id="msgs"></div></div>
+        <div id="typing"></div>
+        <div id="replyBar"><span id="replyText"></span><button onclick="cancelReply()">✕</button></div>
+        <div id="emojiBar"></div>
+        <div id="composer">
+          <button class="iconBtn" onclick="toggleEmoji()" aria-label="Emoji">😊</button>
+          <input id="msgInput" placeholder="Type a message…" oninput="onTyping()" onkeydown="if(event.key==='Enter')sendMsg()">
+          <label class="iconBtn" aria-label="Photo" style="cursor:pointer">📷<input type="file" id="imgInput" accept="image/*" style="display:none" onchange="sendImage(this)"></label>
+          <button class="iconBtn" id="voiceBtn" onclick="toggleVoice()" aria-label="Voice">🎤</button>
+          <button class="sendBtn" onclick="sendMsg()" aria-label="Send">➤</button>
+        </div>
       </div>
     </div>
 
@@ -538,7 +513,7 @@ body:not(.light) .replyQuote{background:rgba(0,0,0,.2)}
   </nav>
 </div>
 
-<!-- ============ STATUS VIEWER (fullscreen) ============ -->
+<!-- ============ STATUS VIEWER ============ -->
 <div id="statusViewer">
   <div class="sv-progress" id="svProgress"></div>
   <div class="sv-header">
@@ -555,12 +530,34 @@ body:not(.light) .replyQuote{background:rgba(0,0,0,.2)}
 
 <!-- ============ MODALS ============ -->
 <div class="modal" id="profileModal"><div class="box"><button class="close" onclick="closeModal('profileModal')">✕</button><div id="profileContent"></div></div></div>
+
 <div class="modal" id="groupModal"><div class="box"><button class="close" onclick="closeModal('groupModal')">✕</button><h3 style="margin-top:0;font-weight:500">Create Group 👥</h3><input id="groupName" placeholder="Group name e.g. Eldoret Boys"><input id="groupDesc" placeholder="Description (optional)"><button class="btn" onclick="createGroup()">Create Group</button></div></div>
-<div class="modal" id="addFriendModal"><div class="box"><button class="close" onclick="closeModal('addFriendModal')">✕</button><h3 style="margin-top:0;font-weight:500">Add Friend</h3><p style="color:var(--text-2);font-size:13px;margin:0 0 8px">Search by username (without @)</p><input id="friendSearch" placeholder="e.g. constant" autocomplete="off" oninput="searchFriend()"><p id="friendSearchErr" class="err"></p><div id="friendSearchResults"></div></div></div>
+
 <div class="modal" id="editProfileModal"><div class="box"><button class="close" onclick="closeModal('editProfileModal')">✕</button><h3 style="margin-top:0;font-weight:500">Edit Profile</h3><input id="editDisplayName" placeholder="Display name" maxlength="20"><input id="editAbout" placeholder="About" maxlength="60"><input id="editBio" placeholder="Bio" maxlength="100"><label style="font-size:13px;color:var(--text-2)">Avatar color</label><select id="editColor"></select><p id="editProfileErr" class="err"></p><button class="btn" onclick="saveProfile()">Save</button></div></div>
+
 <div class="modal" id="statusComposerModal"><div class="box"><button class="close" onclick="closeModal('statusComposerModal')">✕</button><h3 style="margin-top:0;font-weight:500">New Status</h3><div class="status-tabs"><button id="stTextBtn" class="active" onclick="statusType('text')">✏️ Text</button><button id="stImageBtn" onclick="statusType('image')">📷 Image</button></div><div id="stTextPanel"><div id="statusPreview">Your status here…</div><textarea id="statusText" placeholder="What's on your mind?" maxlength="200" rows="3" oninput="updateStatusPreview()"></textarea><div class="status-color-grid" id="statusColorGrid"></div></div><div id="stImagePanel" style="display:none"><label class="iconBtn" style="background:var(--surface-2);width:100%;height:120px;border-radius:10px;margin:10px 0;cursor:pointer;font-size:14px;display:grid">📷 Choose image<input type="file" id="statusImage" accept="image/*" style="display:none" onchange="previewStatusImage(this)"></label><img id="statusImagePreview" style="max-width:100%;border-radius:8px;display:none"><input id="statusCaption" placeholder="Caption (optional)" maxlength="100"></div><p id="statusComposerErr" class="err"></p><button class="btn" onclick="postStatus()">Post Status</button></div></div>
+
 <div class="modal" id="reelComposerModal"><div class="box"><button class="close" onclick="closeModal('reelComposerModal')">✕</button><h3 style="margin-top:0;font-weight:500">Upload Reel</h3><p style="color:var(--text-2);font-size:12px;margin:0 0 8px">Short video (max 550KB — under 6 seconds)</p><label class="iconBtn" style="background:var(--surface-2);width:100%;height:100px;border-radius:10px;margin:10px 0;cursor:pointer;font-size:14px;display:grid">🎬 Choose video<input type="file" id="reelVideo" accept="video/*" style="display:none" onchange="previewReelVideo(this)"></label><video id="reelVideoPreview" controls style="max-width:100%;border-radius:8px;display:none;background:#000"></video><input id="reelCaption" placeholder="Caption" maxlength="150"><p id="reelComposerErr" class="err"></p><button class="btn" onclick="postReel()">Post Reel</button></div></div>
+
+<div class="modal" id="newChatMenuModal">
+  <div class="box">
+    <button class="close" onclick="closeModal('newChatMenuModal')">✕</button>
+    <h3 style="margin-top:0;font-weight:500">Start new</h3>
+    <button class="btn" onclick="closeModal('newChatMenuModal');openNewDMModal()">💬 New Chat</button>
+    <button class="btn2" style="width:100%;margin-top:10px;padding:12px" onclick="closeModal('newChatMenuModal');openCreateGroup()">👥 New Group</button>
+  </div>
+</div>
+
+<div class="modal" id="newDMModal">
+  <div class="box">
+    <button class="close" onclick="closeModal('newDMModal')">✕</button>
+    <h3 style="margin-top:0;font-weight:500">New Chat</h3>
+    <p style="color:var(--text-2);font-size:13px;margin:0 0 8px">Enter a username to start chatting</p>
+    <input id="dmUsername" placeholder="username (without @)" autocomplete="off" oninput="searchDMUser()">
+    <div id="dmSearchResults"></div>
+  </div>
+</div>
 
 <script src="app.js" type="module"></script>
 </body>
-  </html>
+</html>
