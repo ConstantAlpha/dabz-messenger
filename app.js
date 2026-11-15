@@ -78,13 +78,14 @@ function friendlyAuthError(code){
     'auth/popup-closed-by-user': 'Sign-in popup was closed.',
     'auth/popup-blocked': 'Popup blocked — allow popups for this site.',
     'auth/unauthorized-domain': 'Domain not authorized in Firebase. Add it under Authentication → Settings.',
-    'auth/operation-not-allowed': 'Sign-in method disabled in Firebase Console.'
+    'auth/operation-not-allowed': 'Sign-in method disabled in Firebase Console.',
+    'auth/missing-initial-state': 'Mobile browser blocked Google Sign-In. Use email/password instead.'
   };
   return map[code] || 'Something went wrong. Try again.';
 }
 
 /* ============================================================
-   THEME
+   THEME & MOBILE CHECK
    ============================================================ */
 window.toggleTheme = function(){
   document.body.classList.toggle('light');
@@ -97,6 +98,14 @@ if(localStorage.getItem('dabz-theme')==='light'){
   document.body.classList.add('light');
   const btn = document.getElementById('themeBtn');
   if(btn) btn.innerText = '🌙';
+}
+
+// Hide Google button on mobile to prevent "missing-initial-state" crash
+if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+  const gBtn = document.querySelector('.google-btn');
+  const div = document.querySelector('.divider-text');
+  if (gBtn) gBtn.style.display = 'none';
+  if (div) div.style.display = 'none';
 }
 
 /* ============================================================
@@ -126,7 +135,24 @@ function showAuthScreen(){
   document.getElementById('auth').style.display = 'flex';
   document.getElementById('setup').style.display = 'none';
   document.getElementById('app').style.display = 'none';
+
+  // Reset the submit button state so the user isn't locked out
+  const btn = document.getElementById('authSubmit');
+  if(btn){
+    btn.disabled = false;
+    btn.innerText = authMode === 'signup' ? 'Create account' : 'Sign in';
+  }
+  
+  // Clear password fields to avoid confusion
+  const pass = document.getElementById('authPass');
+  const pass2 = document.getElementById('authPass2');
+  if(pass) pass.value = '';
+  if(pass2) pass2.value = '';
+
+  const errEl = document.getElementById('authErr');
+  if(errEl) errEl.innerText = '';
 }
+
 function showSetupScreen(user){
   document.getElementById('auth').style.display = 'none';
   document.getElementById('setup').style.display = 'flex';
@@ -144,8 +170,14 @@ function showSetupScreen(user){
 window.toggleAuthMode = function(){
   authMode = authMode === 'signin' ? 'signup' : 'signin';
   const isSignup = authMode === 'signup';
+  
   document.getElementById('authPass2').style.display = isSignup ? 'block' : 'none';
-  document.getElementById('authSubmit').innerText = isSignup ? 'Create account' : 'Sign in';
+  
+  // Ensure the button is re-enabled when switching modes
+  const btn = document.getElementById('authSubmit');
+  btn.innerText = isSignup ? 'Create account' : 'Sign in';
+  btn.disabled = false; 
+  
   document.getElementById('authModeText').innerText = isSignup ? 'Already have an account?' : 'New to Dabz?';
   document.getElementById('authModeLink').innerText = isSignup ? 'Sign in' : 'Create account';
   document.getElementById('forgotWrap').style.display = isSignup ? 'none' : 'block';
@@ -158,16 +190,29 @@ window.submitAuth = async function(){
   const pass2 = document.getElementById('authPass2').value;
   const errEl = document.getElementById('authErr');
   const btn   = document.getElementById('authSubmit');
+  
   errEl.innerText = '';
   if(!email || !pass){ errEl.innerText = 'Fill in both email and password.'; return; }
   if(authMode === 'signup' && pass !== pass2){ errEl.innerText = 'Passwords do not match.'; return; }
   if(pass.length < 6){ errEl.innerText = 'Password must be 6+ characters.'; return; }
+
   btn.disabled = true;
   btn.innerText = authMode === 'signup' ? 'Creating…' : 'Signing in…';
+
   try{
     if(authMode === 'signup') await createUserWithEmailAndPassword(auth, email, pass);
     else                       await signInWithEmailAndPassword(auth, email, pass);
+    
+    // Safety net: If Firebase hangs, re-enable the button after 3 seconds
+    setTimeout(() => {
+      if(btn.disabled){
+        btn.disabled = false;
+        btn.innerText = authMode === 'signup' ? 'Create account' : 'Sign in';
+      }
+    }, 3000);
+
   }catch(e){
+    console.error('[Auth Error]', e.code, e.message);
     errEl.innerText = friendlyAuthError(e.code);
     btn.disabled = false;
     btn.innerText = authMode === 'signup' ? 'Create account' : 'Sign in';
@@ -177,20 +222,50 @@ window.submitAuth = async function(){
 window.googleSignIn = async function(){
   const errEl = document.getElementById('authErr');
   errEl.innerText = '';
-  try{ await signInWithPopup(auth, new GoogleAuthProvider()); }
-  catch(e){ errEl.innerText = friendlyAuthError(e.code); }
+  try{ 
+    await signInWithPopup(auth, new GoogleAuthProvider()); 
+  }catch(e){ 
+    console.error('[Google Auth Error]', e.code, e.message);
+    
+    // Catch mobile blocking errors
+    if (e.code === 'auth/missing-initial-state' || e.code === 'auth/popup-blocked' || e.code === 'auth/cancelled-popup-request') {
+      errEl.innerText = "Google Sign-In is blocked by this mobile browser. Please use your email and password below.";
+      // Hide Google button permanently for this session
+      const gBtn = document.querySelector('.google-btn');
+      const div = document.querySelector('.divider-text');
+      if(gBtn) gBtn.style.display = 'none';
+      if(div) div.style.display = 'none';
+    } else {
+      errEl.innerText = friendlyAuthError(e.code); 
+    }
+  }
 };
 
 window.forgotPassword = async function(){
   const email = document.getElementById('authEmail').value.trim();
   const errEl = document.getElementById('authErr');
   if(!email){ errEl.innerText = 'Type your email first.'; return; }
-  try{ await sendPasswordResetEmail(auth, email); toast('Reset link sent to ' + email); }
+  try{ 
+    await sendPasswordResetEmail(auth, email); 
+    toast('Reset link sent to ' + email); 
+  }
   catch(e){ errEl.innerText = friendlyAuthError(e.code); }
 };
 
+window.handleSignOut = async function(){
+  if(!confirm('Sign out of Dabz?')) return;
+  try{
+    teardownChat();
+    localStorage.removeItem('dabz-pin');
+    await fbSignOut(auth);
+  }catch(e){
+    console.error('[Signout Error]', e);
+    showAuthScreen(); // Force UI reset if Firebase throws an error
+  }
+};
+
 /* ============================================================
-   SETUP
+   SETUP (username)
    ============================================================ */
 let usernameDebounce = null;
 document.getElementById('setupUsername')?.addEventListener('input', e => {
@@ -259,18 +334,13 @@ window.completeSetup = async function(){
   }
 };
 
-window.handleSignOut = async function(){
-  if(!confirm('Sign out of Dabz?')) return;
-  teardownChat();
-  localStorage.removeItem('dabz-pin');
-  try{ await fbSignOut(auth); }catch(e){ console.error(e); }
-};
-
 /* ============================================================
    AUTH STATE
    ============================================================ */
 onAuthStateChanged(auth, async user => {
+  console.log('[Dabz Auth]', user ? 'signed in: ' + user.uid : 'signed out');
   document.body.removeAttribute('data-loading');
+  
   if(!user){
     teardownChat();
     myUid = ''; myUsername = ''; myName = ''; myEmail = ''; myPhotoURL = ''; myProfile = null;
@@ -280,6 +350,7 @@ onAuthStateChanged(auth, async user => {
   myUid = user.uid;
   myEmail = user.email || '';
   myPhotoURL = user.photoURL || '';
+  
   try{
     const snap = await getDoc(doc(db,'profiles',myUid));
     if(snap.exists() && snap.data().username){
@@ -292,14 +363,14 @@ onAuthStateChanged(auth, async user => {
       showSetupScreen(user);
     }
   }catch(e){
-    console.error(e);
-    toast('Could not load profile — check Firestore rules');
+    console.error('[Dabz Auth] profile load failed:', e);
+    toast('Could not load profile — ' + (e.code || e.message));
     showAuthScreen();
   }
 });
 
 /* ============================================================
-   BOOT / TEARDOWN
+   BOOT / TEARDOWN CHAT
    ============================================================ */
 function bootChat(){
   teardownChat();
@@ -1357,9 +1428,67 @@ window.openProfile = async function(uid){
 };
 
 /* ============================================================
-   MODALS
+   MODALS & NEWS
    ============================================================ */
 window.closeModal = function(id){ document.getElementById(id).style.display = 'none'; };
+
+const NEWS_FEEDS = {
+  all:     ['https://feeds.bbci.co.uk/news/world/rss.xml','https://feeds.bbci.co.uk/news/rss.xml'],
+  sports:  ['https://feeds.bbci.co.uk/sport/rss.xml'],
+  finance: ['https://feeds.bbci.co.uk/news/business/rss.xml'],
+  tech:    ['https://feeds.bbci.co.uk/news/technology/rss.xml']
+};
+
+window.loadNews = async function(cat){
+  newsCurrentCat = cat;
+  newsLoaded = true;
+  document.querySelectorAll('#newsCats button').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+  const body = document.getElementById('newsBody');
+  body.innerHTML = '<div class="news-empty">Loading news…</div>';
+  try{
+    const feeds = NEWS_FEEDS[cat] || NEWS_FEEDS.all;
+    const allItems = [];
+    for(const feedUrl of feeds){
+      try{
+        const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}&count=15`;
+        const res = await fetch(apiUrl);
+        const data = await res.json();
+        if(data.status === 'ok' && Array.isArray(data.items)) allItems.push(...data.items);
+      }catch(e){ console.warn('feed failed', feedUrl, e); }
+    }
+    if(!allItems.length){
+      body.innerHTML = '<div class="news-empty">Could not load news. Check your connection.</div>';
+      return;
+    }
+    allItems.sort((a,b) => new Date(b.pubDate) - new Date(a.pubDate));
+    body.innerHTML = allItems.map(item => {
+      let img = item.thumbnail || item.enclosure?.link || '';
+      if(!img){
+        const m = (item.description || '').match(/<img[^>]+src="([^"]+)"/i);
+        if(m) img = m[1];
+      }
+      const desc = (item.description || '').replace(/<[^>]+>/g,'').slice(0,200);
+      const link = escapeHtml(item.link || '#');
+      return `
+        <div class="news-card" onclick="window.open('${link}','_blank','noopener')">
+          ${img ? `<img src="${escapeHtml(img)}" onerror="this.style.display='none'">` : ''}
+          <div class="news-card-body">
+            <div class="news-card-title">${escapeHtml(item.title || '')}</div>
+            <p class="news-card-desc">${escapeHtml(desc)}</p>
+            <div class="news-card-meta">
+              <span>${escapeHtml(item.author || 'BBC')}</span>
+              <span>·</span>
+              <span>${new Date(item.pubDate).toLocaleDateString()}</span>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }catch(e){
+    console.error(e);
+    body.innerHTML = '<div class="news-empty">Could not load news.</div>';
+  }
+};
+window.refreshNews = function(){ loadNews(newsCurrentCat); };
 
 /* ============================================================
    FINAL INIT
