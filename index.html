@@ -2,32 +2,135 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dabz</title>
+<title>Dabz 💬</title>
 <style>
-body{font-family:sans-serif;background:#0f172a;color:white;margin:0;padding:20px}
-input,button{padding:12px;border-radius:10px;border:none;width:100%;margin:5px 0;font-size:16px}
-button{background:#22c55e;font-weight:bold}
-#chat{display:none}
-#msgs{height:60vh;overflow:auto;background:#1e293b;padding:10px;border-radius:10px}
-.msg{background:#334155;padding:8px;margin:5px 0;border-radius:8px}
+*{box-sizing:border-box}
+:root{--bg:#0b1020;--card:#1e293b;--header:#111827;--text:#e2e8f0;--muted:#94a3b8;--input:#0f172a;--bubble:#1e293b}
+body.light{--bg:#f1f5f9;--card:white;--header:white;--text:#0f172a;--muted:#64748b;--input:#f8fafc;--bubble:#e2e8f0}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);margin:0;height:100vh;display:flex;flex-direction:column}
+header{background:var(--header);padding:10px 12px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.2);z-index:10}
+.logo{width:40px;height:40px;background:linear-gradient(135deg,#22c55e,#06b6d4);border-radius:13px;display:grid;place-items:center;font-size:20px;cursor:pointer}
+header h1{font-size:18px;margin:0}
+header p{font-size:11px;color:var(--muted);margin:2px 0 0}
+.hbtn{margin-left:auto;display:flex;gap:6px}
+.hbtn button{border:none;padding:8px 10px;border-radius:999px;cursor:pointer;background:var(--card);color:var(--text)}
+#login{flex:1;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:var(--card);width:100%;max-width:380px;padding:28px;border-radius:22px;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,.3)}
+.card .big{font-size:56px}
+.card h2{margin:10px 0 4px}
+.card p{color:var(--muted);font-size:14px;margin:0 0 18px}
+input,textarea,select{width:100%;padding:12px;border-radius:12px;border:1px solid #334155;background:var(--input);color:var(--text);font-size:15px;outline:none;margin:6px 0}
+.btn{width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#22c55e,#06b6d4);color:white;font-weight:800;font-size:16px;margin-top:12px;cursor:pointer}
+.btn2{padding:8px 12px;border:none;border-radius:10px;background:var(--card);color:var(--text);cursor:pointer;font-weight:600}
+#chat{display:none;flex:1;flex-direction:column;overflow:hidden}
+#tabs{display:flex;gap:5px;padding:8px 10px;background:var(--header);overflow:auto}
+.tab{flex:1;min-width:70px;padding:9px 6px;border:none;border-radius:10px;cursor:pointer;font-weight:700;background:var(--card);color:var(--text);font-size:13px}
+.tab.active{background:#22c55e;color:white}
+#searchBar{display:none;padding:8px 10px;background:var(--header)}
+#searchBar input{margin:0}
+#pinBar{display:none;background:#fef3c7;color:#92400e;padding:8px 12px;font-size:13px;align-items:center;gap:8px}
+#pinBar button{margin-left:auto;border:none;background:transparent;cursor:pointer}
+#onlineBar{display:flex;gap:6px;overflow:auto;padding:8px 10px;background:var(--header);white-space:nowrap}
+.pill{display:flex;align-items:center;gap:5px;background:var(--card);padding:5px 10px;border-radius:999px;font-size:12px;font-weight:600;cursor:pointer;border:2px solid transparent}
+.pill.active{border-color:#22c55e}
+.pill i{width:8px;height:8px;background:#22c55e;border-radius:50%;display:block}
+.pill i.off{background:#64748b}
+#groupBar{display:none;gap:6px;overflow:auto;padding:8px 10px;background:var(--header);white-space:nowrap}
+.gpill{background:var(--card);padding:6px 12px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;border:2px solid transparent}
+.gpill.active{border-color:#06b6d4;background:#06b6d4;color:white}
+#msgs{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:86%;padding:10px 12px;border-radius:16px;line-height:1.4;position:relative;animation:pop .2s ease}
+@keyframes pop{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+.msg.mine{align-self:flex-end;background:#22c55e;color:white;border-bottom-right-radius:4px}
+.msg.other{align-self:flex-start;background:var(--bubble);border-bottom-left-radius:4px}
+.msg .top{display:flex;align-items:center;gap:6px;margin-bottom:3px;cursor:pointer}
+.avatar{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;color:white}
+.msg b{font-size:12px}
+.msg span{font-size:11px;opacity:.7;display:block;text-align:right;margin-top:4px}
+.msg img{max-width:100%;border-radius:10px;margin-top:6px;display:block}
+.msg audio{width:100%;margin-top:6px}
+.replyQuote{background:rgba(0,0,0,.18);border-left:3px solid #22c55e;padding:6px 8px;border-radius:8px;font-size:12px;margin-bottom:6px}
+.reactions{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.react{font-size:12px;background:rgba(0,0,0,.18);padding:3px 8px;border-radius:999px;cursor:pointer;border:none;color:inherit}
+.react.mine{background:#fff;color:#111;font-weight:800}
+.reactBar{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+.reactBar button{border:none;background:rgba(0,0,0,.15);border-radius:999px;padding:4px 8px;cursor:pointer;font-size:13px}
+.msgActions{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+.msgActions button{border:none;background:rgba(0,0,0,.15);border-radius:999px;padding:4px 8px;cursor:pointer;font-size:12px;color:inherit}
+.del{position:absolute;top:2px;right:6px;border:none;background:transparent;cursor:pointer;font-size:12px;opacity:.6;color:inherit}
+#replyBar{display:none;background:var(--card);padding:8px 12px;font-size:13px;align-items:center;gap:8px}
+#replyBar button{margin-left:auto;border:none;background:transparent;cursor:pointer;font-size:16px}
+#typing{font-size:12px;color:var(--muted);padding:0 14px 6px;min-height:18px;font-style:italic}
+#composer{display:flex;gap:6px;padding:10px;background:var(--header);align-items:center}
+#composer input{flex:1;margin:0}
+.iconBtn{width:46px;height:46px;border-radius:12px;border:none;background:var(--card);font-size:20px;cursor:pointer;flex-shrink:0}
+.iconBtn.rec{background:#ef4444;color:white;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.6}}
+.sendBtn{width:52px;height:46px;border-radius:12px;border:none;background:#22c55e;font-size:20px;cursor:pointer;color:white;flex-shrink:0}
+#emojiBar{display:none;gap:6px;padding:8px 10px;background:var(--header);overflow:auto;white-space:nowrap}
+#emojiBar button{font-size:22px;border:none;background:transparent;cursor:pointer;padding:4px}
+#err{color:#f87171;font-size:13px;min-height:18px}
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#111827;color:white;padding:10px 16px;border-radius:999px;font-size:13px;display:none;z-index:99}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
+.modal .box{background:var(--card);width:100%;max-width:380px;padding:22px;border-radius:20px;max-height:85vh;overflow:auto}
+.close{float:right;border:none;background:transparent;font-size:20px;cursor:pointer;color:var(--text)}
+.profileHead{text-align:center}
+.profileHead .bigAv{width:70px;height:70px;border-radius:50%;display:grid;place-items:center;font-size:28px;font-weight:800;color:white;margin:0 auto}
 </style>
 </head>
 <body>
+<header>
+<div class="logo" onclick="openMyProfile()">💬</div>
+<div><h1>Dabz</h1><p id="status">Chat with everyone • Live</p></div>
+<div class="hbtn">
+<button onclick="toggleSearch()">🔍</button>
+<button onclick="toggleTheme()" id="themeBtn">☀️</button>
+<button onclick="openMyProfile()">👤</button>
+</div>
+</header>
+
 <div id="login">
-<h1>Dabz 💬</h1>
-<input id="nameInput" placeholder="Your name">
-<button onclick="join()">Enter Dabz</button>
-<p id="err" style="color:#f87171"></p>
+<div class="card">
+<div class="big">💬</div>
+<h2>Welcome to Dabz</h2>
+<p>Pick a name and jump in. No signup needed.</p>
+<input id="nameInput" placeholder="Your name e.g. Constant" maxlength="20">
+<p id="err"></p>
+<button class="btn" onclick="join()">Enter Dabz →</button>
+<p style="font-size:12px;margin-top:14px">Dabz v6 • Silent Unsend • Made in Eldoret 🇰🇪</p>
 </div>
+</div>
+
 <div id="chat">
-<h2 id="welcome"></h2>
-<div id="msgs"></div>
-<input id="msgInput" placeholder="Type message...">
-<button onclick="sendMsg()">Send</button>
+<div id="tabs">
+<button class="tab active" id="tabAll" onclick="switchTab('all')">🌍 Everyone</button>
+<button class="tab" id="tabGroup" onclick="switchTab('group')">👥 Groups</button>
+<button class="tab" id="tabDM" onclick="switchTab('dm')">🔒 DMs</button>
 </div>
+<div id="searchBar"><input id="searchInput" placeholder="Search messages..." oninput="renderMsgs()"></div>
+<div id="pinBar"><span id="pinText"></span><button onclick="unpin()">✕</button></div>
+<div id="groupBar"></div>
+<div id="onlineBar"></div>
+<div id="msgs"></div>
+<div id="typing"></div>
+<div id="replyBar"><span id="replyText"></span><button onclick="cancelReply()">✕</button></div>
+<div id="emojiBar"></div>
+<div id="composer">
+<button class="iconBtn" onclick="toggleEmoji()">😊</button>
+<input id="msgInput" placeholder="Type a message..." oninput="onTyping()" onkeydown="if(event.key==='Enter')sendMsg()">
+<label class="iconBtn" style="display:grid;place-items:center;cursor:pointer">📷<input type="file" id="imgInput" accept="image/*" style="display:none" onchange="sendImage(this)"></label>
+<button class="iconBtn" id="voiceBtn" onclick="toggleVoice()">🎤</button>
+<button class="sendBtn" onclick="sendMsg()">➤</button>
+</div>
+</div>
+<div id="toast"></div>
+
+<div class="modal" id="profileModal"><div class="box"><button class="close" onclick="closeModal('profileModal')">✕</button><div id="profileContent"></div></div></div>
+<div class="modal" id="groupModal"><div class="box"><button class="close" onclick="closeModal('groupModal')">✕</button><h3>Create Group 👥</h3><input id="groupName" placeholder="Group name e.g. Eldoret Boys"><input id="groupDesc" placeholder="Description (optional)"><button class="btn" onclick="createGroup()">Create Group</button></div></div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, deleteDoc, doc, getDocs, setDoc, getDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 const firebaseConfig = {
   apiKey: "AIzaSyCXPDgHPp9fCkunGFi2607wDGwh5hIVzf4",
   authDomain: "dabz-6c525.firebaseapp.com",
@@ -38,30 +141,322 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-let myName = "";
-window.join = function(){
-  const n = document.getElementById("nameInput").value.trim();
-  if(!n){ document.getElementById("err").innerText = "Type your name first"; return; }
-  myName = n;
-  document.getElementById("login").style.display="none";
-  document.getElementById("chat").style.display="block";
-  document.getElementById("welcome").innerText = "Hi " + myName;
-  const q = query(collection(db,"messages"), orderBy("time","asc"));
-  onSnapshot(q, (snap)=>{
-    const box = document.getElementById("msgs");
-    box.innerHTML="";
-    snap.forEach(d=>{
-      const m = d.data();
-      box.innerHTML += `<div class="msg"><b>${m.name}:</b> ${m.text}</div>`;
-    });
-    box.scrollTop = box.scrollHeight;
-  });
+let myName="", firstLoad=true, lastCount=0, typingTimeout=null;
+let currentTab="all", dmTo=null, replyTo=null, groupId=null, allMsgs=[], dmMsgs=[], groupMsgs=[], groups=[], onlineUsers=[], profiles={}, lastSeenMap={}, pinnedMsg=null;
+
+const colors=["#ef4444","#f97316","#eab308","#22c55e","#06b6d4","#3b82f6","#a855f7","#ec4899"];
+function colorFor(n){ let h=0; for(let i=0;i<n.length;i++) h=(h*31+n.charCodeAt(i))>>>0; return colors[h%colors.length]; }
+function initials(n){ return (n||"?").trim().slice(0,2).toUpperCase(); }
+function escapeHtml(s){ return (s||"").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function timeAgo(ts){
+  if(!ts) return "never";
+  const diff=Date.now()-ts;
+  if(diff<15000) return "Online now";
+  if(diff<60000) return "Just now";
+  if(diff<3600000) return Math.floor(diff/60000)+"m ago";
+  if(diff<86400000) return Math.floor(diff/3600000)+"h ago";
+  return new Date(ts).toLocaleDateString();
+}
+window.toggleTheme=function(){ document.body.classList.toggle("light"); const l=document.body.classList.contains("light"); document.getElementById("themeBtn").innerText=l?"🌙":"☀️"; localStorage.setItem("dabz-theme",l?"light":"dark"); };
+if(localStorage.getItem("dabz-theme")==="light"){ document.body.classList.add("light"); document.getElementById("themeBtn").innerText="🌙"; }
+function playSound(){ try{ const ctx=new (window.AudioContext||window.webkitAudioContext)(); const o=ctx.createOscillator(); const g=ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.frequency.value=880; g.gain.value=0.08; o.start(); o.stop(ctx.currentTime+0.12);}catch(e){} }
+function toast(t){ const el=document.getElementById("toast"); el.innerText=t; el.style.display="block"; setTimeout(()=>el.style.display="none",2000); }
+window.closeModal=function(id){ document.getElementById(id).style.display="none"; };
+window.toggleSearch=function(){ const b=document.getElementById("searchBar"); b.style.display=b.style.display==="block"?"none":"block"; if(b.style.display==="block") document.getElementById("searchInput").focus(); else { document.getElementById("searchInput").value=""; renderMsgs(); } };
+
+const emojis=["😀","😂","😍","🔥","❤️","👍","👏","😮","😢","😡","🎉","💯","🙏","😎","🤔","🥳","🇰🇪","⚽","🎵","💬"];
+window.toggleEmoji=function(){ const bar=document.getElementById("emojiBar"); if(bar.style.display==="flex"){bar.style.display="none";return;} bar.innerHTML=""; bar.style.display="flex"; emojis.forEach(e=>{ const b=document.createElement("button"); b.innerText=e; b.onclick=()=>{ document.getElementById("msgInput").value+=e; document.getElementById("msgInput").focus(); }; bar.appendChild(b); }); };
+
+// Tabs
+window.switchTab=function(tab){
+  currentTab=tab;
+  ["all","group","dm"].forEach(t=> document.getElementById("tab"+t.charAt(0).toUpperCase()+t.slice(1)).classList.toggle("active",tab===t));
+  document.getElementById("groupBar").style.display = tab==="group" ? "flex" : "none";
+  if(tab==="all"){ dmTo=null; groupId=null; document.getElementById("msgInput").placeholder="Type a message..."; }
+  if(tab==="dm"){ document.getElementById("msgInput").placeholder="Pick someone to DM..."; }
+  if(tab==="group"){ document.getElementById("msgInput").placeholder= groupId ? "Message this group..." : "Pick or create a group..."; }
+  renderMsgs(); renderGroups(); updatePinBar();
 };
-window.sendMsg = async function(){
-  const t = document.getElementById("msgInput").value.trim();
-  if(!t) return;
-  await addDoc(collection(db,"messages"), {name: myName, text: t, time: serverTimestamp()});
-  document.getElementById("msgInput").value="";
+function dmId(a,b){ return [a,b].sort().join("__"); }
+window.startDM=function(name){ if(name===myName) return; dmTo=name; switchTab("dm"); document.getElementById("msgInput").placeholder="DM to "+name+"..."; toast("DM with "+name+" 🔒"); renderOnline(); };
+
+// Groups
+window.openCreateGroup=function(){ document.getElementById("groupModal").style.display="flex"; };
+window.createGroup=async function(){
+  const name=document.getElementById("groupName").value.trim(); if(!name){ toast("Type group name"); return; }
+  const desc=document.getElementById("groupDesc").value.trim();
+  const ref=await addDoc(collection(db,"groups"), {name, desc, createdBy:myName, time:serverTimestamp()});
+  groupId=ref.id; closeModal("groupModal"); document.getElementById("groupName").value=""; document.getElementById("groupDesc").value="";
+  toast("Group created 👥"); switchTab("group");
+};
+function renderGroups(){
+  const bar=document.getElementById("groupBar"); bar.innerHTML=`<div class="gpill" onclick="openCreateGroup()">＋ New Group</div>`;
+  groups.forEach(g=>{ bar.innerHTML+=`<div class="gpill ${groupId===g.id?'active':''}" onclick="selectGroup('${g.id}')"># ${escapeHtml(g.data.name)}</div>`; });
+}
+window.selectGroup=function(id){ groupId=id; document.getElementById("msgInput").placeholder="Message this group..."; renderGroups(); renderMsgs(); updatePinBar(); };
+
+// Profiles + Last Seen
+window.openMyProfile=function(){ openProfile(myName, true); };
+window.openProfile=async function(name, isMe=false){
+  const snap=await getDoc(doc(db,"profiles",name));
+  const p=snap.exists()?snap.data():{status:"Hey! I'm on Dabz 💬", bio:"", color:colorFor(name)};
+  profiles[name]=p;
+  const col=p.color||colorFor(name);
+  const lastSeen = lastSeenMap[name] ? timeAgo(lastSeenMap[name]) : "Unknown";
+  const isOnline = lastSeenMap[name] && (Date.now()-lastSeenMap[name]<20000);
+  document.getElementById("profileContent").innerHTML=`
+    <div class="profileHead"><div class="bigAv" style="background:${col}">${initials(name)}</div><h2>${escapeHtml(name)}</h2><p style="color:${isOnline?'#22c55e':'var(--muted)'}">${isOnline?'● Online now':'○ Last seen: '+lastSeen}</p><p style="color:var(--muted)">${escapeHtml(p.status||"")}</p></div>
+    <p><b>Bio:</b> ${escapeHtml(p.bio||"No bio yet")}</p>
+    ${isMe?`
+    <hr><h3>Edit Your Profile</h3>
+    <input id="editStatus" value="${escapeHtml(p.status||"")}" placeholder="Status e.g. Busy, In Eldoret...">
+    <input id="editBio" value="${escapeHtml(p.bio||"")}" placeholder="Bio e.g. Love football">
+    <label>Pick your color</label>
+    <select id="editColor">${colors.map(c=>`<option value="${c}" ${c===col?"selected":""}>${c}</option>`).join("")}</select>
+    <button class="btn" onclick="saveProfile()">Save Profile</button>
+    `:`
+    <button class="btn" onclick="closeModal('profileModal');startDM('${escapeHtml(name)}')">Message ${escapeHtml(name)} 🔒</button>
+    `}
+  `;
+  document.getElementById("profileModal").style.display="flex";
+};
+window.saveProfile=async function(){
+  const status=document.getElementById("editStatus").value.trim();
+  const bio=document.getElementById("editBio").value.trim();
+  const color=document.getElementById("editColor").value;
+  await setDoc(doc(db,"profiles",myName), {status, bio, color}, {merge:true});
+  toast("Profile saved ✅"); closeModal("profileModal");
+};
+
+// Pin
+window.pinMsg=function(id){
+  let list=currentTab==="all"?allMsgs:currentTab==="dm"?dmMsgs:groupMsgs;
+  const found=list.find(x=>x.id===id); if(!found) return;
+  pinnedMsg={tab:currentTab, groupId:groupId, dmId: dmTo?dmId(myName,dmTo):null, text:found.data.text||"📷 / 🎤", name:found.data.name, id};
+  localStorage.setItem("dabz-pin", JSON.stringify(pinnedMsg));
+  updatePinBar(); toast("Pinned 📌");
+};
+window.unpin=function(){ pinnedMsg=null; localStorage.removeItem("dabz-pin"); updatePinBar(); };
+function updatePinBar(){
+  const saved=localStorage.getItem("dabz-pin");
+  if(saved) pinnedMsg=JSON.parse(saved);
+  const bar=document.getElementById("pinBar");
+  // Only show pin if it belongs to current view
+  let show=false;
+  if(pinnedMsg){
+    if(currentTab==="all" && pinnedMsg.tab==="all") show=true;
+    if(currentTab==="dm" && pinnedMsg.tab==="dm" && pinnedMsg.dmId===dmId(myName,dmTo||"")) show=true;
+    if(currentTab==="group" && pinnedMsg.tab==="group" && pinnedMsg.groupId===groupId) show=true;
+  }
+  if(show){ bar.style.display="flex"; document.getElementById("pinText").innerHTML=`📌 <b>${escapeHtml(pinnedMsg.name)}:</b> ${escapeHtml(pinnedMsg.text.slice(0,60))}`; }
+  else bar.style.display="none";
+}
+
+// Reactions
+window.reactTo=async function(coll, id, emoji){
+  const ref=doc(db,coll,id);
+  const snap=await getDoc(ref); if(!snap.exists()) return;
+  const data=snap.data(); let reactions=data.reactions||{};
+  let list=reactions[emoji]||[];
+  if(list.includes(myName)) list=list.filter(u=>u!==myName); else list.push(myName);
+  if(list.length===0) delete reactions[emoji]; else reactions[emoji]=list;
+  await updateDoc(ref, {reactions});
+};
+function renderReactions(coll, id, reactions){
+  if(!reactions) return "";
+  let html=`<div class="reactions">`;
+  Object.entries(reactions).forEach(([emoji, users])=>{
+    const mine=users.includes(myName);
+    html+=`<button class="react ${mine?'mine':''}" onclick="event.stopPropagation();reactTo('${coll}','${id}','${emoji}')">${emoji} ${users.length}</button>`;
+  });
+  html+=`</div>`;
+  return html;
+}
+
+// *** SILENT UNSEND + READ RECEIPTS ***
+async function markAsRead(list, coll){
+  for(const item of list){
+    const m=item.data;
+    if(m.name===myName) continue;
+    if(m.readBy && m.readBy.includes(myName)) continue;
+    // Mark this message as seen by me - silently, no UI
+    try{ await updateDoc(doc(db,coll,item.id), {readBy: arrayUnion(myName)}); }catch(e){}
+  }
+}
+function readStatus(m){
+  if(m.name!==myName) return "";
+  const others=(m.readBy||[]).filter(u=>u!==myName);
+  if(others.length===0) return "✓ Sent • Nobody has seen it yet - you can unsend silently";
+  return `✓✓ Seen by ${others.join(", ")}`;
+}
+// Silent delete: if unread by others, it disappears with ZERO trace. No placeholder, no notification, no toast to others.
+window.deleteMsg=async function(id){
+  const coll=currentTab==="dm"?"dms":currentTab==="group"?"groupMsgs":"messages";
+  // Find message to check read status
+  let list=currentTab==="all"?allMsgs:currentTab==="dm"?dmMsgs:groupMsgs;
+  const found=list.find(x=>x.id===id);
+  const othersSeen = found ? (found.data.readBy||[]).filter(u=>u!==myName) : [];
+  let msg = "Delete this message?";
+  if(found && othersSeen.length===0) msg = "Unsend this message?\nNobody has seen it yet - it will vanish completely, nobody will know.";
+  else if(found) msg = `Delete? ${othersSeen.join(", ")} already saw it, but it will still disappear.`;
+  if(!confirm(msg)) return;
+  // Delete doc completely - NO placeholder left behind
+  await deleteDoc(doc(db,coll,id));
+  // Only YOU see a tiny confirmation, others see nothing at all
+  toast("Unsent silently 🤫");
+};
+
+function msgHtml(item, coll){
+  const m=item.data; const id=item.id;
+  const time=m.time?new Date(m.time.seconds*1000).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):"";
+  const mine=m.name===myName; const col=(profiles[m.name]?.color)||colorFor(m.name||"?");
+  const quote=m.replyTo?`<div class="replyQuote">↩ ${escapeHtml(m.replyTo.name)}: ${escapeHtml(m.replyTo.text||"📷 / 🎤")}</div>`:"";
+  const img=m.image?`<img src="${m.image}">`:"";
+  const aud=m.audio?`<audio controls src="${m.audio}"></audio>`:"";
+  const statusText = profiles[m.name]?.status ? ` • ${escapeHtml(profiles[m.name].status)}` : "";
+  const read = mine ? `<span style="color:#bbf7d0">${readStatus(m)}</span>` : "";
+  return `<div class="msg ${mine?'mine':'other'}"><div class="top" onclick="event.stopPropagation();openProfile('${escapeHtml(m.name)}')"><div class="avatar" style="background:${col}">${initials(m.name||"?")}</div><b>${mine?'You':escapeHtml(m.name)}</b><span style="font-size:10px">${statusText}</span></div>${quote}${escapeHtml(m.text||"")}${img}${aud}<span>${time}</span>${read}${renderReactions(coll,id,m.reactions)}<div class="reactBar"><button onclick="event.stopPropagation();reactTo('${coll}','${id}','❤️')">❤️</button><button onclick="event.stopPropagation();reactTo('${coll}','${id}','🔥')">🔥</button><button onclick="event.stopPropagation();reactTo('${coll}','${id}','😂')">😂</button><button onclick="event.stopPropagation();reactTo('${coll}','${id}','👍')">👍</button></div><div class="msgActions"><button onclick="event.stopPropagation();setReply('${id}')">↩ Reply</button><button onclick="event.stopPropagation();pinMsg('${id}')">📌 Pin</button>${mine?`<button onclick="event.stopPropagation();deleteMsg('${id}')">🤫 Unsend</button>`:""}</div></div>`;
+}
+function renderMsgs(){
+  const box=document.getElementById("msgs");
+  const search=document.getElementById("searchInput").value.trim().toLowerCase();
+  box.innerHTML="";
+  if(currentTab==="dm" && !dmTo){ box.innerHTML=`<div style="text-align:center;color:var(--muted);padding:20px">Tap a person in Online bar to DM 🔒</div>`; return; }
+  if(currentTab==="group" && !groupId){ box.innerHTML=`<div style="text-align:center;color:var(--muted);padding:20px">Pick a group above or create one 👥<br><button class="btn2" style="margin-top:10px" onclick="openCreateGroup()">＋ Create Group</button></div>`; return; }
+  let list=[], coll="messages";
+  if(currentTab==="all"){ list=allMsgs; coll="messages"; }
+  if(currentTab==="dm"){ list=dmMsgs.filter(m=>m.data.dmId===dmId(myName,dmTo)); coll="dms"; }
+  if(currentTab==="group"){ list=groupMsgs.filter(m=>m.data.groupId===groupId); coll="groupMsgs"; }
+  if(search) list=list.filter(x=> (x.data.text||"").toLowerCase().includes(search) || (x.data.name||"").toLowerCase().includes(search));
+  if(search && list.length===0) box.innerHTML=`<div style="text-align:center;color:var(--muted);padding:20px">No results for "${escapeHtml(search)}"</div>`;
+  list.forEach(item=> box.innerHTML+=msgHtml(item, coll));
+  box.scrollTop=box.scrollHeight;
+  // Mark visible messages as read by me (so sender knows I saw them, and unsend knows it's too late)
+  markAsRead(list, coll);
+}
+function renderOnline(){
+  const bar=document.getElementById("onlineBar"); bar.innerHTML="";
+  onlineUsers.forEach(n=>{
+    if(n===myName) return;
+    const isOnline = lastSeenMap[n] && (Date.now()-lastSeenMap[n]<20000);
+    const st=profiles[n]?.status ? ` - ${escapeHtml(profiles[n].status.slice(0,18))}` : "";
+    const last = !isOnline && lastSeenMap[n] ? ` • ${timeAgo(lastSeenMap[n])}` : "";
+    bar.innerHTML+=`<div class="pill ${dmTo===n?'active':''}" onclick="startDM('${escapeHtml(n)}')"><i class="${isOnline?'':'off'}"></i>${escapeHtml(n)}${st}${last}</div>`;
+  });
+  if(onlineUsers.length<=1){
+    // Show last seen for everyone even if offline - from lastSeenMap
+    let html=`<div class="pill"><i class="off"></i>Only you online</div>`;
+    Object.keys(lastSeenMap).forEach(n=>{ if(n!==myName && !onlineUsers.includes(n)) html+=`<div class="pill" onclick="startDM('${escapeHtml(n)}')"><i class="off"></i>${escapeHtml(n)} • ${timeAgo(lastSeenMap[n])}</div>`; });
+    bar.innerHTML=html;
+  }
+}
+
+// Reply
+window.setReply=function(id){
+  let list=currentTab==="all"?allMsgs:currentTab==="dm"?dmMsgs:groupMsgs;
+  const found=list.find(x=>x.id===id); if(!found) return;
+  replyTo={id, name:found.data.name, text:found.data.text||""};
+  document.getElementById("replyBar").style.display="flex";
+  document.getElementById("replyText").innerHTML=`Replying to <b>${escapeHtml(replyTo.name)}</b>: ${escapeHtml(replyTo.text.slice(0,40))}`;
+  document.getElementById("msgInput").focus();
+};
+window.cancelReply=function(){ replyTo=null; document.getElementById("replyBar").style.display="none"; };
+
+window.join=function(){
+  const n=document.getElementById("nameInput").value.trim();
+  if(!n){ document.getElementById("err").innerText="Type your name first"; return; }
+  myName=n;
+  document.getElementById("login").style.display="none";
+  document.getElementById("chat").style.display="flex";
+  document.getElementById("status").innerText="Hi "+myName+" • Live";
+  const goOnline=()=> setDoc(doc(db,"online",myName), {name:myName, lastSeen:Date.now()}, {merge:true});
+  goOnline(); setInterval(goOnline,10000);
+  onSnapshot(collection(db,"typing"), (snap)=>{
+    const others=[]; snap.forEach(d=>{ if(d.id!==myName && Date.now()-d.data().at<3000) others.push(d.id); });
+    document.getElementById("typing").innerText=others.length?others.join(", ")+" is typing...":"";
+  });
+  onSnapshot(collection(db,"online"), (snap)=>{
+    onlineUsers=[]; snap.forEach(d=>{ lastSeenMap[d.data().name]=d.data().lastSeen; if(Date.now()-d.data().lastSeen<20000) onlineUsers.push(d.data().name); });
+    renderOnline();
+  });
+  onSnapshot(collection(db,"profiles"), (snap)=>{ snap.forEach(d=> profiles[d.id]=d.data()); renderOnline(); renderMsgs(); });
+  onSnapshot(collection(db,"groups"), (snap)=>{ groups=[]; snap.forEach(d=> groups.push({id:d.id, data:d.data()})); renderGroups(); });
+  onSnapshot(query(collection(db,"messages"), orderBy("time","asc")), (snap)=>{ allMsgs=[]; snap.forEach(d=> allMsgs.push({id:d.id, data:d.data()})); if(currentTab==="all") renderMsgs(); if(!firstLoad && snap.size>lastCount) playSound(); firstLoad=false; lastCount=snap.size; });
+  onSnapshot(query(collection(db,"dms"), orderBy("time","asc")), (snap)=>{ dmMsgs=[]; snap.forEach(d=> dmMsgs.push({id:d.id, data:d.data()})); if(currentTab==="dm") renderMsgs(); });
+  onSnapshot(query(collection(db,"groupMsgs"), orderBy("time","asc")), (snap)=>{ groupMsgs=[]; snap.forEach(d=> groupMsgs.push({id:d.id, data:d.data()})); if(currentTab==="group") renderMsgs(); });
+  updatePinBar();
+};
+
+window.onTyping=function(){
+  setDoc(doc(db,"typing",myName), {at:Date.now()}, {merge:true});
+  clearTimeout(typingTimeout);
+  typingTimeout=setTimeout(()=> setDoc(doc(db,"typing",myName), {at:0}, {merge:true}),2500);
+};
+
+window.sendMsg=async function(){
+  const t=document.getElementById("msgInput").value.trim(); if(!t) return;
+  const payload={name:myName, text:t, time:serverTimestamp(), replyTo:replyTo||null, reactions:{}, readBy:[myName]};
+  if(currentTab==="dm"){
+    if(!dmTo){ toast("Pick someone to DM first"); return; }
+    payload.dmId=dmId(myName,dmTo); payload.to=dmTo; await addDoc(collection(db,"dms"), payload);
+  } else if(currentTab==="group"){
+    if(!groupId){ toast("Pick or create a group first"); return; }
+    payload.groupId=groupId; await addDoc(collection(db,"groupMsgs"), payload);
+  } else {
+    await addDoc(collection(db,"messages"), payload);
+  }
+  document.getElementById("msgInput").value=""; document.getElementById("emojiBar").style.display="none"; cancelReply();
+  setDoc(doc(db,"typing",myName), {at:0}, {merge:true});
+};
+
+window.sendImage=function(input){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=async e=>{
+    const payload={name:myName, text:"", image:e.target.result, time:serverTimestamp(), replyTo:replyTo||null, reactions:{}, readBy:[myName]};
+    if(currentTab==="dm" && dmTo){ payload.dmId=dmId(myName,dmTo); payload.to=dmTo; await addDoc(collection(db,"dms"), payload); }
+    else if(currentTab==="group" && groupId){ payload.groupId=groupId; await addDoc(collection(db,"groupMsgs"), payload); }
+    else await addDoc(collection(db,"messages"), payload);
+    toast("Photo sent 📷"); cancelReply();
+  };
+  reader.readAsDataURL(file); input.value="";
+};
+
+window.toggleVoice=async function(){
+  const btn=document.getElementById("voiceBtn");
+  if(!isRecording){
+    try{
+      const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+      mediaRecorder=new MediaRecorder(stream); audioChunks=[]; isRecording=true;
+      btn.classList.add("rec"); btn.innerText="⏹️"; toast("Recording... Tap again to send 🎤");
+      mediaRecorder.ondataavailable=e=> audioChunks.push(e.data);
+      mediaRecorder.onstop=async ()=>{
+        const blob=new Blob(audioChunks, {type:'audio/webm'});
+        const reader=new FileReader();
+        reader.onload=async e=>{
+          const payload={name:myName, text:"", audio:e.target.result, time:serverTimestamp(), replyTo:replyTo||null, reactions:{}, readBy:[myName]};
+          if(currentTab==="dm" && dmTo){ payload.dmId=dmId(myName,dmTo); payload.to=dmTo; await addDoc(collection(db,"dms"), payload); }
+          else if(currentTab==="group" && groupId){ payload.groupId=groupId; await addDoc(collection(db,"groupMsgs"), payload); }
+          else await addDoc(collection(db,"messages"), payload);
+          toast("Voice note sent 🎤");
+        };
+        reader.readAsDataURL(blob);
+        stream.getTracks().forEach(t=>t.stop());
+      };
+      mediaRecorder.start();
+    }catch(e){ toast("Mic blocked - allow microphone"); }
+  } else {
+    isRecording=false; btn.classList.remove("rec"); btn.innerText="🎤"; mediaRecorder.stop();
+  }
+};
+
+window.clearChat=async function(){
+  if(!confirm("Clear ALL messages for everyone?")) return;
+  for(const coll of ["messages","dms","groupMsgs"]){
+    const snap=await getDocs(collection(db,coll));
+    for(const d of snap.docs) await deleteDoc(doc(db,coll,d.id));
+  }
+  toast("Chat cleared");
 };
 </script>
 </body>
