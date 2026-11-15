@@ -3,76 +3,52 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#008069">
+<meta name="theme-color" content="#0066CC">
 <title>Dabz 💬</title>
 <style>
-*{box-sizing:border-box}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
-  --wa-green:#25D366;--wa-green-dark:#008069;--wa-read:#53BDEB;
-  --radius:7.5px;--font:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --primary:#0A84FF;--primary-dark:#0066CC;--primary-darker:#004999;
+  --read:#34C759;--radius:7.5px;
+  --font:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
 }
 body{
   font-family:var(--font);font-weight:400;margin:0;height:100vh;height:100dvh;
   display:flex;flex-direction:column;overflow:hidden;-webkit-font-smoothing:antialiased;
-  --green-header:#1F2C33;--canvas:#0B141A;--surface:#111B21;--surface-2:#202C33;
-  --bubble-sent:#005C4B;--bubble-received:#202C33;--text:#E9EDEF;--text-2:#8696A0;
+  --header:#1F2C33;--canvas:#0B141A;--surface:#111B21;--surface-2:#202C33;
+  --bubble-sent:#0055A4;--bubble-received:#202C33;--text:#E9EDEF;--text-2:#8696A0;
   --text-3:#667781;--divider:#222D34;--shadow:0 1px .5px rgba(0,0,0,.3);
-  --doodle-filter:invert(1) brightness(1.8);--quote-name:#00A884;
+  --doodle-filter:invert(1) brightness(1.8);--quote-name:#0A84FF;
   background:var(--canvas);color:var(--text);
 }
 body.light{
-  --green-header:#008069;--canvas:#EFEAE2;--surface:#FFFFFF;--surface-2:#F0F2F5;
-  --bubble-sent:#D9FDD3;--bubble-received:#FFFFFF;--text:#111B21;--text-2:#667781;
+  --header:#0066CC;--canvas:#EFEAE2;--surface:#FFFFFF;--surface-2:#F0F2F5;
+  --bubble-sent:#D1E7FF;--bubble-received:#FFFFFF;--text:#111B21;--text-2:#667781;
   --text-3:#8696A0;--divider:#E9EDEF;--shadow:0 1px .5px rgba(11,20,26,.13);
-  --doodle-filter:none;--quote-name:#008069;
+  --doodle-filter:none;--quote-name:#0066CC;
 }
 
-/* ===== Loading ===== */
+/* ===== Loading / splash ===== */
 #loading{position:fixed;inset:0;display:none;place-items:center;background:var(--canvas);z-index:200}
 body[data-loading="true"] #loading{display:grid}
 body[data-loading="true"] #auth,
 body[data-loading="true"] #setup,
-body[data-loading="true"] #chat{display:none !important}
-
-/* ===== Header ===== */
-header{
-  background:var(--green-header);color:#fff;
-  padding:8px 8px 8px 12px;
-  padding-top:calc(8px + env(safe-area-inset-top));
-  display:flex;align-items:center;gap:10px;flex:0 0 auto;z-index:10;
+body[data-loading="true"] #app{display:none!important}
+.brand-logo{
+  width:64px;height:64px;border-radius:50%;
+  background:linear-gradient(135deg,#0A84FF,#06b6d4);
+  display:grid;place-items:center;font-size:30px;color:#fff;
 }
-.logo{
-  width:40px;height:40px;border-radius:50%;
-  background:linear-gradient(135deg,#25D366,#06b6d4);
-  display:grid;place-items:center;font-size:20px;cursor:pointer;
-  flex:0 0 auto;color:#fff;overflow:hidden;
-}
-.logo img{width:100%;height:100%;object-fit:cover}
-.header-meta{flex:1;min-width:0}
-.header-meta h1{font-size:17px;margin:0;font-weight:500;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.header-meta p{font-size:12.5px;opacity:.82;margin:1px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hbtn{display:flex;gap:2px}
-.hbtn button{
-  border:none;background:transparent;color:#fff;width:40px;height:40px;border-radius:50%;
-  cursor:pointer;display:grid;place-items:center;font-size:18px;transition:background .15s;
-}
-.hbtn button:hover{background:rgba(255,255,255,.12)}
-.hbtn button:active{background:rgba(255,255,255,.2)}
 
 /* ===== Auth / Setup ===== */
 #auth,#setup{flex:1;display:none;align-items:center;justify-content:center;padding:20px;background:var(--canvas);overflow-y:auto}
 #auth{display:flex}
 .auth-card{
-  background:var(--surface);width:100%;max-width:380px;
-  padding:28px 24px;border-radius:16px;
-  box-shadow:0 8px 24px rgba(0,0,0,.18);color:var(--text);text-align:center;
+  background:var(--surface);width:100%;max-width:380px;padding:28px 24px;
+  border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.18);color:var(--text);text-align:center;
 }
 .brand{margin-bottom:20px}
-.logo-big{
-  width:64px;height:64px;border-radius:50%;
-  background:linear-gradient(135deg,#25D366,#06b6d4);
-  display:grid;place-items:center;font-size:30px;margin:0 auto 10px;color:#fff;
-}
+.brand .brand-logo{margin:0 auto 10px}
 .auth-card h1{margin:0;font-weight:500;font-size:26px}
 .auth-card h2{margin:0 0 6px;font-weight:500;font-size:20px}
 .auth-card>p{color:var(--text-2);font-size:14px;margin:0 0 16px}
@@ -84,1159 +60,507 @@ header{
 }
 .google-btn:hover{background:var(--surface)}
 .google-btn svg{width:18px;height:18px}
-.divider-text{
-  position:relative;margin:16px 0;color:var(--text-3);font-size:12px;
-  text-transform:uppercase;letter-spacing:1px;
-}
-.divider-text::before,.divider-text::after{
-  content:'';position:absolute;top:50%;width:40%;height:1px;background:var(--divider);
-}
-.divider-text::before{left:0}
-.divider-text::after{right:0}
+.divider-text{position:relative;margin:16px 0;color:var(--text-3);font-size:12px;text-transform:uppercase;letter-spacing:1px}
+.divider-text::before,.divider-text::after{content:'';position:absolute;top:50%;width:40%;height:1px;background:var(--divider)}
+.divider-text::before{left:0}.divider-text::after{right:0}
 .auth-toggle{font-size:13px;color:var(--text-2);margin-top:14px}
-.auth-toggle a{color:var(--wa-green);cursor:pointer;text-decoration:none;font-weight:500}
+.auth-toggle a{color:var(--primary);cursor:pointer;text-decoration:none;font-weight:500}
 .auth-toggle a:hover{text-decoration:underline}
 .avatar-preview{
-  width:80px;height:80px;border-radius:50%;background:var(--green-header);color:#fff;
+  width:80px;height:80px;border-radius:50%;background:var(--primary);color:#fff;
   display:grid;place-items:center;font-size:32px;font-weight:500;margin:0 auto 14px;overflow:hidden;
 }
 .avatar-preview img{width:100%;height:100%;object-fit:cover}
 
-/* ===== Inputs / buttons ===== */
 input,textarea,select{
   width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--divider);
   background:var(--surface-2);color:var(--text);font-size:15px;outline:none;margin:6px 0;
   font-family:inherit;transition:border-color .15s;
 }
-input:focus,textarea:focus,select:focus{border-color:var(--wa-green)}
+input:focus,textarea:focus,select:focus{border-color:var(--primary)}
 .btn{
-  width:100%;padding:14px;border:none;border-radius:10px;background:var(--wa-green);
+  width:100%;padding:14px;border:none;border-radius:10px;background:var(--primary);
   color:#fff;font-weight:500;font-size:16px;margin-top:12px;cursor:pointer;
   font-family:inherit;transition:filter .15s,transform .1s;
 }
-.btn:hover{filter:brightness(1.05)}
-.btn:active{transform:scale(.98)}
+.btn:hover{filter:brightness(1.05)}.btn:active{transform:scale(.98)}
 .btn:disabled{opacity:.6;cursor:not-allowed}
-.btn2{
-  padding:8px 14px;border:none;border-radius:999px;background:var(--surface-2);
-  color:var(--text);cursor:pointer;font-weight:500;font-size:13px;font-family:inherit;
-}
+.btn2{padding:8px 14px;border:none;border-radius:999px;background:var(--surface-2);color:var(--text);cursor:pointer;font-weight:500;font-size:13px;font-family:inherit}
+.btn-danger{background:#ef4444;color:#fff}
 .err{color:#ef4444;font-size:13px;min-height:18px;margin:4px 0}
+.hint{font-size:12px;color:var(--text-3);margin-top:-2px}
+.success{color:var(--read)}
 
-/* ===== Chat layout ===== */
-#chat{display:none;flex:1;flex-direction:column;overflow:hidden;min-height:0}
-#tabs{
-  display:flex;gap:4px;padding:8px 10px;background:var(--surface);
-  border-bottom:1px solid var(--divider);overflow:auto;flex:0 0 auto;
+/* ===== App shell ===== */
+#app{display:none;flex:1;flex-direction:column;overflow:hidden;min-height:0;position:relative}
+.page-container{flex:1;position:relative;overflow:hidden;min-height:0}
+.page{position:absolute;inset:0;display:none;flex-direction:column;background:var(--canvas)}
+.page.active{display:flex}
+
+.page-header{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;
+  padding-top:calc(10px + env(safe-area-inset-top));
+  background:var(--header);color:#fff;flex:0 0 auto;box-shadow:0 2px 8px rgba(0,0,0,.1);
 }
-.tab{
-  flex:1;min-width:70px;padding:9px 10px;border:none;border-radius:999px;cursor:pointer;
-  font-weight:500;background:var(--surface-2);color:var(--text-2);font-size:13px;
-  font-family:inherit;transition:all .15s;white-space:nowrap;
+.page-header h1{margin:0;font-size:18px;font-weight:500;flex:1}
+.page-header .logo{
+  width:38px;height:38px;border-radius:50%;
+  background:linear-gradient(135deg,#0A84FF,#06b6d4);
+  display:grid;place-items:center;font-size:18px;cursor:pointer;flex:0 0 auto;color:#fff;overflow:hidden;
 }
-.tab.active{background:var(--green-header);color:#fff}
+.page-header .logo img{width:100%;height:100%;object-fit:cover}
+.hbtn{display:flex;gap:2px}
+.hbtn button{
+  border:none;background:transparent;color:#fff;width:38px;height:38px;border-radius:50%;
+  cursor:pointer;display:grid;place-items:center;font-size:18px;transition:background .15s;
+}
+.hbtn button:hover{background:rgba(255,255,255,.12)}
+.hbtn button:active{background:rgba(255,255,255,.2)}
+
+.page-body{flex:1;overflow-y:auto;min-height:0}
+.page-footer{flex:0 0 auto}
+
+/* ===== Bottom nav ===== */
+#bottomNav{
+  display:flex;background:var(--surface);border-top:1px solid var(--divider);
+  padding-bottom:env(safe-area-inset-bottom);flex:0 0 auto;z-index:20;
+}
+#bottomNav button{
+  flex:1;border:none;background:transparent;padding:10px 4px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  color:var(--text-3);font-size:11px;font-family:inherit;transition:color .15s;position:relative;
+}
+#bottomNav button.active{color:var(--primary)}
+#bottomNav button .icon{font-size:22px;line-height:1}
+#bottomNav button .badge{
+  position:absolute;top:6px;right:calc(50% - 20px);
+  background:#ef4444;color:#fff;font-size:10px;font-weight:600;
+  min-width:16px;height:16px;border-radius:8px;
+  display:grid;place-items:center;padding:0 4px;
+}
+
+/* ===== News page ===== */
+.news-cats{
+  display:flex;gap:6px;padding:8px 12px;background:var(--surface);
+  border-bottom:1px solid var(--divider);overflow-x:auto;flex:0 0 auto;
+}
+.news-cats button{
+  border:none;background:var(--surface-2);color:var(--text-2);
+  padding:7px 14px;border-radius:999px;cursor:pointer;font-size:13px;
+  font-weight:500;font-family:inherit;white-space:nowrap;transition:all .15s;
+}
+.news-cats button.active{background:var(--primary);color:#fff}
+.news-card{
+  background:var(--surface);margin:8px 12px;border-radius:12px;overflow:hidden;
+  box-shadow:0 1px 3px rgba(0,0,0,.08);cursor:pointer;
+}
+.news-card img{width:100%;height:180px;object-fit:cover;display:block;background:var(--surface-2)}
+.news-card-body{padding:12px 14px}
+.news-card-title{font-size:15px;font-weight:500;line-height:1.3;margin:0 0 6px;color:var(--text)}
+.news-card-desc{font-size:13px;color:var(--text-2);margin:0 0 8px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.news-card-meta{font-size:11px;color:var(--text-3);display:flex;gap:8px}
+.news-empty{padding:40px 20px;text-align:center;color:var(--text-2)}
+
+/* ===== Chat page (reuses old classes) ===== */
+#chatTabs{display:flex;gap:4px;padding:8px 10px;background:var(--surface);border-bottom:1px solid var(--divider);overflow:auto;flex:0 0 auto}
+.tab{flex:1;min-width:70px;padding:9px 10px;border:none;border-radius:999px;cursor:pointer;font-weight:500;background:var(--surface-2);color:var(--text-2);font-size:13px;font-family:inherit;transition:all .15s;white-space:nowrap}
+.tab.active{background:var(--primary);color:#fff}
 #searchBar{display:none;padding:8px 10px;background:var(--surface);border-bottom:1px solid var(--divider)}
 #searchBar input{margin:0;background:var(--surface-2);border-radius:999px}
-#pinBar{
-  display:none;background:var(--surface-2);color:var(--text);padding:8px 12px;
-  font-size:13px;align-items:center;gap:8px;border-bottom:1px solid var(--divider);
-}
+#pinBar{display:none;background:var(--surface-2);color:var(--text);padding:8px 12px;font-size:13px;align-items:center;gap:8px;border-bottom:1px solid var(--divider)}
 #pinBar button{margin-left:auto;border:none;background:transparent;cursor:pointer;color:var(--text-2);font-size:16px}
-#onlineBar,#groupBar{
-  display:flex;gap:6px;overflow:auto;padding:8px 10px;background:var(--surface);
-  border-bottom:1px solid var(--divider);white-space:nowrap;flex:0 0 auto;
-}
+#onlineBar,#groupBar{display:flex;gap:6px;overflow:auto;padding:8px 10px;background:var(--surface);border-bottom:1px solid var(--divider);white-space:nowrap;flex:0 0 auto}
 #groupBar{display:none}
-.pill,.gpill{
-  display:flex;align-items:center;gap:6px;background:var(--surface-2);padding:6px 12px;
-  border-radius:999px;font-size:12px;font-weight:500;cursor:pointer;
-  border:2px solid transparent;color:var(--text);transition:border-color .15s,background .15s;
-}
-.pill.active{border-color:var(--wa-green);background:rgba(37,211,102,.15)}
-.gpill.active{border-color:var(--wa-green-dark);background:var(--green-header);color:#fff}
-.pill i{width:8px;height:8px;background:var(--wa-green);border-radius:50%;display:block;flex:0 0 auto}
+.pill,.gpill{display:flex;align-items:center;gap:6px;background:var(--surface-2);padding:6px 12px;border-radius:999px;font-size:12px;font-weight:500;cursor:pointer;border:2px solid transparent;color:var(--text);transition:border-color .15s,background .15s}
+.pill.active{border-color:var(--primary);background:rgba(10,132,255,.15)}
+.gpill.active{border-color:var(--primary-dark);background:var(--primary);color:#fff}
+.pill i{width:8px;height:8px;background:var(--read);border-radius:50%;display:block;flex:0 0 auto}
 .pill i.off{background:var(--text-3)}
-
-/* ===== Chat canvas ===== */
 #chatArea{position:relative;flex:1;min-height:0;background:var(--canvas);overflow:hidden}
-#chatArea::before{
-  content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+#chatArea::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'%3E%3Cg fill='none' stroke='%23000' stroke-opacity='.07' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 40c5-8 14-8 18 0s-6 12-18 12'/%3E%3Ccircle cx='170' cy='30' r='9'/%3E%3Cpath d='M60 110v8c0 5 9 5 9 0v-8c0-5-9-5-9 0z'/%3E%3Cpath d='M130 70l8 8m0-8l-8 8'/%3E%3Crect x='20' y='160' width='20' height='14' rx='2'/%3E%3Cpath d='M170 130c5 0 5 8 0 8s-5-8 0-8z'/%3E%3Cpath d='M100 180c8-6 14 2 9 7s-14-2-9-7z'/%3E%3Ccircle cx='50' cy='200' r='4'/%3E%3Cpath d='M180 190h22M180 200h15'/%3E%3C/g%3E%3C/svg%3E");
-  background-size:220px 220px;filter:var(--doodle-filter);
-}
-#msgs{
-  position:relative;z-index:1;height:100%;overflow-y:auto;padding:12px 5%;
-  display:flex;flex-direction:column;scroll-behavior:smooth;
-}
+  background-size:220px 220px;filter:var(--doodle-filter)}
+#msgs{position:relative;z-index:1;height:100%;overflow-y:auto;padding:12px 5%;display:flex;flex-direction:column;scroll-behavior:smooth}
 #msgs::-webkit-scrollbar{width:6px}
 #msgs::-webkit-scrollbar-thumb{background:rgba(0,0,0,.18);border-radius:3px}
-.wa-date{
-  align-self:center;margin:14px 0 8px;padding:5px 12px;font-size:12.5px;font-weight:500;
-  color:var(--text-2);background:var(--surface);border-radius:var(--radius);
-  box-shadow:var(--shadow);z-index:1;
-}
-
-/* ===== Messages ===== */
-.msg{
-  display:flex;gap:6px;align-items:flex-end;margin-top:6px;max-width:100%;
-  animation:pop .15s ease-out;position:relative;
-}
+.wa-date{align-self:center;margin:14px 0 8px;padding:5px 12px;font-size:12.5px;font-weight:500;color:var(--text-2);background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);z-index:1}
+.msg{display:flex;gap:6px;align-items:flex-end;margin-top:6px;max-width:100%;animation:pop .15s ease-out;position:relative}
 .msg.grouped{margin-top:1px}
 .msg.mine{flex-direction:row-reverse}
 @keyframes pop{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-.msg-avatar{
-  width:28px;height:28px;border-radius:50%;display:grid;place-items:center;
-  font-size:11px;font-weight:500;color:#fff;flex:0 0 auto;align-self:flex-start;margin-top:2px;overflow:hidden;
-}
+.msg-avatar{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:500;color:#fff;flex:0 0 auto;align-self:flex-start;margin-top:2px;overflow:hidden}
 .msg-avatar img{width:100%;height:100%;object-fit:cover}
 .msg.mine .msg-avatar{display:none}
-.msg-bubble{
-  max-width:min(75%,460px);padding:6px 9px 8px;border-radius:var(--radius);
-  background:var(--bubble-received);color:var(--text);font-size:14.2px;line-height:1.35;
-  box-shadow:var(--shadow);position:relative;word-wrap:break-word;overflow-wrap:anywhere;
-}
+.msg-bubble{max-width:min(75%,460px);padding:6px 9px 8px;border-radius:var(--radius);background:var(--bubble-received);color:var(--text);font-size:14.2px;line-height:1.35;box-shadow:var(--shadow);position:relative;word-wrap:break-word;overflow-wrap:anywhere}
 .msg-bubble::after{content:"";display:block;clear:both}
 .msg.mine .msg-bubble{background:var(--bubble-sent)}
 .msg:not(.grouped) .msg-bubble{border-top-left-radius:0}
-.msg:not(.grouped) .msg-bubble::before{
-  content:"";position:absolute;top:0;left:-8px;
-  border-top:10px solid var(--bubble-received);
-  border-left:8px solid transparent;
-}
+.msg:not(.grouped) .msg-bubble::before{content:"";position:absolute;top:0;left:-8px;border-top:10px solid var(--bubble-received);border-left:8px solid transparent}
 .msg.mine:not(.grouped) .msg-bubble{border-top-left-radius:var(--radius);border-top-right-radius:0}
-.msg.mine:not(.grouped) .msg-bubble::after{
-  content:"";position:absolute;top:0;right:-8px;
-  border-top:10px solid var(--bubble-sent);border-right:8px solid transparent;display:block;clear:none;
-}
+.msg.mine:not(.grouped) .msg-bubble::after{content:"";position:absolute;top:0;right:-8px;border-top:10px solid var(--bubble-sent);border-right:8px solid transparent;display:block;clear:none}
 .msg-name{font-size:13px;font-weight:500;margin-bottom:2px;cursor:pointer}
 .msg-text{white-space:pre-wrap}
-.msg-meta{
-  float:right;display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--text-3);
-  margin:4px 0 -2px 10px;position:relative;top:4px;line-height:1;
-}
+.msg-meta{float:right;display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--text-3);margin:4px 0 -2px 10px;position:relative;top:4px;line-height:1}
 .msg-tick{width:16px;height:11px;color:var(--text-3)}
-.msg-tick.read{color:var(--wa-read)}
-.replyQuote{
-  background:rgba(0,0,0,.06);border-left:3px solid var(--wa-green);padding:5px 8px;
-  border-radius:6px;font-size:12.5px;margin-bottom:4px;color:var(--text-2);
-}
+.msg-tick.read{color:var(--read)}
+.replyQuote{background:rgba(0,0,0,.06);border-left:3px solid var(--primary);padding:5px 8px;border-radius:6px;font-size:12.5px;margin-bottom:4px;color:var(--text-2)}
 body:not(.light) .replyQuote{background:rgba(0,0,0,.2)}
 .replyQuote b{color:var(--quote-name);display:block;font-size:12px;font-weight:500;margin-bottom:1px}
 .msg-bubble img{max-width:100%;border-radius:8px;margin-top:4px;display:block;max-height:280px;object-fit:cover}
 .msg-bubble audio{width:100%;margin-top:4px;max-width:280px}
 .reactions{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;clear:both}
-.react{
-  font-size:12px;background:var(--surface-2);padding:2px 8px;border-radius:999px;
-  cursor:pointer;border:none;color:var(--text);font-family:inherit;
-}
-.react.mine{background:rgba(37,211,102,.2);color:var(--quote-name);font-weight:500}
+.react{font-size:12px;background:var(--surface-2);padding:2px 8px;border-radius:999px;cursor:pointer;border:none;color:var(--text);font-family:inherit}
+.react.mine{background:rgba(10,132,255,.2);color:var(--quote-name);font-weight:500}
 .msg-actions{display:flex;gap:2px;margin-top:6px;clear:both;opacity:.5;transition:opacity .15s}
 .msg:hover .msg-actions,.msg:focus-within .msg-actions{opacity:1}
-.msg-actions button{
-  border:none;background:transparent;cursor:pointer;padding:4px 6px;border-radius:6px;
-  font-size:13px;color:var(--text-2);font-family:inherit;transition:background .1s;
-}
+.msg-actions button{border:none;background:transparent;cursor:pointer;padding:4px 6px;border-radius:6px;font-size:13px;color:var(--text-2);font-family:inherit;transition:background .1s}
 .msg-actions button:hover{background:var(--surface-2)}
-
-#typing{
-  font-size:12px;color:var(--text-2);padding:0 14px 4px;min-height:18px;
-  font-style:italic;background:var(--canvas);flex:0 0 auto;
-}
-#replyBar{
-  display:none;background:var(--surface-2);color:var(--text);padding:8px 12px;
-  font-size:13px;align-items:center;gap:8px;border-top:1px solid var(--divider);
-  border-left:3px solid var(--wa-green);
-}
+#typing{font-size:12px;color:var(--text-2);padding:0 14px 4px;min-height:18px;font-style:italic;background:var(--canvas);flex:0 0 auto}
+#replyBar{display:none;background:var(--surface-2);color:var(--text);padding:8px 12px;font-size:13px;align-items:center;gap:8px;border-top:1px solid var(--divider);border-left:3px solid var(--primary)}
 #replyBar button{margin-left:auto;border:none;background:transparent;cursor:pointer;font-size:16px;color:var(--text-2)}
-#emojiBar{
-  display:none;gap:6px;padding:8px 10px;background:var(--surface-2);
-  border-top:1px solid var(--divider);overflow:auto;white-space:nowrap;
-}
+#emojiBar{display:none;gap:6px;padding:8px 10px;background:var(--surface-2);border-top:1px solid var(--divider);overflow:auto;white-space:nowrap}
 #emojiBar button{font-size:22px;border:none;background:transparent;cursor:pointer;padding:4px;border-radius:8px}
-#emojiBar button:hover{background:var(--surface)}
-
-/* ===== Composer ===== */
-#composer{
-  display:flex;gap:4px;padding:6px 8px;padding-bottom:calc(6px + env(safe-area-inset-bottom));
-  background:var(--surface-2);align-items:center;flex:0 0 auto;
-}
-#msgInput{
-  flex:1;margin:0;border-radius:24px;padding:12px 16px;background:var(--surface);
-  border:none;font-size:15px;min-height:44px;color:var(--text);
-}
+#composer{display:flex;gap:4px;padding:6px 8px;background:var(--surface-2);align-items:center;flex:0 0 auto}
+#msgInput{flex:1;margin:0;border-radius:24px;padding:12px 16px;background:var(--surface);border:none;font-size:15px;min-height:44px;color:var(--text)}
 #msgInput::placeholder{color:var(--text-3)}
-.iconBtn{
-  width:44px;height:44px;border-radius:50%;border:none;background:transparent;
-  color:var(--text-2);cursor:pointer;flex-shrink:0;font-size:20px;
-  display:grid;place-items:center;transition:background .15s;font-family:inherit;
-}
+.iconBtn{width:44px;height:44px;border-radius:50%;border:none;background:transparent;color:var(--text-2);cursor:pointer;flex-shrink:0;font-size:20px;display:grid;place-items:center;transition:background .15s;font-family:inherit}
 .iconBtn:hover{background:var(--surface)}
 .iconBtn.rec{background:#ef4444;color:#fff;animation:blink 1s infinite}
 @keyframes blink{50%{opacity:.6}}
-.sendBtn{
-  width:48px;height:48px;border-radius:50%;border:none;background:var(--wa-green);
-  color:#fff;font-size:20px;cursor:pointer;flex-shrink:0;display:grid;place-items:center;
-  transition:transform .1s,filter .15s;
-}
+.sendBtn{width:48px;height:48px;border-radius:50%;border:none;background:var(--primary);color:#fff;font-size:20px;cursor:pointer;flex-shrink:0;display:grid;place-items:center;transition:transform .1s,filter .15s}
 .sendBtn:active{transform:scale(.92)}
 .sendBtn:hover{filter:brightness(1.04)}
 
-/* ===== Toast & modals ===== */
-#toast{
-  position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#111827;
-  color:#fff;padding:10px 16px;border-radius:999px;font-size:13px;display:none;
-  z-index:99;box-shadow:0 4px 20px rgba(0,0,0,.3);
+/* ===== Status page ===== */
+.status-section{padding:12px}
+.status-section h3{margin:0 0 10px;font-size:14px;font-weight:500;color:var(--text-2);text-transform:uppercase;letter-spacing:.5px}
+.status-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px}
+.status-circle{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  cursor:pointer;flex:0 0 auto;width:78px;
 }
-.modal{
-  position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;
-  justify-content:center;z-index:100;padding:20px;
+.status-ring{
+  width:64px;height:64px;border-radius:50%;padding:3px;
+  background:linear-gradient(135deg,#0A84FF,#06b6d4);display:grid;place-items:center;
 }
-.modal .box{
-  background:var(--surface);color:var(--text);width:100%;max-width:380px;padding:22px;
-  border-radius:16px;max-height:85vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.35);
+.status-ring.viewed{background:var(--divider)}
+.status-ring.mine{background:var(--primary);position:relative}
+.status-ring.mine::after{
+  content:"+";position:absolute;bottom:-4px;right:-4px;width:22px;height:22px;
+  border-radius:50%;background:var(--primary);color:#fff;font-weight:600;
+  display:grid;place-items:center;font-size:16px;border:2px solid var(--surface);
 }
+.status-inner{
+  width:100%;height:100%;border-radius:50%;background:var(--surface);
+  display:grid;place-items:center;overflow:hidden;font-size:24px;color:#fff;font-weight:500;
+}
+.status-inner img{width:100%;height:100%;object-fit:cover}
+.status-circle small{font-size:11px;color:var(--text);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:78px}
+
+/* Status viewer */
+#statusViewer{
+  position:fixed;inset:0;background:#000;z-index:150;display:none;flex-direction:column;
+}
+#statusViewer.show{display:flex}
+.sv-progress{display:flex;gap:3px;padding:8px 8px 0;padding-top:calc(8px + env(safe-area-inset-top))}
+.sv-progress div{flex:1;height:3px;background:rgba(255,255,255,.3);border-radius:2px;overflow:hidden}
+.sv-progress div.active{background:#fff}
+.sv-progress div.viewed{background:#0A84FF}
+.sv-header{display:flex;align-items:center;gap:10px;padding:10px 14px;color:#fff;z-index:2}
+.sv-header .av{width:36px;height:36px;border-radius:50%;background:var(--primary);display:grid;place-items:center;font-size:14px;font-weight:600;color:#fff;overflow:hidden}
+.sv-header .av img{width:100%;height:100%;object-fit:cover}
+.sv-header .name{flex:1;font-weight:500;font-size:14px}
+.sv-header button{border:none;background:transparent;color:#fff;font-size:24px;cursor:pointer}
+.sv-content{
+  flex:1;display:grid;place-items:center;padding:20px;text-align:center;
+  color:#fff;font-size:24px;font-weight:500;line-height:1.3;position:relative;
+}
+.sv-content img{max-width:100%;max-height:100%;border-radius:8px;object-fit:contain}
+.sv-content .bg-text{position:absolute;inset:0;display:grid;place-items:center;padding:20px;font-size:26px;font-weight:500;text-align:center}
+.sv-nav{position:absolute;top:0;bottom:0;width:40%;cursor:pointer;z-index:1}
+.sv-nav.prev{left:0}.sv-nav.next{right:0}
+
+/* ===== Reels page ===== */
+#reelsScroll{
+  flex:1;overflow-y:scroll;scroll-snap-type:y mandatory;background:#000;
+  scrollbar-width:none;
+}
+#reelsScroll::-webkit-scrollbar{display:none}
+.reel{
+  height:100%;width:100%;scroll-snap-align:start;position:relative;
+  display:grid;place-items:center;background:#000;flex:0 0 100%;
+}
+.reel video{width:100%;height:100%;object-fit:contain;background:#000}
+.reel-info{
+  position:absolute;left:0;right:60px;bottom:20px;padding:14px;color:#fff;
+  background:linear-gradient(transparent,rgba(0,0,0,.7));
+}
+.reel-info .uname{font-weight:600;font-size:14px;margin-bottom:4px}
+.reel-info .cap{font-size:13px;line-height:1.4;opacity:.95}
+.reel-actions{
+  position:absolute;right:12px;bottom:80px;display:flex;flex-direction:column;gap:16px;color:#fff;
+}
+.reel-actions button{
+  border:none;background:rgba(0,0,0,.4);color:#fff;width:44px;height:44px;border-radius:50%;
+  cursor:pointer;font-size:20px;display:grid;place-items:center;backdrop-filter:blur(8px);
+}
+.reel-actions button.liked{background:rgba(239,68,68,.8)}
+.reel-empty{color:#fff;text-align:center;padding:40px;font-size:15px}
+.reel-count{position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);font-size:11px;color:#fff;font-weight:500}
+
+/* ===== Profile page ===== */
+.profile-hero{padding:24px 20px;background:var(--surface);text-align:center;border-bottom:1px solid var(--divider)}
+.profile-hero .av{width:96px;height:96px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;font-size:36px;font-weight:500;margin:0 auto 12px;overflow:hidden}
+.profile-hero .av img{width:100%;height:100%;object-fit:cover}
+.profile-hero h2{margin:0;font-weight:500;font-size:20px}
+.profile-hero .username{color:var(--text-2);font-size:14px;margin:2px 0 8px}
+.profile-hero .bio{color:var(--text-2);font-size:14px;margin:8px 20px 0;line-height:1.4}
+.profile-stats{display:flex;gap:20px;justify-content:center;margin-top:16px}
+.profile-stats div{text-align:center}
+.profile-stats .n{font-size:18px;font-weight:600;color:var(--text)}
+.profile-stats .l{font-size:11px;color:var(--text-2);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.profile-actions{display:flex;gap:8px;padding:14px 20px}
+.profile-actions button{flex:1}
+
+/* ===== Modals ===== */
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 16px;border-radius:999px;font-size:13px;display:none;z-index:99;box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
+.modal .box{background:var(--surface);color:var(--text);width:100%;max-width:380px;padding:22px;border-radius:16px;max-height:85vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.35)}
 .close{float:right;border:none;background:transparent;font-size:20px;cursor:pointer;color:var(--text-2)}
 .profileHead{text-align:center}
-.profileHead .bigAv{
-  width:70px;height:70px;border-radius:50%;display:grid;place-items:center;
-  font-size:28px;font-weight:500;color:#fff;margin:0 auto;overflow:hidden;
-}
+.profileHead .bigAv{width:70px;height:70px;border-radius:50%;display:grid;place-items:center;font-size:28px;font-weight:500;color:#fff;margin:0 auto;overflow:hidden}
 .profileHead .bigAv img{width:100%;height:100%;object-fit:cover}
+
+/* Friends modal */
+.friend-result{display:flex;align-items:center;gap:10px;padding:10px;background:var(--surface-2);border-radius:10px;margin-top:8px}
+.friend-result .av{width:40px;height:40px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;font-weight:500;flex:0 0 auto;overflow:hidden}
+.friend-result .av img{width:100%;height:100%;object-fit:cover}
+.friend-result .info{flex:1;min-width:0}
+.friend-result .info b{font-weight:500;display:block;font-size:14px}
+.friend-result .info small{font-size:12px;color:var(--text-2)}
+.friend-req{display:flex;align-items:center;gap:10px;padding:10px;background:var(--surface-2);border-radius:10px;margin-top:8px}
+.friend-req .av{width:40px;height:40px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;font-weight:500;flex:0 0 auto;overflow:hidden}
+.friend-req .av img{width:100%;height:100%;object-fit:cover}
+.friend-req .info{flex:1;min-width:0}
+.friend-req .info b{font-weight:500;font-size:14px;display:block}
+.friend-req .info small{font-size:12px;color:var(--text-2)}
+.friend-req button{padding:6px 12px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:12px;font-family:inherit}
+.friend-req button.accept{background:var(--primary);color:#fff}
+.friend-req button.decline{background:var(--surface);color:var(--text-2)}
+
+/* Status composer */
+.status-color-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:10px 0}
+.status-color-grid button{aspect-ratio:1;border-radius:10px;border:3px solid transparent;cursor:pointer}
+.status-color-grid button.sel{border-color:#fff;box-shadow:0 0 0 2px var(--primary)}
+.status-tabs{display:flex;gap:6px;margin-bottom:12px}
+.status-tabs button{flex:1;padding:8px;border:none;border-radius:8px;background:var(--surface-2);color:var(--text-2);cursor:pointer;font-family:inherit;font-weight:500;font-size:13px}
+.status-tabs button.active{background:var(--primary);color:#fff}
+#statusPreview{background:var(--primary);color:#fff;border-radius:10px;padding:30px 20px;text-align:center;font-size:20px;font-weight:500;min-height:120px;display:grid;place-items:center;margin:10px 0}
+
+@media (max-width:480px){
+  .news-card{margin:8px}
+}
 </style>
 </head>
 <body data-loading="true">
 
-<div id="loading"><div class="logo-big">💬</div></div>
+<div id="loading"><div class="brand-logo">💬</div></div>
 
-<!-- ============ AUTH SCREEN ============ -->
+<!-- ============ AUTH ============ -->
 <div id="auth">
   <div class="auth-card">
     <div class="brand">
-      <div class="logo-big">💬</div>
+      <div class="brand-logo">💬</div>
       <h1>Dabz</h1>
-      <p style="color:var(--text-2);margin:2px 0 0;font-size:13px">Chat with everyone • Live</p>
+      <p style="color:var(--text-2);margin:2px 0 0;font-size:13px">Chat · Post · Connect</p>
     </div>
-
     <button class="google-btn" onclick="googleSignIn()">
-      <svg viewBox="0 0 48 48">
-        <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.7 2.6 30.2 0 24 0 14.6 0 6.4 5.4 2.6 13.2l7.9 6.2C12.4 13.4 17.7 9.5 24 9.5z"/>
-        <path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9.2h12.4c-.5 2.9-2.1 5.3-4.4 6.9l7.2 5.6c4.2-3.9 6.9-9.7 6.9-17.1z"/>
-        <path fill="#FBBC05" d="M10.5 28.6c-.5-1.4-.8-2.9-.8-4.6s.3-3.2.8-4.6l-7.9-6.2C.9 16.6 0 20.2 0 24s.9 7.4 2.6 10.8l7.9-6.2z"/>
-        <path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.2-5.6c-2 1.4-4.6 2.2-8 2.2-6.3 0-11.6-3.9-13.5-9.3l-7.9 6.2C6.4 42.6 14.6 48 24 48z"/>
-      </svg>
+      <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.7 2.6 30.2 0 24 0 14.6 0 6.4 5.4 2.6 13.2l7.9 6.2C12.4 13.4 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9.2h12.4c-.5 2.9-2.1 5.3-4.4 6.9l7.2 5.6c4.2-3.9 6.9-9.7 6.9-17.1z"/><path fill="#FBBC05" d="M10.5 28.6c-.5-1.4-.8-2.9-.8-4.6s.3-3.2.8-4.6l-7.9-6.2C.9 16.6 0 20.2 0 24s.9 7.4 2.6 10.8l7.9-6.2z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.2-5.6c-2 1.4-4.6 2.2-8 2.2-6.3 0-11.6-3.9-13.5-9.3l-7.9 6.2C6.4 42.6 14.6 48 24 48z"/></svg>
       Continue with Google
     </button>
-
     <div class="divider-text"><span>or</span></div>
-
     <input id="authEmail" type="email" placeholder="Email" autocomplete="email">
     <input id="authPass" type="password" placeholder="Password" autocomplete="current-password">
     <input id="authPass2" type="password" placeholder="Confirm password" autocomplete="new-password" style="display:none">
     <p id="authErr" class="err"></p>
     <button class="btn" id="authSubmit" onclick="submitAuth()">Sign in</button>
-
-    <p class="auth-toggle">
-      <span id="authModeText">New to Dabz?</span>
-      <a onclick="toggleAuthMode()" id="authModeLink">Create account</a>
-    </p>
-    <p class="auth-toggle" id="forgotWrap">
-      <a onclick="forgotPassword()">Forgot password?</a>
-    </p>
+    <p class="auth-toggle"><span id="authModeText">New to Dabz?</span> <a onclick="toggleAuthMode()" id="authModeLink">Create account</a></p>
+    <p class="auth-toggle" id="forgotWrap"><a onclick="forgotPassword()">Forgot password?</a></p>
   </div>
 </div>
 
-<!-- ============ PROFILE SETUP ============ -->
+<!-- ============ SETUP ============ -->
 <div id="setup">
   <div class="auth-card">
     <div class="avatar-preview" id="setupAvatar">?</div>
     <h2>Set up your profile</h2>
-    <p>This is how others will see you on Dabz.</p>
-    <input id="setupName" placeholder="Your name" maxlength="20" autocomplete="name">
+    <p>Choose a username others can find you by.</p>
+    <input id="setupName" placeholder="Display name e.g. Constant" maxlength="20" autocomplete="name">
+    <input id="setupUsername" placeholder="Username (lowercase, 3-20 chars)" maxlength="20" autocomplete="username" style="margin-bottom:2px">
+    <p class="hint" id="usernameStatus">Letters, numbers, underscore only</p>
     <input id="setupAbout" placeholder="About (optional) e.g. Love football ⚽" maxlength="60">
     <p id="setupErr" class="err"></p>
-    <button class="btn" id="setupSubmit" onclick="completeSetup()">Start chatting →</button>
+    <button class="btn" id="setupSubmit" onclick="completeSetup()">Continue →</button>
     <button class="btn2" style="width:100%;margin-top:8px" onclick="handleSignOut()">Sign out</button>
   </div>
 </div>
 
-<!-- ============ CHAT ============ -->
-<div id="chat">
-  <header>
-    <div class="logo" id="myHeaderAvatar" onclick="openMyProfile()">💬</div>
-    <div class="header-meta">
-      <h1>Dabz</h1>
-      <p id="status">Chat with everyone • Live</p>
+<!-- ============ APP ============ -->
+<div id="app">
+  <div class="page-container">
+
+    <!-- NEWS -->
+    <div id="page-news" class="page active">
+      <div class="page-header">
+        <div class="logo" id="newsAvatar" onclick="showPage('profile')">💬</div>
+        <h1>Trending</h1>
+        <div class="hbtn">
+          <button onclick="refreshNews()" title="Refresh">⟳</button>
+          <button onclick="toggleTheme()" id="themeBtn" title="Theme">☀️</button>
+        </div>
+      </div>
+      <div class="news-cats" id="newsCats">
+        <button data-cat="all" class="active" onclick="loadNews('all')">🌍 All</button>
+        <button data-cat="sports" onclick="loadNews('sports')">⚽ Sports</button>
+        <button data-cat="finance" onclick="loadNews('finance')">💰 Finance</button>
+        <button data-cat="tech" onclick="loadNews('tech')">💻 Tech</button>
+      </div>
+      <div class="page-body" id="newsBody">
+        <div class="news-empty">Loading news…</div>
+      </div>
     </div>
-    <div class="hbtn">
-      <button onclick="toggleSearch()" aria-label="Search">🔍</button>
-      <button onclick="toggleTheme()" id="themeBtn" aria-label="Theme">☀️</button>
-      <button onclick="openMyProfile()" aria-label="Profile">👤</button>
+
+    <!-- CHATS -->
+    <div id="page-chats" class="page">
+      <div class="page-header">
+        <div class="logo" id="chatAvatar" onclick="showPage('profile')">💬</div>
+        <h1>Dabz</h1>
+        <div class="hbtn">
+          <button onclick="toggleSearch()" title="Search">🔍</button>
+          <button onclick="openAddFriend()" title="Add Friend">＋</button>
+          <button onclick="showPage('profile')" title="Profile">👤</button>
+        </div>
+      </div>
+      <div id="chatTabs">
+        <button class="tab active" id="tabGlobal" onclick="switchTab('global')">🌍 Global</button>
+        <button class="tab" id="tabFriends" onclick="switchTab('friends')">👥 Friends</button>
+        <button class="tab" id="tabGroup" onclick="switchTab('group')">💠 Groups</button>
+      </div>
+      <div id="searchBar"><input id="searchInput" placeholder="Search messages…" oninput="renderMsgs()"></div>
+      <div id="pinBar"><span id="pinText"></span><button onclick="unpin()">✕</button></div>
+      <div id="groupBar"></div>
+      <div id="onlineBar"></div>
+      <div id="chatArea"><div id="msgs"></div></div>
+      <div id="typing"></div>
+      <div id="replyBar"><span id="replyText"></span><button onclick="cancelReply()">✕</button></div>
+      <div id="emojiBar"></div>
+      <div id="composer">
+        <button class="iconBtn" onclick="toggleEmoji()" aria-label="Emoji">😊</button>
+        <input id="msgInput" placeholder="Type a message…" oninput="onTyping()" onkeydown="if(event.key==='Enter')sendMsg()">
+        <label class="iconBtn" aria-label="Photo" style="cursor:pointer">📷<input type="file" id="imgInput" accept="image/*" style="display:none" onchange="sendImage(this)"></label>
+        <button class="iconBtn" id="voiceBtn" onclick="toggleVoice()" aria-label="Voice">🎤</button>
+        <button class="sendBtn" onclick="sendMsg()" aria-label="Send">➤</button>
+      </div>
     </div>
-  </header>
 
-  <div id="tabs">
-    <button class="tab active" id="tabAll" onclick="switchTab('all')">🌍 Everyone</button>
-    <button class="tab" id="tabGroup" onclick="switchTab('group')">👥 Groups</button>
-    <button class="tab" id="tabDM" onclick="switchTab('dm')">🔒 DMs</button>
-  </div>
-  <div id="searchBar"><input id="searchInput" placeholder="Search messages..." oninput="renderMsgs()"></div>
-  <div id="pinBar"><span id="pinText"></span><button onclick="unpin()">✕</button></div>
-  <div id="groupBar"></div>
-  <div id="onlineBar"></div>
+    <!-- STATUS -->
+    <div id="page-status" class="page">
+      <div class="page-header">
+        <h1>Status</h1>
+        <div class="hbtn">
+          <button onclick="openStatusComposer()" title="Add Status">＋</button>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="status-section">
+          <h3>My status</h3>
+          <div class="status-row" id="myStatusRow"></div>
+        </div>
+        <div class="status-section">
+          <h3>Recent updates</h3>
+          <div class="status-row" id="recentStatusRow"></div>
+        </div>
+        <div class="status-section">
+          <h3>Viewed</h3>
+          <div class="status-row" id="viewedStatusRow"></div>
+        </div>
+      </div>
+    </div>
 
-  <div id="chatArea">
-    <div id="msgs"></div>
+    <!-- REELS -->
+    <div id="page-reels" class="page" style="background:#000">
+      <div class="page-header" style="background:#111">
+        <h1>Reels</h1>
+        <div class="hbtn">
+          <button onclick="openReelComposer()" title="Upload Reel">📤</button>
+        </div>
+      </div>
+      <div id="reelsScroll"></div>
+    </div>
+
+    <!-- PROFILE -->
+    <div id="page-profile" class="page">
+      <div class="page-header">
+        <h1>Profile</h1>
+        <div class="hbtn">
+          <button onclick="handleSignOut()" title="Sign out">↩</button>
+        </div>
+      </div>
+      <div class="page-body" id="profileBody">
+        <div class="profile-hero" id="profileHero"></div>
+        <div class="profile-actions">
+          <button class="btn2" onclick="openEditProfile()">✏️ Edit Profile</button>
+          <button class="btn2" onclick="showPage('status')">📸 Status</button>
+          <button class="btn2" onclick="showPage('reels')">🎬 Reels</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <div id="typing"></div>
-  <div id="replyBar"><span id="replyText"></span><button onclick="cancelReply()">✕</button></div>
-  <div id="emojiBar"></div>
-  <div id="composer">
-    <button class="iconBtn" onclick="toggleEmoji()" aria-label="Emoji">😊</button>
-    <input id="msgInput" placeholder="Type a message..." oninput="onTyping()" onkeydown="if(event.key==='Enter')sendMsg()">
-    <label class="iconBtn" aria-label="Photo" style="cursor:pointer">📷<input type="file" id="imgInput" accept="image/*" style="display:none" onchange="sendImage(this)"></label>
-    <button class="iconBtn" id="voiceBtn" onclick="toggleVoice()" aria-label="Voice">🎤</button>
-    <button class="sendBtn" onclick="sendMsg()" aria-label="Send">➤</button>
+  <nav id="bottomNav">
+    <button data-page="news" class="active" onclick="showPage('news')">
+      <span class="icon">📰</span><span>News</span>
+    </button>
+    <button data-page="chats" onclick="showPage('chats')">
+      <span class="icon">💬</span><span>Chats</span>
+      <span class="badge" id="chatBadge" style="display:none">0</span>
+    </button>
+    <button data-page="status" onclick="showPage('status')">
+      <span class="icon">⭕</span><span>Status</span>
+    </button>
+    <button data-page="reels" onclick="showPage('reels')">
+      <span class="icon">🎬</span><span>Reels</span>
+    </button>
+    <button data-page="profile" onclick="showPage('profile')">
+      <span class="icon">👤</span><span>Profile</span>
+    </button>
+  </nav>
+</div>
+
+<!-- ============ STATUS VIEWER (fullscreen) ============ -->
+<div id="statusViewer">
+  <div class="sv-progress" id="svProgress"></div>
+  <div class="sv-header">
+    <div class="av" id="svAvatar">?</div>
+    <div class="name" id="svName"></div>
+    <button onclick="closeStatusViewer()">✕</button>
   </div>
+  <div class="sv-content" id="svContent"></div>
+  <div class="sv-nav prev" onclick="statusNav(-1)"></div>
+  <div class="sv-nav next" onclick="statusNav(1)"></div>
 </div>
 
 <div id="toast"></div>
 
+<!-- ============ MODALS ============ -->
 <div class="modal" id="profileModal"><div class="box"><button class="close" onclick="closeModal('profileModal')">✕</button><div id="profileContent"></div></div></div>
 <div class="modal" id="groupModal"><div class="box"><button class="close" onclick="closeModal('groupModal')">✕</button><h3 style="margin-top:0;font-weight:500">Create Group 👥</h3><input id="groupName" placeholder="Group name e.g. Eldoret Boys"><input id="groupDesc" placeholder="Description (optional)"><button class="btn" onclick="createGroup()">Create Group</button></div></div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp,
-  deleteDoc, doc, getDocs, setDoc, getDoc, updateDoc, arrayUnion
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import {
-  getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
-  GoogleAuthProvider, signInWithPopup, signOut as fbSignOut, sendPasswordResetEmail, updateProfile
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCXPDgHPp9fCkunGFi2607wDGwh5hIVzf4",
-  authDomain: "dabz-6c525.firebaseapp.com",
-  projectId: "dabz-6c525",
-  storageBucket: "dabz-6c525.firebasestorage.app",
-  messagingSenderId: "1075617125423",
-  appId: "1:1075617125423:web:e484dc36b9dc18d26a62da"
-};
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
-
-/* ============================================================
-   STATE
-   ============================================================ */
-let myUid = '', myName = '', myEmail = '', myPhotoURL = '';
-let authMode = 'signin';
-let firstLoad = true, lastCount = 0, typingTimeout = null;
-let currentTab = 'all', dmToUid = null, dmToName = null, replyTo = null, groupId = null;
-let allMsgs = [], dmMsgs = [], groupMsgs = [], groups = [];
-let profilesByUid = {}, profilesByName = {}, lastSeenMap = {};
-let pinnedMsg = null, isRecording = false, mediaRecorder = null, audioChunks = [];
-let snapUnsubs = [];
-
-const colors = ["#ef4444","#f97316","#eab308","#22c55e","#06b6d4","#3b82f6","#a855f7","#ec4899"];
-
-function colorFor(s){ let h=0; for(let i=0;i<(s||'').length;i++) h=(h*31+s.charCodeAt(i))>>>0; return colors[h%colors.length]; }
-function initials(n){ return (n||'?').trim().slice(0,2).toUpperCase(); }
-function escapeHtml(s){ return (s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function dmId(a,b){ return [a,b].sort().join('__'); }
-function timeAgo(ts){
-  if(!ts) return 'never';
-  const d = Date.now()-ts;
-  if(d<15000) return 'Online now';
-  if(d<60000) return 'Just now';
-  if(d<3600000) return Math.floor(d/60000)+'m ago';
-  if(d<86400000) return Math.floor(d/3600000)+'h ago';
-  return new Date(ts).toLocaleDateString();
-}
-function playSound(){
-  try{
-    const ctx = new (window.AudioContext||window.webkitAudioContext)();
-    const o = ctx.createOscillator(), g = ctx.createGain();
-    o.connect(g); g.connect(ctx.destination);
-    o.frequency.value = 880; g.gain.value = 0.06;
-    o.start(); o.stop(ctx.currentTime + 0.12);
-  }catch(e){}
-}
-function toast(t){
-  const el = document.getElementById('toast');
-  el.innerText = t; el.style.display = 'block';
-  setTimeout(()=>el.style.display='none', 2000);
-}
-function friendlyAuthError(code){
-  const map = {
-    'auth/invalid-email': 'That email looks invalid.',
-    'auth/user-not-found': 'No account with that email. Try Sign up.',
-    'auth/wrong-password': 'Wrong password. Try again.',
-    'auth/invalid-credential': 'Wrong email or password.',
-    'auth/email-already-in-use': 'That email is already registered. Try Sign in.',
-    'auth/weak-password': 'Password must be 6+ characters.',
-    'auth/too-many-requests': 'Too many attempts. Wait a minute.',
-    'auth/popup-closed-by-user': 'Sign-in popup was closed.',
-    'auth/popup-blocked': 'Popup blocked — allow popups for this site.',
-    'auth/unauthorized-domain': 'This domain is not authorized in Firebase. Add it in Authentication → Settings → Authorized domains.',
-    'auth/operation-not-allowed': 'This sign-in method is disabled in Firebase Console. Enable it under Authentication → Sign-in method.'
-  };
-  return map[code] || 'Something went wrong. Try again.';
-}
-
-/* ============================================================
-   THEME
-   ============================================================ */
-window.toggleTheme = function(){
-  document.body.classList.toggle('light');
-  const l = document.body.classList.contains('light');
-  document.getElementById('themeBtn').innerText = l?'🌙':'☀️';
-  localStorage.setItem('dabz-theme', l?'light':'dark');
-};
-if(localStorage.getItem('dabz-theme')==='light'){
-  document.body.classList.add('light');
-  document.getElementById('themeBtn').innerText = '🌙';
-}
-
-/* ============================================================
-   AUTH UI
-   ============================================================ */
-function showAuthScreen(){
-  document.getElementById('auth').style.display = 'flex';
-  document.getElementById('setup').style.display = 'none';
-  document.getElementById('chat').style.display = 'none';
-}
-function showSetupScreen(user){
-  document.getElementById('auth').style.display = 'none';
-  document.getElementById('setup').style.display = 'flex';
-  document.getElementById('chat').style.display = 'none';
-
-  const name = user.displayName || (user.email ? user.email.split('@')[0] : '');
-  document.getElementById('setupName').value = name;
-  document.getElementById('setupAbout').value = '';
-  document.getElementById('setupErr').innerText = '';
-
-  const av = document.getElementById('setupAvatar');
-  if(user.photoURL){
-    av.innerHTML = `<img src="${user.photoURL}" alt="">`;
-  } else {
-    av.innerHTML = '';
-    av.style.background = colorFor(name || user.uid);
-    av.innerText = initials(name || '?');
-  }
-  setTimeout(()=>document.getElementById('setupName').focus(), 50);
-}
-function showChatScreen(){
-  document.getElementById('auth').style.display = 'none';
-  document.getElementById('setup').style.display = 'none';
-  document.getElementById('chat').style.display = 'flex';
-}
-
-window.toggleAuthMode = function(){
-  authMode = authMode === 'signin' ? 'signup' : 'signin';
-  const isSignup = authMode === 'signup';
-  document.getElementById('authPass2').style.display = isSignup ? 'block' : 'none';
-  document.getElementById('authSubmit').innerText = isSignup ? 'Create account' : 'Sign in';
-  document.getElementById('authModeText').innerText = isSignup ? 'Already have an account?' : 'New to Dabz?';
-  document.getElementById('authModeLink').innerText = isSignup ? 'Sign in' : 'Create account';
-  document.getElementById('forgotWrap').style.display = isSignup ? 'none' : 'block';
-  document.getElementById('authErr').innerText = '';
-};
-
-window.submitAuth = async function(){
-  const email = document.getElementById('authEmail').value.trim();
-  const pass = document.getElementById('authPass').value;
-  const pass2 = document.getElementById('authPass2').value;
-  const errEl = document.getElementById('authErr');
-  const btn = document.getElementById('authSubmit');
-  errEl.innerText = '';
-
-  if(!email || !pass){ errEl.innerText = 'Fill in both email and password.'; return; }
-  if(authMode === 'signup' && pass !== pass2){ errEl.innerText = 'Passwords do not match.'; return; }
-  if(pass.length < 6){ errEl.innerText = 'Password must be 6+ characters.'; return; }
-
-  btn.disabled = true;
-  btn.innerText = authMode === 'signup' ? 'Creating…' : 'Signing in…';
-  try{
-    if(authMode === 'signup'){
-      await createUserWithEmailAndPassword(auth, email, pass);
-    } else {
-      await signInWithEmailAndPassword(auth, email, pass);
-    }
-  }catch(e){
-    errEl.innerText = friendlyAuthError(e.code);
-    btn.disabled = false;
-    btn.innerText = authMode === 'signup' ? 'Create account' : 'Sign in';
-  }
-};
-
-window.googleSignIn = async function(){
-  const errEl = document.getElementById('authErr');
-  errEl.innerText = '';
-  try{
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
-  }catch(e){
-    errEl.innerText = friendlyAuthError(e.code);
-  }
-};
-
-window.forgotPassword = async function(){
-  const email = document.getElementById('authEmail').value.trim();
-  const errEl = document.getElementById('authErr');
-  if(!email){ errEl.innerText = 'Type your email first.'; return; }
-  try{
-    await sendPasswordResetEmail(auth, email);
-    toast('Reset link sent to ' + email);
-  }catch(e){
-    errEl.innerText = friendlyAuthError(e.code);
-  }
-};
-
-window.completeSetup = async function(){
-  const name = document.getElementById('setupName').value.trim();
-  const about = document.getElementById('setupAbout').value.trim();
-  const errEl = document.getElementById('setupErr');
-  const btn = document.getElementById('setupSubmit');
-  errEl.innerText = '';
-
-  if(name.length < 2){ errEl.innerText = 'Enter a name (2+ characters).'; return; }
-  if(!myUid){ errEl.innerText = 'Not signed in — refresh.'; return; }
-
-  btn.disabled = true; btn.innerText = 'Saving…';
-  try{
-    const taken = profilesByName[name];
-    if(taken && taken.uid !== myUid){
-      errEl.innerText = 'That name is taken — pick another.';
-      btn.disabled = false; btn.innerText = 'Start chatting →';
-      return;
-    }
-
-    const user = auth.currentUser;
-    const payload = {
-      name,
-      status: about || "Hey! I'm on Dabz 💬",
-      bio: '',
-      color: colorFor(name),
-      email: myEmail,
-      photoURL: user?.photoURL || ''
-    };
-    await setDoc(doc(db, 'profiles', myUid), payload, { merge: true });
-    try { await updateProfile(user, { displayName: name }); } catch(e){}
-
-    myName = name;
-    bootChat();
-  }catch(e){
-    console.error(e);
-    errEl.innerText = 'Save failed — check Firestore rules.';
-    btn.disabled = false; btn.innerText = 'Start chatting →';
-  }
-};
-
-window.handleSignOut = async function(){
-  if(!confirm('Sign out of Dabz?')) return;
-  teardownChat();
-  localStorage.removeItem('dabz-pin');
-  try{ await fbSignOut(auth); }catch(e){ console.error(e); }
-};
-
-/* ============================================================
-   AUTH STATE
-   ============================================================ */
-onAuthStateChanged(auth, async (user)=>{
-  document.body.removeAttribute('data-loading');
-  if(!user){
-    teardownChat();
-    myUid = ''; myName = ''; myEmail = ''; myPhotoURL = '';
-    showAuthScreen();
-    return;
-  }
-  myUid = user.uid;
-  myEmail = user.email || '';
-  myPhotoURL = user.photoURL || '';
-  try{
-    const snap = await getDoc(doc(db, 'profiles', myUid));
-    if(snap.exists() && snap.data().name){
-      myName = snap.data().name;
-      bootChat();
-    } else {
-      showSetupScreen(user);
-    }
-  }catch(e){
-    console.error(e);
-    toast('Could not load profile — check Firestore rules');
-    showAuthScreen();
-  }
-});
-
-/* ============================================================
-   BOOT / TEARDOWN CHAT
-   ============================================================ */
-function teardownChat(){
-  snapUnsubs.forEach(fn => { try{ fn(); }catch(e){} });
-  snapUnsubs = [];
-  allMsgs = []; dmMsgs = []; groupMsgs = []; groups = [];
-  profilesByUid = {}; profilesByName = {}; lastSeenMap = {};
-  firstLoad = true; lastCount = 0; currentTab = 'all';
-  dmToUid = null; dmToName = null; replyTo = null; groupId = null;
-  try { cancelReply(); } catch(e){}
-}
-
-function bootChat(){
-  teardownChat();
-  showChatScreen();
-  document.getElementById('status').innerText = 'Hi ' + myName + ' • Live';
-
-  // Header avatar
-  const hdrAv = document.getElementById('myHeaderAvatar');
-  const meProfile = { photoURL: myPhotoURL, color: colorFor(myName) };
-  if(meProfile.photoURL){
-    hdrAv.innerHTML = `<img src="${meProfile.photoURL}" alt="">`;
-  } else {
-    hdrAv.innerText = initials(myName);
-  }
-
-  // Online heartbeat
-  const goOnline = () => setDoc(doc(db,'online',myUid), {name:myName, lastSeen:Date.now()}, {merge:true});
-  goOnline();
-  const hb = setInterval(goOnline, 10000);
-  snapUnsubs.push(()=> clearInterval(hb));
-
-  // Typing
-  snapUnsubs.push(onSnapshot(collection(db,'typing'), (snap)=>{
-    const others = [];
-    snap.forEach(d=>{
-      if(d.id !== myUid && Date.now() - (d.data().at||0) < 3000){
-        others.push(d.data().name || profilesByUid[d.id]?.name || 'Someone');
-      }
-    });
-    document.getElementById('typing').innerText = others.length ? others.join(', ') + ' is typing...' : '';
-  }));
-
-  // Online users
-  snapUnsubs.push(onSnapshot(collection(db,'online'), (snap)=>{
-    lastSeenMap = {};
-    snap.forEach(d=>{ lastSeenMap[d.id] = d.data().lastSeen; });
-    renderOnline();
-  }));
-
-  // Profiles
-  snapUnsubs.push(onSnapshot(collection(db,'profiles'), (snap)=>{
-    profilesByUid = {}; profilesByName = {};
-    snap.forEach(d=>{
-      const p = d.data();
-      profilesByUid[d.id] = { uid:d.id, ...p };
-      if(p.name) profilesByName[p.name] = { uid:d.id, ...p };
-    });
-    renderOnline(); renderMsgs();
-  }));
-
-  // Groups
-  snapUnsubs.push(onSnapshot(collection(db,'groups'), (snap)=>{
-    groups = [];
-    snap.forEach(d=> groups.push({id:d.id, data:d.data()}));
-    renderGroups();
-  }));
-
-  // Messages
-  snapUnsubs.push(onSnapshot(query(collection(db,'messages'), orderBy('time','asc')), (snap)=>{
-    allMsgs = [];
-    snap.forEach(d=> allMsgs.push({id:d.id, data:d.data()}));
-    if(currentTab==='all') renderMsgs();
-    if(!firstLoad && snap.size > lastCount) playSound();
-    firstLoad = false; lastCount = snap.size;
-  }));
-  snapUnsubs.push(onSnapshot(query(collection(db,'dms'), orderBy('time','asc')), (snap)=>{
-    dmMsgs = [];
-    snap.forEach(d=> dmMsgs.push({id:d.id, data:d.data()}));
-    if(currentTab==='dm') renderMsgs();
-  }));
-  snapUnsubs.push(onSnapshot(query(collection(db,'groupMsgs'), orderBy('time','asc')), (snap)=>{
-    groupMsgs = [];
-    snap.forEach(d=> groupMsgs.push({id:d.id, data:d.data()}));
-    if(currentTab==='group') renderMsgs();
-  }));
-
-  updatePinBar();
-}
-
-/* ============================================================
-   UI HELPERS
-   ============================================================ */
-window.closeModal = function(id){ document.getElementById(id).style.display = 'none'; };
-window.toggleSearch = function(){
-  const b = document.getElementById('searchBar');
-  b.style.display = b.style.display === 'block' ? 'none' : 'block';
-  if(b.style.display === 'block') document.getElementById('searchInput').focus();
-  else { document.getElementById('searchInput').value = ''; renderMsgs(); }
-};
-
-const emojis = ["😀","😂","😍","🔥","❤️","👍","👏","😮","😢","😡","🎉","💯","🙏","😎","🤔","🥳","🇰🇪","⚽","🎵","💬"];
-window.toggleEmoji = function(){
-  const bar = document.getElementById('emojiBar');
-  if(bar.style.display === 'flex'){ bar.style.display = 'none'; return; }
-  bar.innerHTML = ''; bar.style.display = 'flex';
-  emojis.forEach(e=>{
-    const b = document.createElement('button');
-    b.innerText = e;
-    b.onclick = () => {
-      document.getElementById('msgInput').value += e;
-      document.getElementById('msgInput').focus();
-    };
-    bar.appendChild(b);
-  });
-};
-
-window.switchTab = function(tab){
-  currentTab = tab;
-  ['all','group','dm'].forEach(t => document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1)).classList.toggle('active', tab===t));
-  document.getElementById('groupBar').style.display = tab==='group' ? 'flex' : 'none';
-  if(tab==='all'){ dmToUid = null; dmToName = null; groupId = null; document.getElementById('msgInput').placeholder = 'Type a message...'; }
-  if(tab==='dm'){ document.getElementById('msgInput').placeholder = 'Pick someone to DM...'; }
-  if(tab==='group'){ document.getElementById('msgInput').placeholder = groupId ? 'Message this group...' : 'Pick or create a group...'; }
-  renderMsgs(); renderGroups(); updatePinBar();
-};
-
-window.startDM = function(uid, name){
-  if(uid === myUid) return;
-  dmToUid = uid; dmToName = name;
-  switchTab('dm');
-  document.getElementById('msgInput').placeholder = 'DM to ' + name + '...';
-  toast('DM with ' + name + ' 🔒');
-  renderOnline();
-};
-
-/* ============================================================
-   GROUPS
-   ============================================================ */
-window.openCreateGroup = function(){ document.getElementById('groupModal').style.display = 'flex'; };
-window.createGroup = async function(){
-  const name = document.getElementById('groupName').value.trim();
-  if(!name){ toast('Type group name'); return; }
-  const desc = document.getElementById('groupDesc').value.trim();
-  const ref = await addDoc(collection(db,'groups'), {
-    name, desc, createdBy: myName, createdByUid: myUid, time: serverTimestamp()
-  });
-  groupId = ref.id;
-  closeModal('groupModal');
-  document.getElementById('groupName').value = '';
-  document.getElementById('groupDesc').value = '';
-  toast('Group created 👥');
-  switchTab('group');
-};
-function renderGroups(){
-  const bar = document.getElementById('groupBar');
-  bar.innerHTML = `<div class="gpill" onclick="openCreateGroup()">＋ New Group</div>`;
-  groups.forEach(g=>{
-    bar.innerHTML += `<div class="gpill ${groupId===g.id?'active':''}" onclick="selectGroup('${g.id}')"># ${escapeHtml(g.data.name)}</div>`;
-  });
-}
-window.selectGroup = function(id){
-  groupId = id;
-  document.getElementById('msgInput').placeholder = 'Message this group...';
-  renderGroups(); renderMsgs(); updatePinBar();
-};
-
-/* ============================================================
-   PROFILES
-   ============================================================ */
-function avatarLargeHtml(uid){
-  const p = profilesByUid[uid] || {};
-  const name = p.name || 'User';
-  const col = p.color || colorFor(name);
-  if(p.photoURL){
-    return `<img src="${p.photoURL}" alt="" style="width:70px;height:70px;border-radius:50%;object-fit:cover;margin:0 auto;display:block">`;
-  }
-  return `<div class="bigAv" style="background:${col}">${initials(name)}</div>`;
-}
-
-window.openMyProfile = function(){ openProfile(myUid, true); };
-window.openProfile = async function(uid, isMe=false){
-  const snap = await getDoc(doc(db,'profiles',uid));
-  const p = snap.exists() ? snap.data() : {name:'User', status:'', bio:'', color: colorFor(uid)};
-  const name = p.name || 'User';
-  const col = p.color || colorFor(name);
-  const lastSeen = lastSeenMap[uid] ? timeAgo(lastSeenMap[uid]) : 'Unknown';
-  const isOnline = lastSeenMap[uid] && (Date.now() - lastSeenMap[uid] < 20000);
-
-  document.getElementById('profileContent').innerHTML = `
-    <div class="profileHead">
-      ${avatarLargeHtml(uid)}
-      <h2 style="margin:10px 0 4px;font-weight:500">${escapeHtml(name)}</h2>
-      <p style="color:${isOnline?'#25D366':'var(--text-2)'};margin:0">${isOnline?'● Online now':'○ Last seen: '+lastSeen}</p>
-      <p style="color:var(--text-2);margin:6px 0 0">${escapeHtml(p.status||'')}</p>
-    </div>
-    <p style="margin-top:18px"><b style="font-weight:500">Bio:</b> ${escapeHtml(p.bio||'No bio yet')}</p>
-    ${isMe ? `
-      <hr style="border:none;border-top:1px solid var(--divider);margin:16px 0">
-      <h3 style="font-weight:500;margin:0 0 8px">Edit Your Profile</h3>
-      <input id="editStatus" value="${escapeHtml(p.status||'')}" placeholder="Status e.g. Busy, In Eldoret...">
-      <input id="editBio" value="${escapeHtml(p.bio||'')}" placeholder="Bio e.g. Love football">
-      <label style="font-size:13px;color:var(--text-2)">Pick your color</label>
-      <select id="editColor">${colors.map(c=>`<option value="${c}" ${c===col?'selected':''}>${c}</option>`).join('')}</select>
-      <button class="btn" onclick="saveProfile()">Save Profile</button>
-      <button class="btn2" style="width:100%;margin-top:10px;color:#ef4444" onclick="handleSignOut()">Sign out</button>
-    ` : `
-      <button class="btn" onclick="closeModal('profileModal');startDM('${uid}','${escapeHtml(name)}')">Message ${escapeHtml(name)} 🔒</button>
-    `}
-  `;
-  document.getElementById('profileModal').style.display = 'flex';
-};
-
-window.saveProfile = async function(){
-  const status = document.getElementById('editStatus').value.trim();
-  const bio = document.getElementById('editBio').value.trim();
-  const color = document.getElementById('editColor').value;
-  await setDoc(doc(db,'profiles',myUid), {status, bio, color}, {merge:true});
-  toast('Profile saved ✅');
-  closeModal('profileModal');
-};
-
-/* ============================================================
-   PINS
-   ============================================================ */
-window.pinMsg = function(id){
-  let list = currentTab==='all' ? allMsgs : currentTab==='dm' ? dmMsgs : groupMsgs;
-  const found = list.find(x => x.id === id);
-  if(!found) return;
-  pinnedMsg = {
-    tab: currentTab, groupId,
-    dmId: dmToUid ? dmId(myUid, dmToUid) : null,
-    text: found.data.text || '📷 / 🎤',
-    name: found.data.name, id
-  };
-  localStorage.setItem('dabz-pin', JSON.stringify(pinnedMsg));
-  updatePinBar();
-  toast('Pinned 📌');
-};
-window.unpin = function(){ pinnedMsg = null; localStorage.removeItem('dabz-pin'); updatePinBar(); };
-
-function updatePinBar(){
-  const saved = localStorage.getItem('dabz-pin');
-  if(saved) try{ pinnedMsg = JSON.parse(saved); }catch(e){}
-  const bar = document.getElementById('pinBar');
-  let show = false;
-  if(pinnedMsg){
-    if(currentTab==='all'   && pinnedMsg.tab==='all') show = true;
-    if(currentTab==='dm'    && pinnedMsg.tab==='dm'    && pinnedMsg.dmId === dmId(myUid, dmToUid||'')) show = true;
-    if(currentTab==='group' && pinnedMsg.tab==='group' && pinnedMsg.groupId === groupId) show = true;
-  }
-  if(show){
-    bar.style.display = 'flex';
-    document.getElementById('pinText').innerHTML = `📌 <b style="font-weight:500">${escapeHtml(pinnedMsg.name)}:</b> ${escapeHtml(pinnedMsg.text.slice(0,60))}`;
-  } else bar.style.display = 'none';
-}
-
-/* ============================================================
-   REACTIONS
-   ============================================================ */
-window.reactTo = async function(coll, id, emoji){
-  const ref = doc(db, coll, id);
-  const snap = await getDoc(ref);
-  if(!snap.exists()) return;
-  const data = snap.data();
-  let reactions = data.reactions || {};
-  let list = reactions[emoji] || [];
-  if(list.includes(myUid)) list = list.filter(u => u !== myUid);
-  else list.push(myUid);
-  if(list.length === 0) delete reactions[emoji];
-  else reactions[emoji] = list;
-  await updateDoc(ref, {reactions});
-};
-
-function renderReactions(coll, id, reactions){
-  if(!reactions) return '';
-  const keys = Object.keys(reactions);
-  if(!keys.length) return '';
-  let html = `<div class="reactions">`;
-  keys.forEach(emoji=>{
-    const users = reactions[emoji];
-    const mine = users.includes(myUid);
-    html += `<button class="react ${mine?'mine':''}" onclick="event.stopPropagation();reactTo('${coll}','${id}','${emoji}')">${emoji} ${users.length}</button>`;
-  });
-  return html + `</div>`;
-}
-
-/* ============================================================
-   READ RECEIPTS + SILENT UNSEND
-   ============================================================ */
-async function markAsRead(list, coll){
-  for(const item of list){
-    const m = item.data;
-    if(m.uid === myUid) continue;
-    if(m.readBy && m.readBy.includes(myUid)) continue;
-    try{ await updateDoc(doc(db, coll, item.id), {readBy: arrayUnion(myUid)}); }catch(e){}
-  }
-}
-
-window.deleteMsg = async function(id){
-  const coll = currentTab==='dm' ? 'dms' : currentTab==='group' ? 'groupMsgs' : 'messages';
-  let list = currentTab==='all' ? allMsgs : currentTab==='dm' ? dmMsgs : groupMsgs;
-  const found = list.find(x => x.id === id);
-  if(!found) return;
-  if(found.data.uid !== myUid){ toast('You can only unsend your own messages'); return; }
-
-  const othersSeen = (found.data.readBy||[]).filter(u => u !== myUid);
-  let msg = othersSeen.length === 0
-    ? 'Unsend this message?\nNobody has seen it yet — it will vanish completely.'
-    : `Delete? ${othersSeen.length} person(s) already saw it, but it will still disappear.`;
-  if(!confirm(msg)) return;
-
-  await deleteDoc(doc(db, coll, id));
-  toast('Unsent silently 🤫');
-};
-
-/* ============================================================
-   RENDER MESSAGES
-   ============================================================ */
-function ticksSvg(read){
-  return `<svg class="msg-tick ${read?'read':''}" viewBox="0 0 16 11" fill="none"
-    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M1 6l3 3 6-7"/>
-    ${read ? '<path d="M8 9l1 1 6-7"/>' : ''}
-  </svg>`;
-}
-
-function formatDate(d){
-  const today = new Date();
-  const yest = new Date(today); yest.setDate(yest.getDate()-1);
-  if(d.toDateString() === today.toDateString()) return 'Today';
-  if(d.toDateString() === yest.toDateString()) return 'Yesterday';
-  return d.toLocaleDateString([], {day:'numeric', month:'short', year:'numeric'});
-}
-
-function msgAvatarHtml(uid, name){
-  const p = profilesByUid[uid] || {};
-  const col = p.color || colorFor(name || uid);
-  const inner = p.photoURL ? `<img src="${p.photoURL}" alt="">` : initials(name || '?');
-  return `<div class="msg-avatar" style="background:${p.photoURL ? 'transparent' : col}" onclick="event.stopPropagation();openProfile('${uid}')" title="${escapeHtml(name||'')}">${inner}</div>`;
-}
-
-function msgHtml(item, coll, grouped){
-  const m = item.data, id = item.id;
-  const time = m.time ? new Date(m.time.seconds*1000).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', hour12:false}) : '';
-  const mine = m.uid === myUid;
-  const p = profilesByUid[m.uid] || {};
-  const col = p.color || colorFor(m.name || m.uid || '?');
-  const readByOthers = (m.readBy || []).some(u => u !== myUid);
-
-  const quote = m.replyTo ? `<div class="replyQuote"><b>${escapeHtml(m.replyTo.name)}</b>${escapeHtml((m.replyTo.text||'📷 / 🎤').slice(0,60))}</div>` : '';
-  const img = m.image ? `<img src="${m.image}" alt="">` : '';
-  const aud = m.audio ? `<audio controls src="${m.audio}"></audio>` : '';
-  const textBlock = m.text ? `<span class="msg-text">${escapeHtml(m.text)}</span>` : '';
-
-  const avatar = mine ? '' : msgAvatarHtml(m.uid, m.name);
-  const nameHtml = (!mine && !grouped)
-    ? `<div class="msg-name" style="color:${col}" onclick="event.stopPropagation();openProfile('${m.uid}')">${escapeHtml(m.name || 'User')}</div>`
-    : '';
-
-  const reactions = renderReactions(coll, id, m.reactions);
-  const actions = `<div class="msg-actions">
-    <button title="Love" onclick="event.stopPropagation();reactTo('${coll}','${id}','❤️')">❤️</button>
-    <button title="Fire" onclick="event.stopPropagation();reactTo('${coll}','${id}','🔥')">🔥</button>
-    <button title="Laugh" onclick="event.stopPropagation();reactTo('${coll}','${id}','😂')">😂</button>
-    <button title="Like" onclick="event.stopPropagation();reactTo('${coll}','${id}','👍')">👍</button>
-    <button title="Reply" onclick="event.stopPropagation();setReply('${id}')">↩</button>
-    <button title="Pin" onclick="event.stopPropagation();pinMsg('${id}')">📌</button>
-    ${mine ? `<button title="Unsend" onclick="event.stopPropagation();deleteMsg('${id}')">🤫</button>` : ''}
-  </div>`;
-
-  return `<div class="msg ${mine?'mine':'other'}${grouped?' grouped':''}">
-    ${avatar}
-    <div class="msg-bubble">
-      ${nameHtml}${quote}${textBlock}${img}${aud}
-      <div class="msg-meta">${time}${mine ? ticksSvg(readByOthers) : ''}</div>
-      ${reactions}${actions}
-    </div>
-  </div>`;
-}
-
-function renderMsgs(){
-  const box = document.getElementById('msgs');
-  const search = document.getElementById('searchInput').value.trim().toLowerCase();
-  box.innerHTML = '';
-
-  if(currentTab==='dm' && !dmToUid){
-    box.innerHTML = `<div style="text-align:center;color:var(--text-2);padding:20px">Tap a person in the Online bar to DM 🔒</div>`;
-    return;
-  }
-  if(currentTab==='group' && !groupId){
-    box.innerHTML = `<div style="text-align:center;color:var(--text-2);padding:20px">Pick a group above or create one 👥<br><button class="btn2" style="margin-top:10px" onclick="openCreateGroup()">＋ Create Group</button></div>`;
-    return;
-  }
-
-  let list = [], coll = 'messages';
-  if(currentTab==='all'){ list = allMsgs; coll = 'messages'; }
-  if(currentTab==='dm'){ list = dmMsgs.filter(m => m.data.dmId === dmId(myUid, dmToUid)); coll = 'dms'; }
-  if(currentTab==='group'){ list = groupMsgs.filter(m => m.data.groupId === groupId); coll = 'groupMsgs'; }
-  if(search) list = list.filter(x => (x.data.text||'').toLowerCase().includes(search) || (x.data.name||'').toLowerCase().includes(search));
-  if(search && list.length === 0){
-    box.innerHTML = `<div style="text-align:center;color:var(--text-2);padding:20px">No results for "${escapeHtml(search)}"</div>`;
-    return;
-  }
-
-  let html = '', lastDate = '';
-  list.forEach((item, i)=>{
-    if(item.data.time){
-      const d = new Date(item.data.time.seconds*1000);
-      const ds = d.toDateString();
-      if(ds !== lastDate){ lastDate = ds; html += `<div class="wa-date">${formatDate(d)}</div>`; }
-    }
-    const prev = i > 0 ? list[i-1] : null;
-    const grouped = !!(prev && prev.data.uid === item.data.uid &&
-      item.data.time && prev.data.time &&
-      Math.abs(item.data.time.seconds - prev.data.time.seconds) < 120);
-    html += msgHtml(item, coll, grouped);
-  });
-  box.innerHTML = html;
-  box.scrollTop = box.scrollHeight;
-  markAsRead(list, coll);
-}
-
-function renderOnline(){
-  const bar = document.getElementById('onlineBar');
-  bar.innerHTML = '';
-  const others = Object.keys(lastSeenMap).filter(uid => uid !== myUid);
-  others.sort((a,b) => (lastSeenMap[b]||0) - (lastSeenMap[a]||0));
-  others.forEach(uid=>{
-    const p = profilesByUid[uid] || {};
-    const name = p.name || 'User';
-    const isOnline = lastSeenMap[uid] && (Date.now() - lastSeenMap[uid] < 20000);
-    const st = p.status ? ` · ${escapeHtml(p.status.slice(0,18))}` : '';
-    const last = !isOnline && lastSeenMap[uid] ? ` · ${timeAgo(lastSeenMap[uid])}` : '';
-    bar.innerHTML += `<div class="pill ${dmToUid===uid?'active':''}" onclick="startDM('${uid}','${escapeHtml(name)}')"><i class="${isOnline?'':'off'}"></i>${escapeHtml(name)}${st}${last}</div>`;
-  });
-  if(others.length === 0){
-    bar.innerHTML = `<div class="pill"><i class="off"></i>Only you online</div>`;
-  }
-}
-
-/* ============================================================
-   REPLY
-   ============================================================ */
-window.setReply = function(id){
-  let list = currentTab==='all' ? allMsgs : currentTab==='dm' ? dmMsgs : groupMsgs;
-  const found = list.find(x => x.id === id);
-  if(!found) return;
-  replyTo = {id, uid: found.data.uid, name: found.data.name, text: found.data.text || ''};
-  document.getElementById('replyBar').style.display = 'flex';
-  document.getElementById('replyText').innerHTML = `Replying to <b style="font-weight:500">${escapeHtml(replyTo.name)}</b>: ${escapeHtml(replyTo.text.slice(0,40))}`;
-  document.getElementById('msgInput').focus();
-};
-window.cancelReply = function(){
-  replyTo = null;
-  document.getElementById('replyBar').style.display = 'none';
-};
-
-/* ============================================================
-   TYPING
-   ============================================================ */
-window.onTyping = function(){
-  if(!myUid) return;
-  setDoc(doc(db,'typing',myUid), {name: myName, at: Date.now()}, {merge:true});
-  clearTimeout(typingTimeout);
-  typingTimeout = setTimeout(()=> setDoc(doc(db,'typing',myUid), {at:0}, {merge:true}), 2500);
-};
-
-/* ============================================================
-   SEND MESSAGE
-   ============================================================ */
-window.sendMsg = async function(){
-  const t = document.getElementById('msgInput').value.trim();
-  if(!t) return;
-  const payload = {
-    uid: myUid, name: myName, text: t,
-    time: serverTimestamp(),
-    replyTo: replyTo || null,
-    reactions: {},
-    readBy: [myUid]
-  };
-  if(currentTab==='dm'){
-    if(!dmToUid){ toast('Pick someone to DM first'); return; }
-    payload.dmId = dmId(myUid, dmToUid);
-    payload.to = dmToUid;
-    await addDoc(collection(db,'dms'), payload);
-  } else if(currentTab==='group'){
-    if(!groupId){ toast('Pick or create a group first'); return; }
-    payload.groupId = groupId;
-    await addDoc(collection(db,'groupMsgs'), payload);
-  } else {
-    await addDoc(collection(db,'messages'), payload);
-  }
-  document.getElementById('msgInput').value = '';
-  document.getElementById('emojiBar').style.display = 'none';
-  cancelReply();
-  setDoc(doc(db,'typing',myUid), {at:0}, {merge:true});
-};
-
-window.sendImage = function(input){
-  const file = input.files[0];
-  if(!file) return;
-  if(file.size > 800000){ toast('Image too large (>800KB) — pick a smaller one'); input.value=''; return; }
-  const reader = new FileReader();
-  reader.onload = async e => {
-    const payload = {
-      uid: myUid, name: myName, text: '', image: e.target.result,
-      time: serverTimestamp(),
-      replyTo: replyTo || null,
-      reactions: {},
-      readBy: [myUid]
-    };
-    if(currentTab==='dm' && dmToUid){ payload.dmId = dmId(myUid, dmToUid); payload.to = dmToUid; await addDoc(collection(db,'dms'), payload); }
-    else if(currentTab==='group' && groupId){ payload.groupId = groupId; await addDoc(collection(db,'groupMsgs'), payload); }
-    else await addDoc(collection(db,'messages'), payload);
-    toast('Photo sent 📷');
-    cancelReply();
-  };
-  reader.readAsDataURL(file);
-  input.value = '';
-};
-
-/* ============================================================
-   VOICE NOTES
-   ============================================================ */
-window.toggleVoice = async function(){
-  const btn = document.getElementById('voiceBtn');
-  if(!isRecording){
-    try{
-      const stream = await navigator.mediaDevices.getUserMedia({audio:true});
-      mediaRecorder = new MediaRecorder(stream);
-      audioChunks = [];
-      isRecording = true;
-      btn.classList.add('rec');
-      btn.innerText = '⏹️';
-      toast('Recording… Tap again to send 🎤');
-      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-      mediaRecorder.onstop = async ()=>{
-        const blob = new Blob(audioChunks, {type:'audio/webm'});
-        const reader = new FileReader();
-        reader.onload = async e => {
-          const payload = {
-            uid: myUid, name: myName, text: '', audio: e.target.result,
-            time: serverTimestamp(),
-            replyTo: replyTo || null,
-            reactions: {},
-            readBy: [myUid]
-          };
-          if(currentTab==='dm' && dmToUid){ payload.dmId = dmId(myUid, dmToUid); payload.to = dmToUid; await addDoc(collection(db,'dms'), payload); }
-          else if(currentTab==='group' && groupId){ payload.groupId = groupId; await addDoc(collection(db,'groupMsgs'), payload); }
-          else await addDoc(collection(db,'messages'), payload);
-          toast('Voice note sent 🎤');
-        };
-        reader.readAsDataURL(blob);
-        stream.getTracks().forEach(t=>t.stop());
-      };
-      mediaRecorder.start();
-    }catch(e){ toast('Mic blocked — allow microphone'); }
-  } else {
-    isRecording = false;
-    btn.classList.remove('rec');
-    btn.innerText = '🎤';
-    mediaRecorder.stop();
-  }
-};
-</script>
+<div class="modal" id="addFriendModal"><div class="box"><button class="close" onclick="closeModal('addFriendModal')">✕</button><h3 style="margin-top:0;font-weight:500">Add Friend</h3><p style="color:var(--text-2);font-size:13px;margin:0 0 8px">Search by username (without @)</p><input id="friendSearch" placeholder="e.g. constant" autocomplete="off" oninput="searchFriend()"><p id="friendSearchErr" class="err"></p><div id="friendSearchResults"></div></div></div>
+<div class="modal" id="editProfileModal"><div class="box"><button class="close" onclick="closeModal('editProfileModal')">✕</button><h3 style="margin-top:0;font-weight:500">Edit Profile</h3><input id="editDisplayName" placeholder="Display name" maxlength="20"><input id="editAbout" placeholder="About" maxlength="60"><input id="editBio" placeholder="Bio" maxlength="100"><label style="font-size:13px;color:var(--text-2)">Avatar color</label><select id="editColor"></select><p id="editProfileErr" class="err"></p><button class="btn" onclick="saveProfile()">Save</button></div></div>
+<div class="modal" id="statusComposerModal"><div class="box"><button class="close" onclick="closeModal('statusComposerModal')">✕</button><h3 style="margin-top:0;font-weight:500">New Status</h3><div class="status-tabs"><button id="stTextBtn" class="active" onclick="statusType('text')">✏️ Text</button><button id="stImageBtn" onclick="statusType('image')">📷 Image</button></div><div id="stTextPanel"><div id="statusPreview">Your status here…</div><textarea id="statusText" placeholder="What's on your mind?" maxlength="200" rows="3" oninput="updateStatusPreview()"></textarea><div class="status-color-grid" id="statusColorGrid"></div></div><div id="stImagePanel" style="display:none"><label class="iconBtn" style="background:var(--surface-2);width:100%;height:120px;border-radius:10px;margin:10px 0;cursor:pointer;font-size:14px;display:grid">📷 Choose image<input type="file" id="statusImage" accept="image/*" style="display:none" onchange="previewStatusImage(this)"></label><img id="statusImagePreview" style="max-width:100%;border-radius:8px;display:none"><input id="statusCaption" placeholder="Caption (optional)" maxlength="100"></div><p id="statusComposerErr" class="err"></p><button class="btn" onclick="postStatus()">Post Status</button></div></div>
+<div class="modal" id="reelComposerModal"><div class="box"><button class="close" onclick="closeModal('reelComposerModal')">✕</button><h3 style="margin-top:0;font-weight:500">Upload Reel</h3><p style="color:var(--text-2);font-size:12px;margin:0 0 8px">Short video (max 550KB — under 6 seconds)</p><label class="iconBtn" style="background:var(--surface-2);width:100%;height:100px;border-radius:10px;margin:10px 0;cursor:pointer;font-size:14px;display:grid">🎬 Choose video<input type="file" id="reelVideo" accept="video/*" style="display:none" onchange="previewReelVideo(this)"></label><video id="reelVideoPreview" controls style="max-width:100%;border-radius:8px;display:none;background:#000"></video><input id="reelCaption" placeholder="Caption" maxlength="150"><p id="reelComposerErr" class="err"></p><button class="btn" onclick="postReel()">Post Reel</button></div></div>
+
+<script src="app.js" type="module"></script>
 </body>
   </html>
