@@ -93,6 +93,7 @@ body {
 }
 @media (max-width: 620px) { .brand small { display: none; } }
 
+.user-chip-wrap { display: flex; align-items: center; gap: 8px; }
 .admin-chip {
   display: flex; align-items: center; gap: 7px;
   padding: 8px 13px; border-radius: 999px;
@@ -108,6 +109,13 @@ body {
   .admin-name { display: none; }
   .admin-short { display: inline; }
 }
+
+.auth-btn-top {
+  padding: 7px 12px; border-radius: 999px; font-size: 12px; font-weight: 700;
+  background: var(--panel-3); border: 1px solid var(--line); color: var(--text);
+  cursor: pointer; transition: .2s;
+}
+.auth-btn-top:hover { border-color: var(--brand-2); }
 
 /* ---------- Content / views ---------- */
 .content { flex: 1; position: relative; overflow: hidden; }
@@ -224,7 +232,8 @@ body {
 }
 .chat-meta { flex: 1; min-width: 0; }
 .chat-meta .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.chat-meta h3 { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chat-meta h3 { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; }
+.chat-meta .handle-sub { font-size: 11.5px; color: var(--muted); font-weight: normal; }
 .chat-meta .time { font-size: 11px; color: var(--muted); flex: 0 0 auto; }
 .chat-meta p {
   font-size: 12.5px; color: var(--muted); margin-top: 2px;
@@ -240,7 +249,7 @@ body {
   font-size: 9px; font-weight: 800; letter-spacing: .5px;
   color: var(--gold); background: rgba(247, 183, 49, .14);
   border: 1px solid rgba(247, 183, 49, .4);
-  padding: 2px 6px; border-radius: 999px; margin-left: 6px;
+  padding: 2px 6px; border-radius: 999px;
   vertical-align: middle;
 }
 
@@ -456,8 +465,9 @@ body {
   display: grid; place-items: center;
 }
 .back-btn svg { width: 17px; height: 17px; stroke: currentColor; }
-.chat-header .info { flex: 1; min-width: 0; }
-.chat-header h2 { font-size: 15.5px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chat-header .info { flex: 1; min-width: 0; cursor: pointer; }
+.chat-header h2 { font-size: 15.5px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; }
+.chat-header .chat-handle-sub { font-size: 11px; color: var(--muted); font-weight: normal; }
 .chat-header .status { font-size: 11.5px; color: var(--online); margin-top: 2px; display: flex; align-items: center; gap: 5px; }
 .chat-header .status .pulse {
   width: 7px; height: 7px; border-radius: 50%; background: var(--online);
@@ -495,7 +505,8 @@ body {
   font-size: 14px; line-height: 1.45; position: relative; word-wrap: break-word;
 }
 .msg .bubble p { white-space: pre-wrap; }
-.msg .bubble .sender { font-size: 11px; font-weight: 700; color: var(--brand-2); margin-bottom: 3px; }
+.msg .bubble .sender { font-size: 11px; font-weight: 700; color: var(--brand-2); margin-bottom: 3px; display: flex; align-items: center; gap: 4px; }
+.msg .bubble .sender-handle { font-size: 10px; color: var(--muted); font-weight: normal; }
 .msg .bubble .time { display: block; font-size: 10px; margin-top: 4px; opacity: .6; text-align: right; }
 .msg.in { justify-content: flex-start; }
 .msg.in .bubble { background: var(--panel-2); border: 1px solid var(--line); border-bottom-left-radius: 5px; }
@@ -557,6 +568,56 @@ body {
 .send-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
 .send-btn svg { width: 19px; height: 19px; }
 
+/* ---------- Group Members Drawer / Modal ---------- */
+.drawer {
+  position: fixed; inset: 0; z-index: 250;
+  display: none; justify-content: flex-end;
+  background: rgba(0, 0, 0, .55); backdrop-filter: blur(4px);
+}
+.drawer.show { display: flex; animation: fade .2s ease-out; }
+.drawer-card {
+  width: min(380px, 100%); height: 100%; background: var(--panel);
+  border-left: 1px solid var(--line); padding: 22px 18px;
+  display: flex; flex-direction: column; overflow-y: auto;
+}
+.drawer-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.drawer-head h3 { font-size: 17px; font-weight: 700; }
+.member-row {
+  display: flex; align-items: center; gap: 11px; padding: 9px 10px;
+  background: var(--panel-2); border: 1px solid var(--line);
+  border-radius: 12px; margin-bottom: 8px;
+}
+.member-info { flex: 1; min-width: 0; }
+.member-info h4 { font-size: 13.5px; font-weight: 650; display: flex; align-items: center; gap: 6px; }
+.member-info p { font-size: 11.5px; color: var(--muted); }
+
+/* ---------- Call Overlay ---------- */
+.call-overlay {
+  position: fixed; inset: 0; z-index: 400;
+  display: none; flex-direction: column; align-items: center; justify-content: space-between;
+  background: radial-gradient(circle at center, #1b2238 0%, #0b0d12 100%);
+  padding: 40px 20px; text-align: center;
+}
+.call-overlay.show { display: flex; animation: fade .25s ease-out; }
+.call-avatar-wrap { margin-top: 40px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.call-avatar { width: 110px; height: 110px; font-size: 38px; border-radius: 50%; box-shadow: 0 10px 40px rgba(108,92,231,.4); }
+.call-overlay h2 { font-size: 24px; font-weight: 700; }
+.call-overlay p { font-size: 14px; color: var(--muted); }
+.video-preview {
+  width: min(540px, 100%); aspect-ratio: 16/9; background: #161b26; border: 1px solid var(--line);
+  border-radius: 18px; display: none; place-items: center; position: relative; overflow: hidden;
+}
+.call-overlay.video-mode .video-preview { display: grid; }
+.call-overlay.video-mode .call-avatar-wrap { display: none; }
+.call-controls { display: flex; gap: 18px; margin-bottom: 30px; }
+.call-btn {
+  width: 56px; height: 56px; border-radius: 50%; border: none; font-size: 20px;
+  cursor: pointer; display: grid; place-items: center; color: #fff; background: var(--panel-3);
+  box-shadow: 0 8px 20px rgba(0,0,0,.3); transition: transform .15s;
+}
+.call-btn:hover { transform: scale(1.08); }
+.call-btn.end { background: var(--danger); box-shadow: 0 8px 25px rgba(235,59,90,.4); }
+
 /* ---------- Status viewer ---------- */
 .status-viewer {
   position: fixed; inset: 0; z-index: 200;
@@ -589,7 +650,7 @@ body {
   display: grid; place-items: center;
 }
 
-/* ---------- Modal ---------- */
+/* ---------- Modal / Auth ---------- */
 .modal {
   position: fixed; inset: 0; z-index: 300;
   display: none; align-items: center; justify-content: center;
@@ -609,9 +670,29 @@ body {
 .modal-card .desc { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 20px; }
 .modal-card .btn-primary { width: 100%; padding: 11px; font-size: 14px; }
 
+.auth-form input {
+  width: 100%; background: var(--panel-2); border: 1px solid var(--line);
+  padding: 11px 14px; border-radius: 12px; color: var(--text); font-size: 13.5px;
+  margin-bottom: 12px; outline: none; font-family: inherit;
+}
+.auth-form input:focus { border-color: var(--brand-2); }
+.google-btn {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+  background: #fff; color: #333; font-weight: 600; padding: 11px; border-radius: 12px;
+  border: none; cursor: pointer; font-size: 13.5px; margin-bottom: 14px; transition: filter .2s;
+}
+.google-btn:hover { filter: brightness(0.95); }
+.auth-divider {
+  display: flex; align-items: center; text-align: center; color: var(--muted);
+  font-size: 11.5px; margin: 14px 0; text-transform: uppercase; letter-spacing: 1px;
+}
+.auth-divider::before, .auth-divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--line); }
+.auth-divider::before { margin-right: .75em; }
+.auth-divider::after { margin-left: .75em; }
+
 /* ---------- Toast ---------- */
 .toast {
-  position: fixed; left: 50%; bottom: 92px; z-index: 400;
+  position: fixed; left: 50%; bottom: 92px; z-index: 500;
   transform: translate(-50%, 20px); opacity: 0;
   background: var(--panel-3); border: 1px solid var(--line);
   color: var(--text); font-size: 12.5px; font-weight: 600;
@@ -654,11 +735,14 @@ body {
         <small>News · Chats · Groups · Status · Music · Pages</small>
       </div>
     </div>
-    <button class="admin-chip" id="adminChip" title="Admin profile">
-      <span>👑</span>
-      <span class="admin-name">Constant Okoth Alpha</span>
-      <span class="admin-short">Admin</span>
-    </button>
+    <div class="user-chip-wrap">
+      <button class="admin-chip" id="adminChip" title="Admin profile">
+        <span>👑</span>
+        <span class="admin-name" id="currentUserName">Constant Okoth Alpha</span>
+        <span class="admin-short">Admin</span>
+      </button>
+      <button class="auth-btn-top" id="authBtnTop">Sign In</button>
+    </div>
   </header>
 
   <!-- ==================== CONTENT ==================== -->
@@ -697,7 +781,7 @@ body {
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
             </svg>
-            <input id="searchInput" type="text" placeholder="Search chats…" autocomplete="off" />
+            <input id="searchInput" type="text" placeholder="Search chats or @usernames…" autocomplete="off" />
           </label>
         </div>
         <div class="chat-list" id="chatList"></div>
@@ -709,7 +793,7 @@ body {
       <div class="pane-header">
         <div>
           <h2>👥 Groups</h2>
-          <div class="sub">Community conversations</div>
+          <div class="sub">Community conversations & member directories</div>
         </div>
         <button class="btn btn-primary" id="createGroupBtn">+ New Group</button>
       </div>
@@ -797,16 +881,16 @@ body {
       </svg>
     </button>
     <div class="avatar" id="chatAvatar" style="width:40px;height:40px;font-size:13px;"></div>
-    <div class="info">
+    <div class="info" id="chatHeaderInfo" title="View details / members">
       <h2 id="chatName">Chat</h2>
       <div class="status" id="chatStatus"><span class="pulse"></span><span id="chatStatusText">Online</span></div>
     </div>
-    <button class="icon-btn" title="Voice call" aria-label="Voice call">
+    <button class="icon-btn" id="voiceCallBtn" title="Voice call" aria-label="Voice call">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>
       </svg>
     </button>
-    <button class="icon-btn" title="Video call" aria-label="Video call">
+    <button class="icon-btn" id="videoCallBtn" title="Video call" aria-label="Video call">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="m23 7-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
       </svg>
@@ -835,6 +919,45 @@ body {
   </div>
 </div>
 
+<!-- ==================== CALL OVERLAY ==================== -->
+<div class="call-overlay" id="callOverlay">
+  <div style="width:100%; display:flex; justify-content:space-between; align-items:center;">
+    <span id="callTypeLabel" style="font-size:13px; font-weight:700; color:var(--brand-2); letter-spacing:1px; text-transform:uppercase;">Voice Call</span>
+    <span id="callDuration" style="font-size:13px; font-weight:600; color:var(--muted);">00:00</span>
+  </div>
+
+  <div class="call-avatar-wrap">
+    <div class="avatar call-avatar" id="callAvatar">CA</div>
+    <div>
+      <h2 id="callTargetName">Constant Okoth Alpha</h2>
+      <p id="callStatusText" style="margin-top:4px;">Connecting…</p>
+    </div>
+  </div>
+
+  <div class="video-preview" id="videoPreview">
+    <div style="position:absolute; bottom:12px; left:12px; background:rgba(0,0,0,0.6); padding:4px 10px; border-radius:8px; font-size:11px;">Camera Active (Simulated)</div>
+    <span style="font-size:42px;">📹</span>
+  </div>
+
+  <div class="call-controls">
+    <button class="call-btn" id="muteBtn" title="Mute Mic">🎤</button>
+    <button class="call-btn end" id="endCallBtn" title="End Call">📞</button>
+    <button class="call-btn" id="camBtn" title="Toggle Camera">📷</button>
+  </div>
+</div>
+
+<!-- ==================== GROUP MEMBERS DRAWER ==================== -->
+<div class="drawer" id="groupDrawer">
+  <div class="drawer-card">
+    <div class="drawer-head">
+      <h3 id="drawerGroupName">Group Members</h3>
+      <button class="back-btn" id="closeDrawer">✕</button>
+    </div>
+    <p style="font-size:12px; color:var(--muted); margin-bottom:14px;" id="drawerGroupSub">Members in this community</p>
+    <div id="drawerMemberList" style="flex:1; overflow-y:auto;"></div>
+  </div>
+</div>
+
 <!-- ==================== STATUS VIEWER ==================== -->
 <div class="status-viewer" id="statusViewer">
   <div class="status-bg" id="statusBg"></div>
@@ -853,15 +976,47 @@ body {
 <!-- ==================== PROFILE MODAL ==================== -->
 <div class="modal" id="profileModal">
   <div class="modal-card">
-    <div class="avatar" style="width:84px;height:84px;font-size:28px;background:linear-gradient(135deg,#f7b731,#eb3b5a);">CA</div>
-    <h2>Constant Okoth Alpha</h2>
-    <p class="role">👑 Administrator · DabzChat</p>
-    <p class="desc">
+    <div class="avatar" style="width:84px;height:84px;font-size:28px;background:linear-gradient(135deg,#f7b731,#eb3b5a);" id="modalAvatar">CA</div>
+    <h2 id="modalName">Constant Okoth Alpha</h2>
+    <p class="role" id="modalRole">👑 Administrator · DabzChat</p>
+    <p class="desc" id="modalDesc">
       Founder and lead administrator of DabzChat. Managing chats, groups,
       status updates, music, pages and the news feed — keeping the community
       connected and informed.
     </p>
     <button class="btn btn-primary" id="closeProfile">Close</button>
+  </div>
+</div>
+
+<!-- ==================== AUTH / SIGN-IN MODAL ==================== -->
+<div class="modal" id="authModal">
+  <div class="modal-card" style="text-align:left;">
+    <div style="text-align:center; margin-bottom:16px;">
+      <div class="logo" style="margin:0 auto 10px; width:48px; height:48px; font-size:22px;">💬</div>
+      <h2>Welcome to DabzChat</h2>
+      <p style="font-size:12.5px; color:var(--muted);">Sign in to connect and join communities</p>
+    </div>
+
+    <button class="google-btn" id="googleSignInBtn">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.15v3.15C3.12 21.36 7.24 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.6H1.15C.42 8.08 0 9.75 0 12s.42 3.92 1.15 5.4l4.12-3.16z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.24 0 3.12 2.64 1.15 6.6l4.12 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
+      Continue with Google
+    </button>
+
+    <div class="auth-divider">or email</div>
+
+    <form class="auth-form" id="authForm">
+      <label style="font-size:11.5px; color:var(--muted); font-weight:600;">Display Name</label>
+      <input type="text" id="authNameInput" placeholder="e.g. Sarah Connor" required />
+
+      <label style="font-size:11.5px; color:var(--muted); font-weight:600;">Username (@handle)</label>
+      <input type="text" id="authHandleInput" placeholder="e.g. sarahc" required />
+
+      <label style="font-size:11.5px; color:var(--muted); font-weight:600;">Email Address</label>
+      <input type="email" id="authEmailInput" placeholder="name@example.com" required />
+
+      <button type="submit" class="btn btn-primary" style="width:100%; padding:11px; margin-top:6px;">Sign In / Register</button>
+    </form>
+    <button class="btn" style="width:100%; margin-top:10px;" id="closeAuthModal">Cancel</button>
   </div>
 </div>
 
@@ -879,11 +1034,14 @@ body {
   const uid = () => Math.random().toString(36).slice(2, 9);
   const rand = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-  /* ---------- Admin ---------- */
-  const ADMIN = {
+  /* ---------- User State ---------- */
+  let currentUser = {
     name: 'Constant Okoth Alpha',
+    handle: '@constantalpha',
     initials: 'CA',
-    color: 'linear-gradient(135deg,#f7b731,#eb3b5a)'
+    color: 'linear-gradient(135deg,#f7b731,#eb3b5a)',
+    isAdmin: true,
+    email: 'admin@dabzchat.com'
   };
 
   /* =========================================================
@@ -938,14 +1096,15 @@ body {
     {
       id: 'admin',
       name: 'Constant Okoth Alpha',
+      handle: '@constantalpha',
       initials: 'CA',
       color: 'linear-gradient(135deg,#f7b731,#eb3b5a)',
       online: true,
       unread: 0,
       isAdmin: true,
       messages: [
-        { from: 'them', sender: 'Constant Okoth Alpha', text: 'Welcome to DabzChat 👋 I\'m Constant, the administrator.', time: '09:41' },
-        { from: 'them', sender: 'Constant Okoth Alpha', text: 'Use the tabs below to explore News, Groups, Status, Music and Pages.', time: '09:41' },
+        { from: 'them', sender: 'Constant Okoth Alpha', handle: '@constantalpha', text: 'Welcome to DabzChat 👋 I\'m Constant, the administrator.', time: '09:41' },
+        { from: 'them', sender: 'Constant Okoth Alpha', handle: '@constantalpha', text: 'Use the tabs below to explore News, Groups, Status, Music and Pages.', time: '09:41' },
         { from: 'me', text: 'Thanks! This looks amazing.', time: '09:42' }
       ],
       replies: [
@@ -958,6 +1117,7 @@ body {
     {
       id: 'alex',
       name: 'Alex Rivera',
+      handle: '@alexrivera',
       initials: 'AR',
       color: 'linear-gradient(135deg,#ff7675,#fdcb6e)',
       online: true,
@@ -972,6 +1132,7 @@ body {
     {
       id: 'maya',
       name: 'Maya Chen',
+      handle: '@mayachen',
       initials: 'MC',
       color: 'linear-gradient(135deg,#a29bfe,#fd79a8)',
       online: true,
@@ -985,6 +1146,7 @@ body {
     {
       id: 'sam',
       name: 'Sam Okafor',
+      handle: '@samokafor',
       initials: 'SO',
       color: 'linear-gradient(135deg,#0984e3,#74b9ff)',
       online: false,
@@ -998,19 +1160,25 @@ body {
   ];
 
   /* =========================================================
-     GROUPS
+     GROUPS & MEMBERS
      ========================================================= */
   const groups = [
     {
       id: 'g1',
       name: 'Dabz Devs',
+      handle: '@group_dabzdevs',
       initials: 'DD',
       color: 'linear-gradient(135deg,#00b894,#00cec9)',
-      members: 24,
-      memberNames: ['Alex Rivera', 'Maya Chen', 'Sam Okafor', 'Constant Okoth Alpha'],
+      membersList: [
+        { name: 'Constant Okoth Alpha', handle: '@constantalpha', role: 'Admin', initials: 'CA', color: 'linear-gradient(135deg,#f7b731,#eb3b5a)', online: true },
+        { name: 'Alex Rivera', handle: '@alexrivera', role: 'Moderator', initials: 'AR', color: 'linear-gradient(135deg,#ff7675,#fdcb6e)', online: true },
+        { name: 'Maya Chen', handle: '@mayachen', role: 'Member', initials: 'MC', color: 'linear-gradient(135deg,#a29bfe,#fd79a8)', online: true },
+        { name: 'Sam Okafor', handle: '@samokafor', role: 'Member', initials: 'SO', color: 'linear-gradient(135deg,#0984e3,#74b9ff)', online: false },
+        { name: 'Sarah Connor', handle: '@sarahc', role: 'Member', initials: 'SC', color: 'linear-gradient(135deg,#6c5ce7,#00d2ff)', online: true }
+      ],
       messages: [
-        { from: 'them', sender: 'Alex Rivera', text: 'Pushed the new build to staging 🚀', time: '09:10' },
-        { from: 'them', sender: 'Maya Chen', text: 'Testing it now — looks smooth so far!', time: '09:14' },
+        { from: 'them', sender: 'Alex Rivera', handle: '@alexrivera', text: 'Pushed the new build to staging 🚀', time: '09:10' },
+        { from: 'them', sender: 'Maya Chen', handle: '@mayachen', text: 'Testing it now — looks smooth so far!', time: '09:14' },
         { from: 'me', text: 'Great work team 💪', time: '09:16' }
       ],
       replies: ['Merging now ✅', 'Found a tiny bug, fixing it.', 'Nice catch!', 'Ship it 🚢', 'Looks good to me.']
@@ -1018,12 +1186,16 @@ body {
     {
       id: 'g2',
       name: 'Newsroom',
+      handle: '@group_newsroom',
       initials: 'NR',
       color: 'linear-gradient(135deg,#0984e3,#74b9ff)',
-      members: 112,
-      memberNames: ['Constant Okoth Alpha', 'Sam Okafor', 'Maya Chen'],
+      membersList: [
+        { name: 'Constant Okoth Alpha', handle: '@constantalpha', role: 'Admin', initials: 'CA', color: 'linear-gradient(135deg,#f7b731,#eb3b5a)', online: true },
+        { name: 'Sam Okafor', handle: '@samokafor', role: 'Editor', initials: 'SO', color: 'linear-gradient(135deg,#0984e3,#74b9ff)', online: false },
+        { name: 'Maya Chen', handle: '@mayachen', role: 'Journalist', initials: 'MC', color: 'linear-gradient(135deg,#a29bfe,#fd79a8)', online: true }
+      ],
       messages: [
-        { from: 'them', sender: 'Constant Okoth Alpha', text: 'Big story breaking this afternoon — stay alert 📰', time: 'Yesterday' },
+        { from: 'them', sender: 'Constant Okoth Alpha', handle: '@constantalpha', text: 'Big story breaking this afternoon — stay alert 📰', time: 'Yesterday' },
         { from: 'me', text: 'On it. Draft coming in 20.', time: 'Yesterday' }
       ],
       replies: ['Copy that.', 'Sending the source now.', 'Great coverage today 👏', 'Let\'s verify before publishing.']
@@ -1031,12 +1203,16 @@ body {
     {
       id: 'g3',
       name: 'Music Lovers',
+      handle: '@group_musiclovers',
       initials: 'ML',
       color: 'linear-gradient(135deg,#a29bfe,#fd79a8)',
-      members: 89,
-      memberNames: ['Maya Chen', 'Alex Rivera', 'Constant Okoth Alpha'],
+      membersList: [
+        { name: 'Maya Chen', handle: '@mayachen', role: 'Admin', initials: 'MC', color: 'linear-gradient(135deg,#a29bfe,#fd79a8)', online: true },
+        { name: 'Alex Rivera', handle: '@alexrivera', role: 'Member', initials: 'AR', color: 'linear-gradient(135deg,#ff7675,#fdcb6e)', online: true },
+        { name: 'Constant Okoth Alpha', handle: '@constantalpha', role: 'Member', initials: 'CA', color: 'linear-gradient(135deg,#f7b731,#eb3b5a)', online: true }
+      ],
       messages: [
-        { from: 'them', sender: 'Maya Chen', text: 'New playlist uploaded to the Music tab 🎵', time: 'Yesterday' },
+        { from: 'them', sender: 'Maya Chen', handle: '@mayachen', text: 'New playlist uploaded to the Music tab 🎵', time: 'Yesterday' },
         { from: 'me', text: 'Listening now — fire 🔥', time: 'Yesterday' }
       ],
       replies: ['This track is amazing 🎶', 'Adding it to my rotation.', 'What genre is this?', 'Absolute banger 🔥']
@@ -1049,9 +1225,10 @@ body {
   const statuses = [
     {
       id: 'st1',
-      author: ADMIN.name,
-      initials: ADMIN.initials,
-      color: ADMIN.color,
+      author: 'Constant Okoth Alpha',
+      handle: '@constantalpha',
+      initials: 'CA',
+      color: 'linear-gradient(135deg,#f7b731,#eb3b5a)',
       time: 'Just now',
       text: 'Welcome to DabzChat! Big things are coming 🚀',
       bg: 'linear-gradient(135deg,#6c5ce7,#00d2ff)',
@@ -1061,6 +1238,7 @@ body {
     {
       id: 'st2',
       author: 'Maya Chen',
+      handle: '@mayachen',
       initials: 'MC',
       color: 'linear-gradient(135deg,#a29bfe,#fd79a8)',
       time: '10 min ago',
@@ -1071,6 +1249,7 @@ body {
     {
       id: 'st3',
       author: 'Alex Rivera',
+      handle: '@alexrivera',
       initials: 'AR',
       color: 'linear-gradient(135deg,#ff7675,#fdcb6e)',
       time: '32 min ago',
@@ -1081,6 +1260,7 @@ body {
     {
       id: 'st4',
       author: 'Sam Okafor',
+      handle: '@samokafor',
       initials: 'SO',
       color: 'linear-gradient(135deg,#0984e3,#74b9ff)',
       time: '1h ago',
@@ -1126,7 +1306,11 @@ body {
     activeConv: null,      // { type: 'dm' | 'group', id }
     currentTrack: null,
     isPlaying: false,
-    statusTimer: null
+    statusTimer: null,
+    callInterval: null,
+    callSeconds: 0,
+    isMuted: false,
+    isCamOn: false
   };
 
   /* ---------- DOM ---------- */
@@ -1247,6 +1431,7 @@ body {
     const visible = contacts.filter(c =>
       !filter ||
       c.name.toLowerCase().includes(filter) ||
+      c.handle.toLowerCase().includes(filter) ||
       c.messages.some(m => m.text.toLowerCase().includes(filter))
     );
 
@@ -1271,20 +1456,28 @@ body {
       const row = document.createElement('div');
       row.className = 'row';
 
-      const name = document.createElement('h3');
-      name.textContent = c.name;
+      const nameContainer = document.createElement('h3');
+      const nameSpan = document.createElement('span');
+      nameSpan.textContent = c.name;
+      nameContainer.appendChild(nameSpan);
+
+      const handleSub = document.createElement('span');
+      handleSub.className = 'handle-sub';
+      handleSub.textContent = c.handle;
+      nameContainer.appendChild(handleSub);
+
       if (c.isAdmin) {
         const badge = document.createElement('span');
         badge.className = 'admin-mini';
         badge.textContent = 'ADMIN';
-        name.appendChild(badge);
+        nameContainer.appendChild(badge);
       }
 
       const time = document.createElement('span');
       time.className = 'time';
       time.textContent = last ? last.time : '';
 
-      row.append(name, time);
+      row.append(nameContainer, time);
 
       const preview = document.createElement('p');
       preview.textContent = last ? (last.from === 'me' ? 'You: ' : '') + last.text : 'Say hi 👋';
@@ -1307,7 +1500,7 @@ body {
   }
 
   /* =========================================================
-     GROUPS
+     GROUPS & MEMBERS DIRECTORY
      ========================================================= */
   function renderGroups() {
     const list = $('#groupList');
@@ -1332,11 +1525,15 @@ body {
       info.className = 'info';
 
       const h3 = document.createElement('h3');
-      h3.textContent = g.name;
+      h3.textContent = g.name + ' ';
+      const hsub = document.createElement('span');
+      hsub.style.cssText = 'font-size:11.5px;color:var(--muted);font-weight:normal;';
+      hsub.textContent = g.handle;
+      h3.appendChild(hsub);
 
       const members = document.createElement('div');
       members.className = 'members';
-      members.textContent = g.members + ' members';
+      members.textContent = g.membersList.length + ' members · Tap to view directory';
 
       const last = g.messages[g.messages.length - 1];
       const lastEl = document.createElement('div');
@@ -1358,26 +1555,71 @@ body {
     });
   }
 
+  function openGroupDrawer(group) {
+    $('#drawerGroupName').textContent = group.name;
+    $('#drawerGroupSub').textContent = group.handle + ' · ' + group.membersList.length + ' members';
+
+    const listEl = $('#drawerMemberList');
+    listEl.innerHTML = '';
+
+    group.membersList.forEach(m => {
+      const row = document.createElement('div');
+      row.className = 'member-row';
+
+      row.appendChild(makeAvatar(m.initials, m.color, 38, m.online));
+
+      const info = document.createElement('div');
+      info.className = 'member-info';
+
+      const h4 = document.createElement('h4');
+      h4.textContent = m.name;
+      const hspan = document.createElement('span');
+      hspan.style.cssText = 'font-size:11px;color:var(--muted);font-weight:normal;';
+      hspan.textContent = m.handle;
+      h4.appendChild(hspan);
+
+      if (m.role === 'Admin') {
+        const bdg = document.createElement('span');
+        bdg.className = 'admin-mini';
+        bdg.textContent = 'ADMIN';
+        h4.appendChild(bdg);
+      }
+
+      const p = document.createElement('p');
+      p.textContent = m.role + (m.online ? ' · Online' : ' · Offline');
+
+      info.append(h4, p);
+      row.appendChild(info);
+      listEl.appendChild(row);
+    });
+
+    $('#groupDrawer').classList.add('show');
+  }
+
   function createGroup() {
     const name = prompt('Enter a name for the new group:');
     if (!name || !name.trim()) return;
 
     const clean = name.trim();
+    const handle = '@group_' + clean.toLowerCase().replace(/[^a-z0-9]/g, '');
     const initials = clean.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'G';
 
-    groups.unshift({
+    const newGroup = {
       id: 'g_' + uid(),
       name: clean,
+      handle,
       initials,
       color: 'linear-gradient(135deg,#6c5ce7,#00d2ff)',
-      members: 1,
-      memberNames: [ADMIN.name],
+      membersList: [
+        { name: currentUser.name, handle: currentUser.handle, role: 'Admin', initials: currentUser.initials, color: currentUser.color, online: true }
+      ],
       messages: [
-        { from: 'them', sender: ADMIN.name, text: 'Group created by admin 👑', time: nowTime() }
+        { from: 'them', sender: currentUser.name, handle: currentUser.handle, text: 'Group created by ' + currentUser.name + ' 👑', time: nowTime() }
       ],
       replies: ['Welcome everyone! 👋', 'Great to be here.', 'Let\'s get started 🚀', 'Hello all!']
-    });
+    };
 
+    groups.unshift(newGroup);
     renderGroups();
     showToast('Group "' + clean + '" created');
   }
@@ -1402,6 +1644,12 @@ body {
       const sender = document.createElement('div');
       sender.className = 'sender';
       sender.textContent = m.sender || conv.name;
+      if (m.handle) {
+        const hs = document.createElement('span');
+        hs.className = 'sender-handle';
+        hs.textContent = m.handle;
+        sender.appendChild(hs);
+      }
       bubble.appendChild(sender);
     }
 
@@ -1432,7 +1680,7 @@ body {
     if (state.activeConv.type === 'group') {
       dom.chatStatus.style.color = 'var(--muted)';
       dom.chatStatus.querySelector('.pulse').style.display = 'none';
-      dom.chatStatusText.textContent = conv.members + ' members';
+      dom.chatStatusText.textContent = conv.membersList.length + ' members (Tap to view)';
     } else {
       dom.chatStatus.style.color = conv.online ? 'var(--online)' : 'var(--muted)';
       dom.chatStatus.querySelector('.pulse').style.display = conv.online ? 'block' : 'none';
@@ -1495,7 +1743,7 @@ body {
     const conv = getConv(state.activeConv.type, state.activeConv.id);
     if (!conv) return;
 
-    conv.messages.push({ from: 'me', text, time: nowTime(), sender: 'You' });
+    conv.messages.push({ from: 'me', text, time: nowTime(), sender: currentUser.name, handle: currentUser.handle });
 
     const typingEl = $('#typing');
     const bubble = buildMsg(conv.messages[conv.messages.length - 1], conv);
@@ -1523,17 +1771,18 @@ body {
         const i = (conv._ri || 0) % pool.length;
         conv._ri = i + 1;
 
-        let sender;
+        let sender, handle;
         if (conv.type === 'group') {
-          const names = conv.memberNames && conv.memberNames.length
-            ? conv.memberNames
-            : ['Member'];
-          sender = rand(names);
+          const members = conv.membersList && conv.membersList.length ? conv.membersList : [{ name: 'Member', handle: '@member' }];
+          const m = rand(members);
+          sender = m.name;
+          handle = m.handle;
         } else {
           sender = conv.name;
+          handle = conv.handle;
         }
 
-        conv.messages.push({ from: 'them', sender, text: pool[i], time: nowTime() });
+        conv.messages.push({ from: 'them', sender, handle, text: pool[i], time: nowTime() });
 
         typingEl.classList.remove('show');
 
@@ -1547,11 +1796,55 @@ body {
           scrollChat();
         }
 
-        // Refresh list previews
         renderChatList($('#searchInput') ? $('#searchInput').value : '');
         if (conv.type === 'group') renderGroups();
       }, 900 + Math.random() * 700);
     }, 600 + Math.random() * 600);
+  }
+
+  /* =========================================================
+     VOICE & VIDEO CALLS
+     ========================================================= */
+  function startCall(isVideo) {
+    if (!state.activeConv) return;
+    const conv = getConv(state.activeConv.type, state.activeConv.id);
+    if (!conv) return;
+
+    const overlay = $('#callOverlay');
+    if (isVideo) overlay.classList.add('video-mode');
+    else overlay.classList.remove('video-mode');
+
+    $('#callTypeLabel').textContent = isVideo ? 'Video Call' : 'Voice Call';
+    $('#callTargetName').textContent = conv.name;
+    $('#callAvatar').style.background = conv.color;
+    $('#callAvatar').textContent = conv.initials;
+    $('#callStatusText').textContent = 'Connecting…';
+
+    state.callSeconds = 0;
+    $('#callDuration').textContent = '00:00';
+    state.isMuted = false;
+    state.isCamOn = isVideo;
+    $('#muteBtn').textContent = '🎤';
+    $('#camBtn').textContent = isVideo ? '📷' : '📹';
+
+    overlay.classList.add('show');
+
+    setTimeout(() => {
+      $('#callStatusText').textContent = isVideo ? 'Video Connected' : 'Call Connected';
+      clearInterval(state.callInterval);
+      state.callInterval = setInterval(() => {
+        state.callSeconds++;
+        const mins = String(Math.floor(state.callSeconds / 60)).padStart(2, '0');
+        const secs = String(state.callSeconds % 60).padStart(2, '0');
+        $('#callDuration').textContent = `${mins}:${secs}`;
+      }, 1000);
+    }, 1500);
+  }
+
+  function endCall() {
+    clearInterval(state.callInterval);
+    $('#callOverlay').classList.remove('show');
+    showToast('Call ended');
   }
 
   /* =========================================================
@@ -1563,7 +1856,6 @@ body {
     row.innerHTML = '';
     list.innerHTML = '';
 
-    // "Add status" bubble first
     const addBubble = document.createElement('button');
     addBubble.className = 'status-bubble';
     addBubble.type = 'button';
@@ -1595,13 +1887,12 @@ body {
       ring.appendChild(av);
 
       const label = document.createElement('small');
-      label.textContent = s.isAdmin ? 'You' : s.author.split(' ')[0];
+      label.textContent = s.isAdmin && s.author === currentUser.name ? 'You' : s.author.split(' ')[0];
 
       b.append(ring, label);
       b.addEventListener('click', () => openStatus(s.id));
       row.appendChild(b);
 
-      // Detailed row
       const card = document.createElement('button');
       card.className = 'chat-item';
       card.type = 'button';
@@ -1617,7 +1908,15 @@ body {
       r.className = 'row';
 
       const nm = document.createElement('h3');
-      nm.textContent = s.author;
+      const nmspan = document.createElement('span');
+      nmspan.textContent = s.author;
+      nm.appendChild(nmspan);
+
+      const hsub = document.createElement('span');
+      hsub.className = 'handle-sub';
+      hsub.textContent = s.handle;
+      nm.appendChild(hsub);
+
       if (s.isAdmin) {
         const bdg = document.createElement('span');
         bdg.className = 'admin-mini';
@@ -1662,13 +1961,14 @@ body {
 
     statuses.unshift({
       id: 'st_' + uid(),
-      author: ADMIN.name,
-      initials: ADMIN.initials,
-      color: ADMIN.color,
+      author: currentUser.name,
+      handle: currentUser.handle,
+      initials: currentUser.initials,
+      color: currentUser.color,
       time: 'Just now',
       text: text.trim(),
       bg: rand(bgs),
-      isAdmin: true,
+      isAdmin: currentUser.isAdmin,
       seen: false
     });
 
@@ -1686,7 +1986,7 @@ body {
     $('#statusBg').style.background = s.bg;
     $('#statusAvatar').style.background = s.color;
     $('#statusAvatar').textContent = s.initials;
-    $('#statusAuthor').textContent = s.author;
+    $('#statusAuthor').textContent = s.author + ' (' + s.handle + ')';
     $('#statusTime').textContent = s.time;
     $('#statusText').textContent = s.text;
 
@@ -1821,7 +2121,7 @@ body {
       tracks.unshift({
         id: 'tr_' + uid(),
         title: file.name.replace(/\.[^.]+$/, ''),
-        artist: 'You',
+        artist: currentUser.name,
         src: url,
         duration: '—',
         demo: false
@@ -1868,7 +2168,6 @@ body {
       const card = document.createElement('article');
       card.className = 'post';
 
-      // header
       const head = document.createElement('div');
       head.className = 'post-head';
 
@@ -1903,11 +2202,9 @@ body {
 
       head.append(av, who, followBtn);
 
-      // body
       const text = document.createElement('p');
       text.textContent = post.text;
 
-      // actions
       const actions = document.createElement('div');
       actions.className = 'post-actions';
 
@@ -2010,7 +2307,10 @@ body {
       if (e.key === 'Escape') {
         if (dom.chatOverlay.classList.contains('open')) closeConversation();
         if ($('#statusViewer').classList.contains('show')) closeStatus();
+        if ($('#groupDrawer').classList.contains('show')) $('#groupDrawer').classList.remove('show');
         $('#profileModal').classList.remove('show');
+        $('#authModal').classList.remove('show');
+        $('#callOverlay').classList.remove('show');
       }
     });
 
@@ -2039,6 +2339,31 @@ body {
 
     // Groups
     $('#createGroupBtn').addEventListener('click', createGroup);
+    $('#chatHeaderInfo').addEventListener('click', () => {
+      if (state.activeConv && state.activeConv.type === 'group') {
+        const g = getConv('group', state.activeConv.id);
+        if (g) openGroupDrawer(g);
+      }
+    });
+    $('#closeDrawer').addEventListener('click', () => $('#groupDrawer').classList.remove('show'));
+    $('#groupDrawer').addEventListener('click', (e) => {
+      if (e.target.id === 'groupDrawer') $('#groupDrawer').classList.remove('show');
+    });
+
+    // Calls
+    $('#voiceCallBtn').addEventListener('click', () => startCall(false));
+    $('#videoCallBtn').addEventListener('click', () => startCall(true));
+    $('#endCallBtn').addEventListener('click', endCall);
+    $('#muteBtn').addEventListener('click', () => {
+      state.isMuted = !state.isMuted;
+      $('#muteBtn').textContent = state.isMuted ? '🔇' : '🎤';
+      showToast(state.isMuted ? 'Microphone muted' : 'Microphone unmuted');
+    });
+    $('#camBtn').addEventListener('click', () => {
+      state.isCamOn = !state.isCamOn;
+      $('#camBtn').textContent = state.isCamOn ? '📷' : '📹';
+      showToast(state.isCamOn ? 'Camera turned on' : 'Camera turned off');
+    });
 
     // Status
     $('#addStatusBtn').addEventListener('click', addStatus);
@@ -2077,6 +2402,11 @@ body {
 
     // Profile modal
     $('#adminChip').addEventListener('click', () => {
+      $('#modalAvatar').style.background = currentUser.color;
+      $('#modalAvatar').textContent = currentUser.initials;
+      $('#modalName').textContent = currentUser.name;
+      $('#modalRole').textContent = currentUser.isAdmin ? '👑 Administrator · ' + currentUser.handle : '👤 Member · ' + currentUser.handle;
+      $('#modalDesc').textContent = 'Signed in as ' + currentUser.email + '. Managing chats, groups, status updates, music, pages and news feed.';
       $('#profileModal').classList.add('show');
     });
     $('#closeProfile').addEventListener('click', () => {
@@ -2085,6 +2415,55 @@ body {
     $('#profileModal').addEventListener('click', (e) => {
       if (e.target.id === 'profileModal') $('#profileModal').classList.remove('show');
     });
+
+    // Auth / Sign-in modal
+    $('#authBtnTop').addEventListener('click', () => $('#authModal').classList.add('show'));
+    $('#closeAuthModal').addEventListener('click', () => $('#authModal').classList.remove('show'));
+    $('#authModal').addEventListener('click', (e) => {
+      if (e.target.id === 'authModal') $('#authModal').classList.remove('show');
+    });
+
+    $('#googleSignInBtn').addEventListener('click', () => {
+      currentUser = {
+        name: 'Google User',
+        handle: '@google_user',
+        initials: 'GU',
+        color: 'linear-gradient(135deg,#4285F4,#34A853)',
+        isAdmin: false,
+        email: 'user@gmail.com'
+      };
+      updateUserUI();
+      $('#authModal').classList.remove('show');
+      showToast('Successfully signed in with Google');
+    });
+
+    $('#authForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = $('#authNameInput').value.trim();
+      let handle = $('#authHandleInput').value.trim();
+      const email = $('#authEmailInput').value.trim();
+
+      if (!handle.startsWith('@')) handle = '@' + handle;
+      const initials = name.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'U';
+
+      currentUser = {
+        name,
+        handle,
+        initials,
+        color: 'linear-gradient(135deg,#6c5ce7,#00d2ff)',
+        isAdmin: name.toLowerCase().includes('admin') || name === 'Constant Okoth Alpha',
+        email
+      };
+
+      updateUserUI();
+      $('#authModal').classList.remove('show');
+      showToast('Welcome, ' + name + ' (' + handle + ')');
+    });
+  }
+
+  function updateUserUI() {
+    $('#currentUserName').textContent = currentUser.name;
+    $('#authBtnTop').textContent = 'Switch Account';
   }
 
   /* =========================================================
@@ -2107,4 +2486,4 @@ body {
 })();
 </script>
 </body>
-  </html>
+</html>
