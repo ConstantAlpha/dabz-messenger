@@ -4,8 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="theme-color" content="#0b0d12" />
-   <link rel="icon" href="1795011984093.jpg">
 <title>DabzChat — News · Chats · Groups · Status · Music · Pages</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 /* =========================================================
    DabzChat — full stylesheet
@@ -80,7 +80,10 @@ body {
   display: grid; place-items: center;
   background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
   box-shadow: 0 8px 22px rgba(108, 92, 231, .45);
-  font-size: 19px; flex: 0 0 auto;
+  font-size: 19px; flex: 0 0 auto; overflow: hidden;
+}
+.logo img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
 }
 .brand h1 { font-size: 18px; font-weight: 700; letter-spacing: .3px; white-space: nowrap; }
 .brand h1 span {
@@ -677,6 +680,9 @@ body {
   margin-bottom: 12px; outline: none; font-family: inherit;
 }
 .auth-form input:focus { border-color: var(--brand-2); }
+.google-btn-wrap {
+  display: flex; justify-content: center; margin-bottom: 10px; min-height: 42px;
+}
 .google-btn {
   width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
   background: #fff; color: #333; font-weight: 600; padding: 11px; border-radius: 12px;
@@ -730,7 +736,9 @@ body {
   <!-- ==================== TOP BAR ==================== -->
   <header class="topbar">
     <div class="brand">
-      <div class="logo">💬</div>
+      <div class="logo">
+        <img src="1795011984093.jpg" alt="DabzChat Logo" />
+      </div>
       <div>
         <h1>Dabz<span>Chat</span></h1>
         <small>News · Chats · Groups · Status · Music · Pages</small>
@@ -993,12 +1001,18 @@ body {
 <div class="modal" id="authModal">
   <div class="modal-card" style="text-align:left;">
     <div style="text-align:center; margin-bottom:16px;">
-      <div class="logo" style="margin:0 auto 10px; width:48px; height:48px; font-size:22px;">💬</div>
+      <div class="logo" style="margin:0 auto 10px; width:48px; height:48px; font-size:22px;">
+        <img src="1795011984093.jpg" alt="DabzChat Logo" />
+      </div>
       <h2>Welcome to DabzChat</h2>
       <p style="font-size:12.5px; color:var(--muted);">Sign in to connect and join communities</p>
     </div>
 
-    <button class="google-btn" id="googleSignInBtn">
+    <!-- Real Google Identity Services Button Container -->
+    <div class="google-btn-wrap" id="googleGsiBtnContainer"></div>
+
+    <!-- Fallback / Helper Google Sign-In Button -->
+    <button class="google-btn" id="googleSignInBtn" type="button">
       <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.15v3.15C3.12 21.36 7.24 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.6H1.15C.42 8.08 0 9.75 0 12s.42 3.92 1.15 5.4l4.12-3.16z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.24 0 3.12 2.64 1.15 6.6l4.12 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
       Continue with Google
     </button>
@@ -1028,12 +1042,31 @@ body {
 (function () {
   'use strict';
 
+  // Replace with your real Google Cloud OAuth 2.0 Web Client ID
+  const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+
   /* ---------- Helpers ---------- */
   const $  = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
   const nowTime = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   const uid = () => Math.random().toString(36).slice(2, 9);
   const rand = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+  function parseJwt(token) {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+      return JSON.parse(jsonPayload);
+    } catch (e) {
+      return null;
+    }
+  }
 
   /* ---------- User State ---------- */
   let currentUser = {
@@ -1304,7 +1337,7 @@ body {
   const state = {
     region: 'Africa',
     activeView: 'news',
-    activeConv: null,      // { type: 'dm' | 'group', id }
+    activeConv: null,
     currentTrack: null,
     isPlaying: false,
     statusTimer: null,
@@ -1334,6 +1367,65 @@ body {
     playerProgress: $('#playerProgress'),
     playerToggle: $('#playerToggle')
   };
+
+  /* =========================================================
+     REAL GOOGLE SIGN-IN (GOOGLE IDENTITY SERVICES)
+     ========================================================= */
+  function handleGoogleCredentialResponse(response) {
+    const payload = parseJwt(response.credential);
+    if (!payload) {
+      showToast('Could not verify Google account');
+      return;
+    }
+
+    const fullName = payload.name || payload.email.split('@')[0];
+    const cleanHandle = '@' + (payload.email.split('@')[0] || 'google_user').toLowerCase().replace(/[^a-z0-9_]/g, '');
+    const initials = fullName
+      .split(/\s+/)
+      .map(w => w[0])
+      .join('')
+      .slice(0, 2)
+      .toUpperCase() || 'G';
+
+    currentUser = {
+      name: fullName,
+      handle: cleanHandle,
+      initials,
+      color: 'linear-gradient(135deg,#4285F4,#34A853)',
+      isAdmin: false,
+      email: payload.email || 'google-account@gmail.com'
+    };
+
+    updateUserUI();
+    $('#authModal').classList.remove('show');
+    showToast('Signed in with Google as ' + fullName);
+  }
+
+  function initGoogleSignIn() {
+    if (!window.google || !window.google.accounts || !window.google.accounts.id) {
+      setTimeout(initGoogleSignIn, 300);
+      return;
+    }
+
+    if (!GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID.startsWith('YOUR_GOOGLE_CLIENT_ID')) {
+      $('#googleGsiBtnContainer').style.display = 'none';
+      return;
+    }
+
+    window.google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: handleGoogleCredentialResponse
+    });
+
+    window.google.accounts.id.renderButton($('#googleGsiBtnContainer'), {
+      theme: 'outline',
+      size: 'large',
+      width: 340,
+      text: 'continue_with'
+    });
+
+    $('#googleSignInBtn').style.display = 'none';
+  }
 
   /* =========================================================
      NEWS
@@ -1673,7 +1765,6 @@ body {
 
     conv.type = state.activeConv.type;
 
-    // Header
     dom.chatAvatar.style.background = conv.color;
     dom.chatAvatar.textContent = conv.initials;
     dom.chatName.textContent = conv.name;
@@ -1688,7 +1779,6 @@ body {
       dom.chatStatusText.textContent = conv.online ? 'Online' : 'Last seen recently';
     }
 
-    // Messages
     dom.messages.innerHTML = '';
     const divider = document.createElement('div');
     divider.className = 'day-divider';
@@ -2289,19 +2379,16 @@ body {
      EVENT WIRING
      ========================================================= */
   function wireEvents() {
-    // Tabs
     dom.tabbar.addEventListener('click', (e) => {
       const btn = e.target.closest('.tab');
       if (!btn) return;
       setView(btn.dataset.view);
     });
 
-    // Chat search
     $('#searchInput').addEventListener('input', (e) => {
       renderChatList(e.target.value);
     });
 
-    // Chat overlay
     dom.chatBack.addEventListener('click', closeConversation);
 
     document.addEventListener('keydown', (e) => {
@@ -2330,7 +2417,6 @@ body {
       dom.sendBtn.disabled = dom.chatInput.value.trim().length === 0;
     });
 
-    // Emoji
     const emojis = ['😀', '😂', '😍', '🔥', '👍', '🎉', '😎', '🙌', '💯', '❤️', '🚀', '✨'];
     $('#emojiBtn').addEventListener('click', () => {
       dom.chatInput.value += rand(emojis);
@@ -2338,7 +2424,6 @@ body {
       dom.sendBtn.disabled = false;
     });
 
-    // Groups
     $('#createGroupBtn').addEventListener('click', createGroup);
     $('#chatHeaderInfo').addEventListener('click', () => {
       if (state.activeConv && state.activeConv.type === 'group') {
@@ -2351,7 +2436,6 @@ body {
       if (e.target.id === 'groupDrawer') $('#groupDrawer').classList.remove('show');
     });
 
-    // Calls
     $('#voiceCallBtn').addEventListener('click', () => startCall(false));
     $('#videoCallBtn').addEventListener('click', () => startCall(true));
     $('#endCallBtn').addEventListener('click', endCall);
@@ -2366,14 +2450,12 @@ body {
       showToast(state.isCamOn ? 'Camera turned on' : 'Camera turned off');
     });
 
-    // Status
     $('#addStatusBtn').addEventListener('click', addStatus);
     $('#statusClose').addEventListener('click', closeStatus);
     $('#statusViewer').addEventListener('click', (e) => {
       if (e.target.id === 'statusViewer') closeStatus();
     });
 
-    // Music
     $('#musicUpload').addEventListener('change', (e) => {
       handleUpload(e.target.files);
       e.target.value = '';
@@ -2401,7 +2483,6 @@ body {
       dom.audio.currentTime = ratio * dom.audio.duration;
     });
 
-    // Profile modal
     $('#adminChip').addEventListener('click', () => {
       $('#modalAvatar').style.background = currentUser.color;
       $('#modalAvatar').textContent = currentUser.initials;
@@ -2417,25 +2498,21 @@ body {
       if (e.target.id === 'profileModal') $('#profileModal').classList.remove('show');
     });
 
-    // Auth / Sign-in modal
-    $('#authBtnTop').addEventListener('click', () => $('#authModal').classList.add('show'));
+    $('#authBtnTop').addEventListener('click', () => {
+      $('#authModal').classList.add('show');
+      initGoogleSignIn();
+    });
     $('#closeAuthModal').addEventListener('click', () => $('#authModal').classList.remove('show'));
     $('#authModal').addEventListener('click', (e) => {
       if (e.target.id === 'authModal') $('#authModal').classList.remove('show');
     });
 
     $('#googleSignInBtn').addEventListener('click', () => {
-      currentUser = {
-        name: 'Google User',
-        handle: '@google_user',
-        initials: 'GU',
-        color: 'linear-gradient(135deg,#4285F4,#34A853)',
-        isAdmin: false,
-        email: 'user@gmail.com'
-      };
-      updateUserUI();
-      $('#authModal').classList.remove('show');
-      showToast('Successfully signed in with Google');
+      if (window.google && window.google.accounts && window.google.accounts.id && !GOOGLE_CLIENT_ID.startsWith('YOUR_GOOGLE_CLIENT_ID')) {
+        window.google.accounts.id.prompt();
+      } else {
+        showToast('Set GOOGLE_CLIENT_ID in code for live Google OAuth');
+      }
     });
 
     $('#authForm').addEventListener('submit', (e) => {
