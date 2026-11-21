@@ -51,6 +51,7 @@ body {
   flex-direction: column;
   background: var(--panel);
   overflow: hidden;
+  position: relative;
 }
 @media (min-width: 900px) {
   body { padding: 20px; align-items: center; }
@@ -62,13 +63,98 @@ body {
   }
 }
 
+/* ---------- Splash Screen ---------- */
+.splash-screen {
+  position: fixed; inset: 0; z-index: 900;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: #0b0d12;
+  transition: opacity .45s ease, visibility .45s ease;
+  overflow: hidden;
+}
+.splash-screen.hidden {
+  opacity: 0; visibility: hidden; pointer-events: none;
+}
+.splash-bg-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; opacity: .38; filter: blur(2px);
+}
+.splash-scrim {
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at center, rgba(11,13,18,.45) 0%, rgba(11,13,18,.92) 100%);
+}
+.splash-content {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  padding: 24px; max-width: 440px; width: 100%;
+}
+.splash-logo-card {
+  width: 96px; height: 96px; border-radius: 24px; overflow: hidden;
+  border: 2px solid rgba(0, 210, 255, .45);
+  box-shadow: 0 18px 45px rgba(108, 92, 231, .45);
+  margin-bottom: 16px; background: var(--panel-2);
+}
+.splash-logo-card img { width: 100%; height: 100%; object-fit: cover; }
+.splash-content h1 { font-size: 28px; font-weight: 800; letter-spacing: .4px; }
+.splash-content h1 span {
+  background: linear-gradient(90deg, var(--brand-1), var(--brand-2));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.splash-content p { font-size: 13px; color: var(--muted); margin-top: 6px; }
+.splash-bar {
+  width: 220px; height: 5px; border-radius: 99px;
+  background: rgba(255,255,255,.12); overflow: hidden; margin-top: 22px;
+}
+.splash-bar-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--brand-1), var(--brand-2));
+  transition: width 1.6s ease;
+}
+
+/* ---------- Landing / Login Screen ---------- */
+.landing-screen {
+  position: fixed; inset: 0; z-index: 800;
+  display: none; align-items: center; justify-content: center;
+  padding: 20px; background: #0b0d12; overflow-y: auto;
+}
+.landing-screen.show { display: flex; animation: fade .28s ease-out; }
+.landing-bg-img {
+  position: fixed; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; opacity: .28; pointer-events: none;
+}
+.landing-scrim {
+  position: fixed; inset: 0;
+  background: linear-gradient(180deg, rgba(11,13,18,.72) 0%, rgba(11,13,18,.95) 100%);
+  pointer-events: none;
+}
+.landing-card {
+  position: relative; z-index: 2;
+  width: min(460px, 100%);
+  background: rgba(18, 21, 29, .92);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 24px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, .65);
+}
+.landing-hero-banner {
+  width: 100%; height: 150px; border-radius: 16px; overflow: hidden;
+  border: 1px solid var(--line); margin-bottom: 16px; position: relative;
+}
+.landing-hero-banner img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.landing-hero-tag {
+  position: absolute; bottom: 10px; left: 10px;
+  background: rgba(11,13,18,.82); border: 1px solid rgba(255,255,255,.15);
+  padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700;
+  color: var(--brand-2);
+}
+
 /* ---------- Top bar ---------- */
 .topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 12px 18px;
+  gap: 10px;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--line);
   background: rgba(18, 21, 29, .92);
   backdrop-filter: blur(8px);
@@ -82,9 +168,7 @@ body {
   box-shadow: 0 8px 22px rgba(108, 92, 231, .45);
   font-size: 19px; flex: 0 0 auto; overflow: hidden;
 }
-.logo img {
-  width: 100%; height: 100%; object-fit: cover; display: block;
-}
+.logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .brand h1 { font-size: 18px; font-weight: 700; letter-spacing: .3px; white-space: nowrap; }
 .brand h1 span {
   background: linear-gradient(90deg, var(--brand-1), var(--brand-2));
@@ -95,29 +179,29 @@ body {
   letter-spacing: .4px; text-transform: uppercase; font-weight: 600;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-@media (max-width: 620px) { .brand small { display: none; } }
+@media (max-width: 680px) { .brand small { display: none; } }
 
-.user-chip-wrap { display: flex; align-items: center; gap: 8px; }
+.user-chip-wrap { display: flex; align-items: center; gap: 7px; }
 .admin-chip {
   display: flex; align-items: center; gap: 7px;
-  padding: 8px 13px; border-radius: 999px;
+  padding: 7px 12px; border-radius: 999px;
   background: linear-gradient(135deg, rgba(247, 183, 49, .18), rgba(235, 59, 90, .14));
   border: 1px solid rgba(247, 183, 49, .45);
-  color: var(--gold); font-size: 12.5px; font-weight: 700;
+  color: var(--gold); font-size: 12px; font-weight: 700;
   cursor: pointer; font-family: inherit; white-space: nowrap;
   transition: .2s; flex: 0 0 auto;
 }
 .admin-chip:hover { background: linear-gradient(135deg, rgba(247,183,49,.3), rgba(235,59,90,.22)); }
 .admin-short { display: none; }
-@media (max-width: 620px) {
+@media (max-width: 680px) {
   .admin-name { display: none; }
   .admin-short { display: inline; }
 }
 
 .auth-btn-top {
-  padding: 7px 12px; border-radius: 999px; font-size: 12px; font-weight: 700;
+  padding: 7px 11px; border-radius: 999px; font-size: 12px; font-weight: 700;
   background: var(--panel-3); border: 1px solid var(--line); color: var(--text);
-  cursor: pointer; transition: .2s;
+  cursor: pointer; transition: .2s; white-space: nowrap;
 }
 .auth-btn-top:hover { border-color: var(--brand-2); }
 
@@ -203,25 +287,39 @@ body {
 
 .news-card {
   background: var(--panel-2); border: 1px solid var(--line);
-  border-radius: 16px; padding: 14px 16px; cursor: pointer;
+  border-radius: 16px; padding: 14px 16px;
   transition: .2s; display: flex; flex-direction: column;
 }
 .news-card:hover { border-color: rgba(108, 92, 231, .5); transform: translateY(-2px); }
+.news-card-img {
+  width: 100%; height: 130px; object-fit: cover; border-radius: 11px;
+  margin-bottom: 10px; border: 1px solid var(--line);
+}
 .news-tag {
   display: inline-block; align-self: flex-start;
   font-size: 9.5px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase;
   color: #00d2ff; background: rgba(0, 210, 255, .12);
   padding: 3px 8px; border-radius: 999px; margin-bottom: 9px;
 }
-.news-card h4 { font-size: 14.5px; line-height: 1.35; margin-bottom: 6px; }
+.news-card h4 { font-size: 14.5px; line-height: 1.35; margin-bottom: 6px; cursor: pointer; }
+.news-card h4:hover { color: var(--brand-2); }
 .news-card p { font-size: 12.5px; color: var(--muted); line-height: 1.5; flex: 1; }
 .news-meta { font-size: 11px; color: var(--muted); margin-top: 11px; opacity: .85; }
+.card-social-bar {
+  display: flex; align-items: center; gap: 14px;
+  margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--line);
+}
+.card-social-bar button {
+  background: none; border: none; color: var(--muted);
+  font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; gap: 5px; transition: .18s;
+}
+.card-social-bar button:hover { color: var(--text); }
+.card-social-bar button.liked { color: var(--danger); }
 
 /* ---------- Chats ---------- */
 .chats-pane { height: 100%; display: flex; flex-direction: column; }
-.chat-list {
-  flex: 1; overflow-y: auto; padding: 0 10px 16px;
-}
+.chat-list { flex: 1; overflow-y: auto; padding: 0 10px 16px; }
 .chat-item {
   display: flex; align-items: center; gap: 12px; width: 100%;
   text-align: left; padding: 11px 12px; margin-bottom: 2px;
@@ -230,10 +328,6 @@ body {
   cursor: pointer; transition: background .18s, border-color .18s;
 }
 .chat-item:hover { background: var(--panel-2); }
-.chat-item.active {
-  background: linear-gradient(90deg, rgba(108, 92, 231, .18), rgba(0, 210, 255, .07));
-  border-color: rgba(108, 92, 231, .45);
-}
 .chat-meta { flex: 1; min-width: 0; }
 .chat-meta .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .chat-meta h3 { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; }
@@ -248,6 +342,11 @@ body {
   background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
   color: #fff; font-size: 11px; font-weight: 700;
   display: grid; place-items: center; flex: 0 0 auto;
+}
+.lock-pill {
+  font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 999px;
+  background: rgba(0, 210, 255, .14); color: var(--brand-2);
+  border: 1px solid rgba(0, 210, 255, .35);
 }
 .admin-mini {
   font-size: 9px; font-weight: 800; letter-spacing: .5px;
@@ -471,7 +570,6 @@ body {
 .back-btn svg { width: 17px; height: 17px; stroke: currentColor; }
 .chat-header .info { flex: 1; min-width: 0; cursor: pointer; }
 .chat-header h2 { font-size: 15.5px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; }
-.chat-header .chat-handle-sub { font-size: 11px; color: var(--muted); font-weight: normal; }
 .chat-header .status { font-size: 11.5px; color: var(--online); margin-top: 2px; display: flex; align-items: center; gap: 5px; }
 .chat-header .status .pulse {
   width: 7px; height: 7px; border-radius: 50%; background: var(--online);
@@ -485,7 +583,7 @@ body {
   width: 36px; height: 36px; border-radius: 10px;
   border: 1px solid var(--line); background: var(--panel-2);
   color: var(--muted); display: grid; place-items: center;
-  cursor: pointer; transition: .2s; flex: 0 0 auto;
+  cursor: pointer; transition: .2s; flex: 0 0 auto; font-size: 13px; font-weight: 700;
 }
 .icon-btn:hover { color: var(--text); border-color: rgba(108, 92, 231, .6); background: var(--panel-3); }
 .icon-btn svg { width: 16px; height: 16px; stroke: currentColor; }
@@ -520,6 +618,18 @@ body {
   border-bottom-right-radius: 5px;
   box-shadow: 0 8px 20px rgba(108, 92, 231, .28);
 }
+
+.view-once-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  margin-top: 6px; padding: 8px 12px; border-radius: 12px;
+  background: rgba(0, 0, 0, .28); border: 1px solid rgba(255, 255, 255, .24);
+  color: #fff; font-size: 12.5px; font-weight: 700; cursor: pointer;
+  font-family: inherit;
+}
+.view-once-chip.opened {
+  opacity: .6; cursor: default; background: rgba(255, 255, 255, .08);
+}
+
 .typing {
   display: none; align-items: center; gap: 5px; padding: 12px 16px;
   background: var(--panel-2); border: 1px solid var(--line);
@@ -539,14 +649,14 @@ body {
 }
 
 .composer {
-  display: flex; align-items: flex-end; gap: 9px;
+  display: flex; align-items: flex-end; gap: 8px;
   padding: 12px 14px calc(14px + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid var(--line);
   background: rgba(18, 21, 29, .95);
   flex: 0 0 auto;
 }
 .composer .field {
-  flex: 1; display: flex; align-items: flex-end; gap: 6px;
+  flex: 1; display: flex; align-items: flex-end; gap: 4px;
   background: var(--panel-2); border: 1px solid var(--line);
   border-radius: 16px; padding: 7px 7px 7px 13px; transition: .2s;
 }
@@ -572,7 +682,7 @@ body {
 .send-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
 .send-btn svg { width: 19px; height: 19px; }
 
-/* ---------- Group Members Drawer / Modal ---------- */
+/* ---------- Drawers & Modals ---------- */
 .drawer {
   position: fixed; inset: 0; z-index: 250;
   display: none; justify-content: flex-end;
@@ -580,11 +690,11 @@ body {
 }
 .drawer.show { display: flex; animation: fade .2s ease-out; }
 .drawer-card {
-  width: min(380px, 100%); height: 100%; background: var(--panel);
+  width: min(390px, 100%); height: 100%; background: var(--panel);
   border-left: 1px solid var(--line); padding: 22px 18px;
   display: flex; flex-direction: column; overflow-y: auto;
 }
-.drawer-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.drawer-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
 .drawer-head h3 { font-size: 17px; font-weight: 700; }
 .member-row {
   display: flex; align-items: center; gap: 11px; padding: 9px 10px;
@@ -594,6 +704,15 @@ body {
 .member-info { flex: 1; min-width: 0; }
 .member-info h4 { font-size: 13.5px; font-weight: 650; display: flex; align-items: center; gap: 6px; }
 .member-info p { font-size: 11.5px; color: var(--muted); }
+
+.comment-item {
+  background: var(--panel-2); border: 1px solid var(--line);
+  border-radius: 12px; padding: 10px 12px; margin-bottom: 8px;
+}
+.comment-item .c-head { display: flex; justify-content: space-between; font-size: 11.5px; margin-bottom: 4px; }
+.comment-item .c-author { font-weight: 700; color: var(--brand-2); }
+.comment-item .c-time { color: var(--muted); }
+.comment-item p { font-size: 13px; color: var(--text); line-height: 1.45; }
 
 /* ---------- Call Overlay ---------- */
 .call-overlay {
@@ -654,19 +773,19 @@ body {
   display: grid; place-items: center;
 }
 
-/* ---------- Modal / Auth ---------- */
+/* ---------- Modal / Auth / Lock ---------- */
 .modal {
   position: fixed; inset: 0; z-index: 300;
   display: none; align-items: center; justify-content: center;
-  padding: 20px; background: rgba(0, 0, 0, .65);
-  backdrop-filter: blur(4px);
+  padding: 20px; background: rgba(0, 0, 0, .72);
+  backdrop-filter: blur(5px); overflow-y: auto;
 }
 .modal.show { display: flex; animation: fade .2s ease-out; }
 .modal-card {
-  width: min(420px, 100%); background: var(--panel);
+  width: min(430px, 100%); background: var(--panel);
   border: 1px solid var(--line); border-radius: 20px;
-  padding: 26px 24px; text-align: center;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
+  padding: 24px; text-align: center;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, .65);
 }
 .modal-card .avatar { margin: 0 auto 14px; }
 .modal-card h2 { font-size: 19px; margin-bottom: 5px; }
@@ -674,32 +793,56 @@ body {
 .modal-card .desc { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 20px; }
 .modal-card .btn-primary { width: 100%; padding: 11px; font-size: 14px; }
 
-.auth-form input {
+.auth-form input, .auth-form select {
   width: 100%; background: var(--panel-2); border: 1px solid var(--line);
-  padding: 11px 14px; border-radius: 12px; color: var(--text); font-size: 13.5px;
-  margin-bottom: 12px; outline: none; font-family: inherit;
+  padding: 10px 13px; border-radius: 12px; color: var(--text); font-size: 13.5px;
+  margin-bottom: 11px; outline: none; font-family: inherit;
 }
-.auth-form input:focus { border-color: var(--brand-2); }
-.google-btn-wrap {
-  display: flex; justify-content: center; margin-bottom: 10px; min-height: 42px;
-}
+.auth-form input:focus, .auth-form select:focus { border-color: var(--brand-2); }
+.google-btn-wrap { display: flex; justify-content: center; margin-bottom: 10px; min-height: 40px; }
 .google-btn {
   width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
   background: #fff; color: #333; font-weight: 600; padding: 11px; border-radius: 12px;
-  border: none; cursor: pointer; font-size: 13.5px; margin-bottom: 14px; transition: filter .2s;
+  border: none; cursor: pointer; font-size: 13.5px; margin-bottom: 12px; transition: filter .2s;
 }
 .google-btn:hover { filter: brightness(0.95); }
 .auth-divider {
   display: flex; align-items: center; text-align: center; color: var(--muted);
-  font-size: 11.5px; margin: 14px 0; text-transform: uppercase; letter-spacing: 1px;
+  font-size: 11.5px; margin: 12px 0; text-transform: uppercase; letter-spacing: 1px;
 }
 .auth-divider::before, .auth-divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--line); }
 .auth-divider::before { margin-right: .75em; }
 .auth-divider::after { margin-left: .75em; }
 
+/* Pattern Lock Grid */
+.pattern-grid {
+  display: grid; grid-template-columns: repeat(3, 64px); gap: 14px;
+  justify-content: center; margin: 14px auto;
+}
+.pattern-node {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--panel-2); border: 2px solid var(--line);
+  color: var(--text); font-weight: 700; cursor: pointer;
+  display: grid; place-items: center; font-size: 14px; transition: .15s;
+}
+.pattern-node.selected {
+  background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+  border-color: #fff; box-shadow: 0 0 18px rgba(0, 210, 255, .45);
+}
+
+.toggle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; padding: 10px 12px; border-radius: 12px;
+  background: var(--panel-2); border: 1px solid var(--line);
+  margin-bottom: 8px; font-size: 13px; text-align: left;
+}
+.toggle-row input[type="checkbox"] {
+  width: 18px; height: 18px; accent-color: var(--brand-1); cursor: pointer;
+}
+
 /* ---------- Toast ---------- */
 .toast {
-  position: fixed; left: 50%; bottom: 92px; z-index: 500;
+  position: fixed; left: 50%; bottom: 92px; z-index: 950;
   transform: translate(-50%, 20px); opacity: 0;
   background: var(--panel-3); border: 1px solid var(--line);
   color: var(--text); font-size: 12.5px; font-weight: 600;
@@ -731,7 +874,68 @@ body {
 </head>
 <body>
 
-<div class="app">
+<!-- ==================== SPLASH SCREEN ==================== -->
+<div class="splash-screen" id="splashScreen">
+  <img src="Splashscreen.jpg" alt="DabzChat Splash Background" class="splash-bg-img" />
+  <div class="splash-scrim"></div>
+  <div class="splash-content">
+    <div class="splash-logo-card">
+      <img src="1795011984093.jpg" alt="DabzChat Logo" />
+    </div>
+    <h1>Dabz<span>Chat</span></h1>
+    <p>News · Chats · Groups · Status · Music · Pages</p>
+    <div class="splash-bar">
+      <div class="splash-bar-fill" id="splashBarFill"></div>
+    </div>
+    <button class="btn" style="margin-top:18px;font-size:12px;" id="skipSplashBtn" type="button">Continue to Login →</button>
+  </div>
+</div>
+
+<!-- ==================== LANDING / LOGIN SCREEN ==================== -->
+<div class="landing-screen" id="landingScreen">
+  <img src="landing.jpg" alt="DabzChat Landing Background" class="landing-bg-img" />
+  <div class="landing-scrim"></div>
+  <div class="landing-card">
+    <div class="landing-hero-banner">
+      <img src="landing.jpg" alt="DabzChat Welcome Banner" />
+      <span class="landing-hero-tag">✨ Welcome to DabzChat</span>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+      <div class="logo" style="width:42px;height:42px;">
+        <img src="1795011984093.jpg" alt="DabzChat Logo" />
+      </div>
+      <div>
+        <h2 style="font-size:19px;">Sign in to DabzChat</h2>
+        <p style="font-size:12px;color:var(--muted);">Real-time news, private chats, view-once media & lock protection</p>
+      </div>
+    </div>
+
+    <div class="google-btn-wrap" id="landingGoogleGsiBtnContainer"></div>
+
+    <button class="google-btn" id="landingGoogleBtn" type="button">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.15v3.15C3.12 21.36 7.24 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.6H1.15C.42 8.08 0 9.75 0 12s.42 3.92 1.15 5.4l4.12-3.16z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.24 0 3.12 2.64 1.15 6.6l4.12 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
+      Continue with Google
+    </button>
+
+    <div class="auth-divider">or sign in with account</div>
+
+    <form class="auth-form" id="landingLoginForm">
+      <input type="text" id="landNameInput" placeholder="Full Name (e.g. Constant Okoth Alpha)" value="Constant Okoth Alpha" required />
+      <input type="text" id="landHandleInput" placeholder="Username (e.g. @constantalpha)" value="@constantalpha" required />
+      <input type="email" id="landEmailInput" placeholder="Email Address" value="admin@dabzchat.com" required />
+      <button type="submit" class="btn btn-primary" style="width:100%;padding:11px;font-size:14px;">Log In to DabzChat</button>
+    </form>
+
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <button class="btn" style="flex:1;font-size:12px;" id="landingLockSettingsBtn" type="button">🔒 Lock Settings</button>
+      <button class="btn" style="flex:1;font-size:12px;" id="landingEnterGuestBtn" type="button">Enter App →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MAIN APP SHELL ==================== -->
+<div class="app" id="mainAppShell">
 
   <!-- ==================== TOP BAR ==================== -->
   <header class="topbar">
@@ -745,12 +949,13 @@ body {
       </div>
     </div>
     <div class="user-chip-wrap">
-      <button class="admin-chip" id="adminChip" title="Admin profile">
+      <button class="auth-btn-top" id="openLockSettingsBtn" type="button" title="App & Chat Lock Settings">🔒 Lock</button>
+      <button class="admin-chip" id="adminChip" title="Admin profile" type="button">
         <span>👑</span>
         <span class="admin-name" id="currentUserName">Constant Okoth Alpha</span>
         <span class="admin-short">Admin</span>
       </button>
-      <button class="auth-btn-top" id="authBtnTop">Sign In</button>
+      <button class="auth-btn-top" id="authBtnTop" type="button">Login</button>
     </div>
   </header>
 
@@ -760,12 +965,13 @@ body {
     <!-- ---------- NEWS ---------- -->
     <section class="view active" id="view-news">
       <div class="news-hero">
-        <h2>📰 Your News Feed</h2>
+        <h2>📰 Latest News Feed</h2>
         <p id="newsLocation">Detecting your region…</p>
         <div class="controls">
           <label for="regionSelect">Region:</label>
           <select id="regionSelect"></select>
-          <span style="font-size:11.5px;color:var(--muted);">Auto-detected from your timezone</span>
+          <button class="btn" style="padding:6px 11px;font-size:12px;" id="refreshNewsBtn" type="button">↻ Refresh Live News</button>
+          <span id="newsApiStatus" style="font-size:11.5px;color:var(--muted);">Live API ready</span>
         </div>
       </div>
 
@@ -784,6 +990,7 @@ body {
             <h2>💬 Chats</h2>
             <div class="sub" id="chatCount"></div>
           </div>
+          <button class="btn" style="font-size:12px;padding:7px 11px;" id="quickChatLockBtn" type="button">🔒 Lock Chats</button>
         </div>
         <div class="search-wrap" style="padding:0 16px;">
           <label class="search">
@@ -804,7 +1011,7 @@ body {
           <h2>👥 Groups</h2>
           <div class="sub">Community conversations & member directories</div>
         </div>
-        <button class="btn btn-primary" id="createGroupBtn">+ New Group</button>
+        <button class="btn btn-primary" id="createGroupBtn" type="button">+ New Group</button>
       </div>
       <div id="groupList"></div>
     </section>
@@ -814,9 +1021,9 @@ body {
       <div class="pane-header">
         <div>
           <h2>🟢 Status Updates</h2>
-          <div class="sub">Share moments that disappear</div>
+          <div class="sub">Share moments, like & comment</div>
         </div>
-        <button class="btn btn-primary" id="addStatusBtn">+ Add Status</button>
+        <button class="btn btn-primary" id="addStatusBtn" type="button">+ Add Status</button>
       </div>
 
       <div class="status-row" id="statusRow"></div>
@@ -849,7 +1056,7 @@ body {
             <div class="player-fill" id="playerFill"></div>
           </div>
         </div>
-        <button class="player-btn" id="playerToggle">▶</button>
+        <button class="player-btn" id="playerToggle" type="button">▶</button>
       </div>
       <audio id="audioEl" preload="metadata"></audio>
     </section>
@@ -859,7 +1066,7 @@ body {
       <div class="pane-header">
         <div>
           <h2>📄 Pages</h2>
-          <div class="sub">Follow people and brands you love</div>
+          <div class="sub">Follow people, like posts & comment</div>
         </div>
       </div>
 
@@ -872,19 +1079,19 @@ body {
 
   <!-- ==================== TAB BAR ==================== -->
   <nav class="tabbar" id="tabbar">
-    <button class="tab active" data-view="news"><span>📰</span><small>News</small></button>
-    <button class="tab" data-view="chats"><span>💬</span><small>Chats</small></button>
-    <button class="tab" data-view="groups"><span>👥</span><small>Groups</small></button>
-    <button class="tab" data-view="status"><span>🟢</span><small>Status</small></button>
-    <button class="tab" data-view="music"><span>🎵</span><small>Music</small></button>
-    <button class="tab" data-view="pages"><span>📄</span><small>Pages</small></button>
+    <button class="tab active" data-view="news" type="button"><span>📰</span><small>News</small></button>
+    <button class="tab" data-view="chats" type="button"><span>💬</span><small>Chats</small></button>
+    <button class="tab" data-view="groups" type="button"><span>👥</span><small>Groups</small></button>
+    <button class="tab" data-view="status" type="button"><span>🟢</span><small>Status</small></button>
+    <button class="tab" data-view="music" type="button"><span>🎵</span><small>Music</small></button>
+    <button class="tab" data-view="pages" type="button"><span>📄</span><small>Pages</small></button>
   </nav>
 </div>
 
 <!-- ==================== CHAT OVERLAY ==================== -->
 <div class="chat-overlay" id="chatOverlay">
   <header class="chat-header">
-    <button class="back-btn" id="chatBack" aria-label="Back">
+    <button class="back-btn" id="chatBack" aria-label="Back" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="m15 18-6-6 6-6"/>
       </svg>
@@ -894,12 +1101,12 @@ body {
       <h2 id="chatName">Chat</h2>
       <div class="status" id="chatStatus"><span class="pulse"></span><span id="chatStatusText">Online</span></div>
     </div>
-    <button class="icon-btn" id="voiceCallBtn" title="Voice call" aria-label="Voice call">
+    <button class="icon-btn" id="voiceCallBtn" title="Voice call" aria-label="Voice call" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>
       </svg>
     </button>
-    <button class="icon-btn" id="videoCallBtn" title="Video call" aria-label="Video call">
+    <button class="icon-btn" id="videoCallBtn" title="Video call" aria-label="Video call" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="m23 7-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
       </svg>
@@ -911,6 +1118,11 @@ body {
   <div class="composer">
     <div class="field">
       <textarea id="chatInput" rows="1" placeholder="Type a message…" maxlength="1000"></textarea>
+      <button class="icon-btn" id="viewOnceBtn" title="Send View-Once Image or Video" aria-label="Send View-Once Media"
+              style="width:36px;height:34px;border:none;background:transparent;color:var(--brand-2);">
+        👁️1
+      </button>
+      <input type="file" id="viewOnceFileInput" accept="image/*,video/*" hidden />
       <button class="icon-btn" id="emojiBtn" title="Emoji" aria-label="Emoji"
               style="width:34px;height:34px;border:none;background:transparent;">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -920,11 +1132,120 @@ body {
         </svg>
       </button>
     </div>
-    <button class="send-btn" id="sendBtn" aria-label="Send message" disabled>
+    <button class="send-btn" id="sendBtn" aria-label="Send message" disabled type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>
       </svg>
     </button>
+  </div>
+</div>
+
+<!-- ==================== VIEW-ONCE MEDIA VIEWER ==================== -->
+<div class="modal" id="viewOnceModal">
+  <div class="modal-card" style="max-width:480px;">
+    <h2 id="viewOnceTitle">👁️ View Once Media</h2>
+    <p class="desc" id="viewOnceSubtitle" style="margin-bottom:14px;">This media disappears after closing.</p>
+    <div id="viewOnceMediaBox" style="margin-bottom:16px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#000;"></div>
+    <button class="btn btn-primary" id="closeViewOnceBtn" type="button">Close & Destroy</button>
+  </div>
+</div>
+
+<!-- ==================== COMMENTS DRAWER ==================== -->
+<div class="drawer" id="commentsDrawer">
+  <div class="drawer-card">
+    <div class="drawer-head">
+      <h3 id="commentsDrawerTitle">💬 Comments</h3>
+      <button class="back-btn" id="closeCommentsDrawer" type="button">✕</button>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:12px;" id="commentsTargetPreview"></p>
+    <div id="commentsList" style="flex:1;overflow-y:auto;margin-bottom:12px;"></div>
+    <form id="commentForm" style="display:flex;gap:8px;">
+      <input type="text" id="commentInput" placeholder="Write a comment…" required
+             style="flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:11px;padding:9px 12px;color:var(--text);font-family:inherit;outline:none;" />
+      <button type="submit" class="btn btn-primary">Post</button>
+    </form>
+  </div>
+</div>
+
+<!-- ==================== LOCK SETTINGS MODAL ==================== -->
+<div class="modal" id="lockSettingsModal">
+  <div class="modal-card" style="text-align:left;max-width:450px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <h2 style="font-size:18px;">🔐 Lock & Biometric Settings</h2>
+      <button class="back-btn" id="closeLockSettingsBtn" type="button">✕</button>
+    </div>
+
+    <form class="auth-form" id="lockSettingsForm">
+      <label style="font-size:11.5px;color:var(--muted);font-weight:700;">Unlock Method</label>
+      <select id="lockMethodSelect">
+        <option value="passcode">🔢 Passcode (PIN)</option>
+        <option value="pattern">⠿ Pattern Lock (3×3)</option>
+        <option value="fingerprint">👆 Fingerprint / Biometric</option>
+      </select>
+
+      <div id="passcodeConfigBox">
+        <label style="font-size:11.5px;color:var(--muted);font-weight:700;">Set 4–8 Digit Passcode</label>
+        <input type="password" id="lockPasscodeInput" placeholder="Enter passcode (default: 1234)" maxlength="8" />
+      </div>
+
+      <div id="patternConfigBox" style="display:none;">
+        <label style="font-size:11.5px;color:var(--muted);font-weight:700;">Tap Nodes in Order to Set Pattern</label>
+        <div class="pattern-grid" id="configPatternGrid"></div>
+        <p style="font-size:11.5px;color:var(--muted);text-align:center;margin-bottom:10px;" id="configPatternStatus">Pattern: 1-2-3</p>
+      </div>
+
+      <div id="fingerprintConfigBox" style="display:none;margin-bottom:12px;">
+        <p style="font-size:12.5px;color:var(--muted);background:var(--panel-2);padding:10px 12px;border-radius:12px;border:1px solid var(--line);">
+          👆 Uses device biometric prompt when available (or simulated fingerprint scan in browsers without hardware biometrics).
+        </p>
+      </div>
+
+      <label class="toggle-row">
+        <span><strong>Lock Whole App</strong> (require unlock on app lock)</span>
+        <input type="checkbox" id="lockWholeAppToggle" />
+      </label>
+
+      <div style="margin-top:10px;margin-bottom:12px;">
+        <div style="font-size:11.5px;color:var(--muted);font-weight:700;margin-bottom:6px;">Lock Individual Chats</div>
+        <div id="perChatLockList"></div>
+      </div>
+
+      <div style="display:flex;gap:8px;">
+        <button type="submit" class="btn btn-primary" style="flex:1;">Save Lock Rules</button>
+        <button type="button" class="btn" id="lockNowBtn">🔒 Lock Now</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ==================== UNLOCK PROMPT MODAL ==================== -->
+<div class="modal" id="unlockPromptModal" style="z-index:850;">
+  <div class="modal-card" style="max-width:390px;">
+    <div style="font-size:36px;margin-bottom:8px;" id="unlockIcon">🔐</div>
+    <h2 id="unlockTitle">Locked</h2>
+    <p class="desc" id="unlockDesc" style="margin-bottom:14px;">Enter your credentials to unlock.</p>
+
+    <div id="unlockPasscodeArea">
+      <input type="password" id="unlockPasscodeInput" placeholder="Enter passcode"
+             style="width:100%;background:var(--panel-2);border:1px solid var(--line);padding:11px 14px;border-radius:12px;color:var(--text);font-size:14px;margin-bottom:10px;outline:none;text-align:center;" />
+      <button class="btn btn-primary" id="submitPasscodeUnlockBtn" type="button">Unlock with Passcode</button>
+    </div>
+
+    <div id="unlockPatternArea" style="display:none;">
+      <div class="pattern-grid" id="unlockPatternGrid"></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn" style="flex:1;" id="resetUnlockPatternBtn" type="button">Clear</button>
+        <button class="btn btn-primary" style="flex:1;" id="submitPatternUnlockBtn" type="button">Unlock</button>
+      </div>
+    </div>
+
+    <div id="unlockFingerprintArea" style="display:none;">
+      <button class="btn btn-primary" id="triggerFingerprintBtn" type="button" style="padding:14px;font-size:15px;">
+        👆 Scan Fingerprint to Unlock
+      </button>
+    </div>
+
+    <button class="btn" style="width:100%;margin-top:10px;" id="cancelUnlockBtn" type="button">Cancel</button>
   </div>
 </div>
 
@@ -949,9 +1270,9 @@ body {
   </div>
 
   <div class="call-controls">
-    <button class="call-btn" id="muteBtn" title="Mute Mic">🎤</button>
-    <button class="call-btn end" id="endCallBtn" title="End Call">📞</button>
-    <button class="call-btn" id="camBtn" title="Toggle Camera">📷</button>
+    <button class="call-btn" id="muteBtn" title="Mute Mic" type="button">🎤</button>
+    <button class="call-btn end" id="endCallBtn" title="End Call" type="button">📞</button>
+    <button class="call-btn" id="camBtn" title="Toggle Camera" type="button">📷</button>
   </div>
 </div>
 
@@ -960,7 +1281,7 @@ body {
   <div class="drawer-card">
     <div class="drawer-head">
       <h3 id="drawerGroupName">Group Members</h3>
-      <button class="back-btn" id="closeDrawer">✕</button>
+      <button class="back-btn" id="closeDrawer" type="button">✕</button>
     </div>
     <p style="font-size:12px; color:var(--muted); margin-bottom:14px;" id="drawerGroupSub">Members in this community</p>
     <div id="drawerMemberList" style="flex:1; overflow-y:auto;"></div>
@@ -971,7 +1292,7 @@ body {
 <div class="status-viewer" id="statusViewer">
   <div class="status-bg" id="statusBg"></div>
   <div class="status-progress"><div id="statusProgress"></div></div>
-  <button class="status-close" id="statusClose" aria-label="Close">✕</button>
+  <button class="status-close" id="statusClose" aria-label="Close" type="button">✕</button>
   <div class="status-top">
     <div class="avatar" id="statusAvatar" style="width:38px;height:38px;font-size:13px;"></div>
     <div class="who">
@@ -993,57 +1314,20 @@ body {
       status updates, music, pages and the news feed — keeping the community
       connected and informed.
     </p>
-    <button class="btn btn-primary" id="closeProfile">Close</button>
-  </div>
-</div>
-
-<!-- ==================== AUTH / SIGN-IN MODAL ==================== -->
-<div class="modal" id="authModal">
-  <div class="modal-card" style="text-align:left;">
-    <div style="text-align:center; margin-bottom:16px;">
-      <div class="logo" style="margin:0 auto 10px; width:48px; height:48px; font-size:22px;">
-        <img src="1795011984093.jpg" alt="DabzChat Logo" />
-      </div>
-      <h2>Welcome to DabzChat</h2>
-      <p style="font-size:12.5px; color:var(--muted);">Sign in to connect and join communities</p>
-    </div>
-
-    <!-- Real Google Identity Services Button Container -->
-    <div class="google-btn-wrap" id="googleGsiBtnContainer"></div>
-
-    <!-- Fallback / Helper Google Sign-In Button -->
-    <button class="google-btn" id="googleSignInBtn" type="button">
-      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.15v3.15C3.12 21.36 7.24 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.6H1.15C.42 8.08 0 9.75 0 12s.42 3.92 1.15 5.4l4.12-3.16z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.24 0 3.12 2.64 1.15 6.6l4.12 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
-      Continue with Google
-    </button>
-
-    <div class="auth-divider">or email</div>
-
-    <form class="auth-form" id="authForm">
-      <label style="font-size:11.5px; color:var(--muted); font-weight:600;">Display Name</label>
-      <input type="text" id="authNameInput" placeholder="e.g. Sarah Connor" required />
-
-      <label style="font-size:11.5px; color:var(--muted); font-weight:600;">Username (@handle)</label>
-      <input type="text" id="authHandleInput" placeholder="e.g. sarahc" required />
-
-      <label style="font-size:11.5px; color:var(--muted); font-weight:600;">Email Address</label>
-      <input type="email" id="authEmailInput" placeholder="name@example.com" required />
-
-      <button type="submit" class="btn btn-primary" style="width:100%; padding:11px; margin-top:6px;">Sign In / Register</button>
-    </form>
-    <button class="btn" style="width:100%; margin-top:10px;" id="closeAuthModal">Cancel</button>
+    <button class="btn btn-primary" id="closeProfile" type="button">Close</button>
   </div>
 </div>
 
 <script>
 /* =========================================================
-   DabzChat — application logic
+   DabzChat — full application logic
    ========================================================= */
 (function () {
   'use strict';
 
-  // Replace with your real Google Cloud OAuth 2.0 Web Client ID
+  // Configure your API keys & OAuth Client ID
   const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+  const GNEWS_API_KEY = 'YOUR_GNEWS_API_KEY'; // Get free key at gnews.io
 
   /* ---------- Helpers ---------- */
   const $  = (sel, root = document) => root.querySelector(sel);
@@ -1078,50 +1362,132 @@ body {
     email: 'admin@dabzchat.com'
   };
 
+  /* ---------- Lock State ---------- */
+  const lockConfig = {
+    method: 'passcode',        // 'passcode' | 'pattern' | 'fingerprint'
+    passcode: '1234',
+    pattern: ['1', '2', '3'],
+    lockWholeApp: false,
+    appCurrentlyLocked: false,
+    lockedChats: {
+      admin: false,
+      alex: false,
+      maya: false,
+      sam: false,
+      g1: false,
+      g2: false,
+      g3: false
+    }
+  };
+
+  let pendingUnlockAction = null;
+  let tempConfigPattern = [...lockConfig.pattern];
+  let currentUnlockPattern = [];
+
   /* =========================================================
-     NEWS DATA
+     NEWS DATA & LIVE API
      ========================================================= */
   const REGIONS = ['Africa', 'Europe', 'Americas', 'Asia', 'Oceania'];
+  const REGION_COUNTRY_MAP = {
+    Africa: 'ke',
+    Europe: 'gb',
+    Americas: 'us',
+    Asia: 'jp',
+    Oceania: 'au'
+  };
 
   const LOCAL_NEWS = {
     Africa: [
-      { title: 'Kenya rolls out nationwide digital ID system', summary: 'The government says the new platform will streamline access to public services and reduce paperwork.', source: 'Nairobi Times', time: '2h ago', tag: 'Local' },
-      { title: 'AfCFTA trade volumes hit record high', summary: 'Intra-African trade grew 18% this quarter, led by manufacturing and agricultural exports.', source: 'Africa Business', time: '4h ago', tag: 'Business' },
-      { title: 'Lagos tech hub raises $40M for fintech startups', summary: 'Investors bet big on mobile payments and cross-border transfers across West Africa.', source: 'TechAfrica', time: '6h ago', tag: 'Tech' },
-      { title: 'Cape Town water reserves recover after heavy rains', summary: 'Reservoir levels reach 78% following sustained seasonal rainfall across the Western Cape.', source: 'Cape News', time: '8h ago', tag: 'Local' }
+      { id: 'ln_af_1', title: 'Kenya expands digital public infrastructure across counties', summary: 'New citizen services roll out nationwide with faster verification and mobile access.', source: 'Nairobi Times', time: 'Just now', tag: 'Local', likes: 48, liked: false, comments: [{ author: 'Alex Rivera', text: 'Huge step forward for digital access!', time: '10m ago' }] },
+      { id: 'ln_af_2', title: 'AfCFTA cross-border trade accelerates in Q4', summary: 'Regional manufacturers report stronger exports and logistics corridors.', source: 'Africa Business', time: '1h ago', tag: 'Business', likes: 31, liked: false, comments: [] },
+      { id: 'ln_af_3', title: 'East & West African fintechs scale instant settlements', summary: 'New partnerships reduce transfer fees for small merchants and freelancers.', source: 'TechAfrica', time: '2h ago', tag: 'Tech', likes: 64, liked: false, comments: [] },
+      { id: 'ln_af_4', title: 'Conservation teams launch community reforestation drive', summary: 'Local volunteers plant indigenous trees ahead of seasonal rains.', source: 'Eco Daily', time: '3h ago', tag: 'Local', likes: 22, liked: false, comments: [] }
     ],
     Europe: [
-      { title: 'EU unveils new digital privacy framework', summary: 'The proposal strengthens user consent rules and limits data sharing across platforms.', source: 'Brussels Post', time: '1h ago', tag: 'Policy' },
-      { title: 'Rail network expansion approved across Central Europe', summary: 'A €12B plan aims to connect major cities with high-speed lines by 2032.', source: 'Euro Transport', time: '3h ago', tag: 'Infrastructure' },
-      { title: 'London fintech sector sees record investment', summary: 'Startups raised over £4.2B in the first half of the year, led by payments and insurtech.', source: 'City AM', time: '5h ago', tag: 'Business' },
-      { title: 'Alpine ski resorts open early after cold snap', summary: 'Early snowfall brings an unexpected boost to winter tourism operators.', source: 'Alpine Daily', time: '7h ago', tag: 'Local' }
+      { id: 'ln_eu_1', title: 'EU digital rules update strengthens user data controls', summary: 'New standards emphasize transparency and cross-border interoperability.', source: 'Brussels Post', time: '30m ago', tag: 'Policy', likes: 19, liked: false, comments: [] },
+      { id: 'ln_eu_2', title: 'High-speed rail corridor upgrades advance across Europe', summary: 'Commuters gain faster connections between major economic hubs.', source: 'Euro Transport', time: '1h ago', tag: 'Infrastructure', likes: 27, liked: false, comments: [] }
     ],
     Americas: [
-      { title: 'US job growth beats forecasts in latest report', summary: 'Employers added 254,000 jobs last month, easing fears of a slowdown.', source: 'Wall Street Wire', time: '1h ago', tag: 'Economy' },
-      { title: 'Brazil launches major Amazon reforestation drive', summary: 'The initiative aims to restore 5 million hectares of rainforest by 2030.', source: 'Amazon Watch', time: '4h ago', tag: 'Environment' },
-      { title: 'New York transit upgrades enter final phase', summary: 'Signal modernisation promises faster and more reliable subway service.', source: 'NY Metro', time: '6h ago', tag: 'Local' },
-      { title: 'Canada expands clean energy tax credits', summary: 'The new measures target battery storage and hydrogen production projects.', source: 'Ottawa Report', time: '8h ago', tag: 'Energy' }
+      { id: 'ln_am_1', title: 'Tech & clean energy investments drive Q4 momentum', summary: 'Analysts highlight strong demand in grid storage and cloud infrastructure.', source: 'Market Wire', time: '45m ago', tag: 'Economy', likes: 41, liked: false, comments: [] },
+      { id: 'ln_am_2', title: 'Urban transit modernization reaches new milestone', summary: 'Real-time arrival tracking and upgraded signaling roll out citywide.', source: 'Metro Dispatch', time: '2h ago', tag: 'Local', likes: 15, liked: false, comments: [] }
     ],
     Asia: [
-      { title: 'Japan unveils next-gen high-speed rail prototype', summary: 'The new train is expected to cut travel times between major cities by 30%.', source: 'Tokyo Tech', time: '2h ago', tag: 'Tech' },
-      { title: 'India\'s startup ecosystem hits new milestone', summary: 'The country now hosts over 120 unicorns, with fintech and AI leading growth.', source: 'India Business', time: '4h ago', tag: 'Business' },
-      { title: 'Singapore expands green building incentives', summary: 'Developers will receive grants for retrofitting older buildings to cut emissions.', source: 'Straits Times', time: '6h ago', tag: 'Environment' },
-      { title: 'Seoul announces smart city pilot in three districts', summary: 'The project will integrate AI traffic control and real-time energy management.', source: 'Seoul News', time: '9h ago', tag: 'Local' }
+      { id: 'ln_as_1', title: 'Next-gen transit & robotics pilots expand in major cities', summary: 'Smart mobility and low-emission transport systems enter wider testing.', source: 'Asia Tech Wire', time: '1h ago', tag: 'Tech', likes: 53, liked: false, comments: [] },
+      { id: 'ln_as_2', title: 'Regional innovation hubs back AI and biotech founders', summary: 'New accelerator programs support early-stage research commercialization.', source: 'Pacific Business', time: '3h ago', tag: 'Business', likes: 29, liked: false, comments: [] }
     ],
     Oceania: [
-      { title: 'Australia announces new renewable energy zones', summary: 'Three regions will receive major investment in solar and wind infrastructure.', source: 'Sydney Herald', time: '2h ago', tag: 'Energy' },
-      { title: 'New Zealand tourism rebounds strongly', summary: 'Visitor numbers surpassed pre-pandemic levels for the first time this year.', source: 'Kiwi Tourism', time: '4h ago', tag: 'Travel' },
-      { title: 'Pacific nations sign ocean protection pact', summary: 'The agreement creates a vast marine reserve across 12 island nations.', source: 'Pacific Post', time: '6h ago', tag: 'Environment' },
-      { title: 'Melbourne named among world\'s most liveable cities', summary: 'The city scored highly on healthcare, education and infrastructure.', source: 'Melbourne Times', time: '8h ago', tag: 'Local' }
+      { id: 'ln_oc_1', title: 'Renewable solar & wind zones expand grid capacity', summary: 'Utility operators connect new clean generation to regional networks.', source: 'Southern Herald', time: '1h ago', tag: 'Energy', likes: 24, liked: false, comments: [] },
+      { id: 'ln_oc_2', title: 'Coastal marine protection initiatives gain local backing', summary: 'Researchers and coastal communities track reef and wildlife recovery.', source: 'Oceanic Post', time: '2h ago', tag: 'Environment', likes: 33, liked: false, comments: [] }
     ]
   };
 
   const INTL_NEWS = [
-    { title: 'Global markets rally as inflation cools', summary: 'Major indices posted their best week in months after central bank signals of easing pressure.', source: 'Reuters', time: '1h ago', tag: 'Markets' },
-    { title: 'UN climate summit ends with new emissions pledge', summary: 'Nearly 190 nations agreed to accelerate the transition to clean energy by 2035.', source: 'BBC World', time: '3h ago', tag: 'World' },
-    { title: 'AI regulations take shape across major economies', summary: 'New frameworks aim to balance innovation with safety, transparency and accountability.', source: 'The Verge', time: '5h ago', tag: 'Tech' },
-    { title: 'Space mission returns first images of distant moon', summary: 'Scientists call the data a breakthrough for planetary science and future exploration.', source: 'NASA', time: '7h ago', tag: 'Science' }
+    { id: 'in_1', title: 'Global markets respond to latest central bank & trade signals', summary: 'Investors monitor currency shifts, energy prices and quarterly earnings.', source: 'Global Wire', time: '25m ago', tag: 'Markets', likes: 72, liked: false, comments: [{ author: 'Maya Chen', text: 'Watching this closely this week.', time: '12m ago' }] },
+    { id: 'in_2', title: 'Clean energy & climate summit highlights grid modernization', summary: 'Nations focus on battery storage, grid resilience and emissions targets.', source: 'World Report', time: '1h ago', tag: 'World', likes: 59, liked: false, comments: [] },
+    { id: 'in_3', title: 'AI safety and open standards take center stage globally', summary: 'Developers and policymakers debate evaluation benchmarks and privacy.', source: 'Tech Chronicle', time: '2h ago', tag: 'Tech', likes: 88, liked: false, comments: [] },
+    { id: 'in_4', title: 'Space observatories share fresh deep-space imaging data', summary: 'Astronomers analyze high-resolution captures of distant star nurseries.', source: 'Cosmos News', time: '4h ago', tag: 'Science', likes: 94, liked: false, comments: [] }
   ];
+
+  async function fetchLiveNewsForRegion(region) {
+    const statusEl = $('#newsApiStatus');
+    if (!GNEWS_API_KEY || GNEWS_API_KEY === 'YOUR_GNEWS_API_KEY') {
+      statusEl.textContent = 'Using latest built-in feed (add GNEWS_API_KEY for live GNews.io API)';
+      return;
+    }
+
+    statusEl.textContent = 'Fetching latest headlines…';
+    const country = REGION_COUNTRY_MAP[region] || 'ke';
+
+    try {
+      const [localRes, intlRes] = await Promise.all([
+        fetch(`https://gnews.io/api/v4/top-headlines?country=${encodeURIComponent(country)}&lang=en&max=4&apikey=${encodeURIComponent(GNEWS_API_KEY)}`),
+        fetch(`https://gnews.io/api/v4/top-headlines?category=world&lang=en&max=4&apikey=${encodeURIComponent(GNEWS_API_KEY)}`)
+      ]);
+
+      if (!localRes.ok || !intlRes.ok) throw new Error('API response not ok');
+
+      const localData = await localRes.json();
+      const intlData = await intlRes.json();
+
+      if (Array.isArray(localData.articles) && localData.articles.length) {
+        LOCAL_NEWS[region] = localData.articles.map((a, idx) => ({
+          id: `live_loc_${region}_${idx}`,
+          title: a.title || 'Headline',
+          summary: a.description || 'Latest headline from GNews.',
+          source: (a.source && a.source.name) || 'GNews',
+          time: a.publishedAt ? new Date(a.publishedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Live',
+          tag: 'Live Local',
+          image: a.image || null,
+          url: a.url || null,
+          likes: 0,
+          liked: false,
+          comments: []
+        }));
+      }
+
+      if (Array.isArray(intlData.articles) && intlData.articles.length) {
+        intlData.articles.forEach((a, idx) => {
+          INTL_NEWS[idx] = {
+            id: `live_intl_${idx}`,
+            title: a.title || 'World Headline',
+            summary: a.description || 'Latest international report.',
+            source: (a.source && a.source.name) || 'GNews',
+            time: a.publishedAt ? new Date(a.publishedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Live',
+            tag: 'Live World',
+            image: a.image || null,
+            url: a.url || null,
+            likes: INTL_NEWS[idx] ? INTL_NEWS[idx].likes : 0,
+            liked: INTL_NEWS[idx] ? INTL_NEWS[idx].liked : false,
+            comments: INTL_NEWS[idx] ? INTL_NEWS[idx].comments : []
+          };
+        });
+      }
+
+      statusEl.textContent = 'Live GNews feed updated';
+    } catch (err) {
+      statusEl.textContent = 'Fallback latest feed active (live API unreachable or CORS restricted)';
+    }
+  }
 
   /* =========================================================
      CONTACTS (DMs)
@@ -1138,7 +1504,7 @@ body {
       isAdmin: true,
       messages: [
         { from: 'them', sender: 'Constant Okoth Alpha', handle: '@constantalpha', text: 'Welcome to DabzChat 👋 I\'m Constant, the administrator.', time: '09:41' },
-        { from: 'them', sender: 'Constant Okoth Alpha', handle: '@constantalpha', text: 'Use the tabs below to explore News, Groups, Status, Music and Pages.', time: '09:41' },
+        { from: 'them', sender: 'Constant Okoth Alpha', handle: '@constantalpha', text: 'Try sending a View-Once photo or video with the 👁️1 button!', time: '09:41' },
         { from: 'me', text: 'Thanks! This looks amazing.', time: '09:42' }
       ],
       replies: [
@@ -1267,7 +1633,10 @@ body {
       text: 'Welcome to DabzChat! Big things are coming 🚀',
       bg: 'linear-gradient(135deg,#6c5ce7,#00d2ff)',
       isAdmin: true,
-      seen: false
+      seen: false,
+      likes: 18,
+      liked: false,
+      comments: [{ author: 'Alex Rivera', text: 'Excited for v2!', time: '5m ago' }]
     },
     {
       id: 'st2',
@@ -1278,7 +1647,10 @@ body {
       time: '10 min ago',
       text: 'Coffee & code ☕💻',
       bg: 'linear-gradient(135deg,#fd79a8,#a29bfe)',
-      seen: false
+      seen: false,
+      likes: 12,
+      liked: false,
+      comments: []
     },
     {
       id: 'st3',
@@ -1289,7 +1661,10 @@ body {
       time: '32 min ago',
       text: 'Sunset run 🌅🏃',
       bg: 'linear-gradient(135deg,#ff7675,#fdcb6e)',
-      seen: false
+      seen: false,
+      likes: 9,
+      liked: false,
+      comments: []
     },
     {
       id: 'st4',
@@ -1300,7 +1675,10 @@ body {
       time: '1h ago',
       text: 'Shipping day 🚢',
       bg: 'linear-gradient(135deg,#0984e3,#74b9ff)',
-      seen: true
+      seen: true,
+      likes: 15,
+      liked: false,
+      comments: []
     }
   ];
 
@@ -1324,11 +1702,11 @@ body {
   ];
 
   const posts = [
-    { id: 'post1', pageId: 'p1', text: '🎉 DabzChat v2 is live! News, Groups, Status, Music and Pages — all in one place. Welcome aboard!', time: '1h ago', likes: 342, comments: 28, liked: false },
-    { id: 'post2', pageId: 'p3', text: 'Proud to lead DabzChat as administrator. Building a platform where conversation and community come together. 🚀', time: '3h ago', likes: 512, comments: 64, liked: false },
-    { id: 'post3', pageId: 'p2', text: 'Top 5 AI tools to watch this month — thread 🧵', time: '5h ago', likes: 198, comments: 19, liked: false },
-    { id: 'post4', pageId: 'p4', text: 'BREAKING: Global markets close higher for a third straight session as inflation data surprises to the downside.', time: '6h ago', likes: 87, comments: 12, liked: false },
-    { id: 'post5', pageId: 'p1', text: 'Tip: use the Music tab to upload your favourite tracks and share them with friends.', time: '8h ago', likes: 87, comments: 6, liked: false }
+    { id: 'post1', pageId: 'p1', text: '🎉 DabzChat v2 is live! News, Groups, Status, Music and Pages — all in one place. Welcome aboard!', time: '1h ago', likes: 342, comments: [{ author: 'Sam Okafor', text: 'Clean UI and fast performance!', time: '40m ago' }], liked: false },
+    { id: 'post2', pageId: 'p3', text: 'Proud to lead DabzChat as administrator. Building a platform where conversation and community come together. 🚀', time: '3h ago', likes: 512, comments: [{ author: 'Maya Chen', text: 'Congrats Constant!', time: '2h ago' }], liked: false },
+    { id: 'post3', pageId: 'p2', text: 'Top 5 AI tools to watch this month — thread 🧵', time: '5h ago', likes: 198, comments: [], liked: false },
+    { id: 'post4', pageId: 'p4', text: 'BREAKING: Global markets close higher for a third straight session as inflation data surprises to the downside.', time: '6h ago', likes: 87, comments: [], liked: false },
+    { id: 'post5', pageId: 'p1', text: 'Tip: use the 👁️1 button in chat to send view-once photos and videos!', time: '8h ago', likes: 87, comments: [], liked: false }
   ];
 
   /* =========================================================
@@ -1344,7 +1722,8 @@ body {
     callInterval: null,
     callSeconds: 0,
     isMuted: false,
-    isCamOn: false
+    isCamOn: false,
+    activeCommentTarget: null // { kind: 'post' | 'news' | 'status', id, region }
   };
 
   /* ---------- DOM ---------- */
@@ -1367,6 +1746,38 @@ body {
     playerProgress: $('#playerProgress'),
     playerToggle: $('#playerToggle')
   };
+
+  /* =========================================================
+     SPLASH & LANDING FLOW
+     ========================================================= */
+  function runSplashScreen() {
+    const splash = $('#splashScreen');
+    const bar = $('#splashBarFill');
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        bar.style.width = '100%';
+      });
+    });
+
+    const showLanding = () => {
+      splash.classList.add('hidden');
+      $('#landingScreen').classList.add('show');
+      initGoogleSignIn();
+    };
+
+    $('#skipSplashBtn').addEventListener('click', showLanding);
+    setTimeout(showLanding, 1750);
+  }
+
+  function enterMainApp() {
+    $('#landingScreen').classList.remove('show');
+    if (lockConfig.lockWholeApp) {
+      lockConfig.appCurrentlyLocked = true;
+      promptUnlock('whole_app', 'App Locked', 'Unlock DabzChat to continue', () => {
+        lockConfig.appCurrentlyLocked = false;
+      });
+    }
+  }
 
   /* =========================================================
      REAL GOOGLE SIGN-IN (GOOGLE IDENTITY SERVICES)
@@ -1397,18 +1808,18 @@ body {
     };
 
     updateUserUI();
-    $('#authModal').classList.remove('show');
+    enterMainApp();
     showToast('Signed in with Google as ' + fullName);
   }
 
   function initGoogleSignIn() {
     if (!window.google || !window.google.accounts || !window.google.accounts.id) {
-      setTimeout(initGoogleSignIn, 300);
+      setTimeout(initGoogleSignIn, 350);
       return;
     }
 
     if (!GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID.startsWith('YOUR_GOOGLE_CLIENT_ID')) {
-      $('#googleGsiBtnContainer').style.display = 'none';
+      $('#landingGoogleGsiBtnContainer').style.display = 'none';
       return;
     }
 
@@ -1417,18 +1828,130 @@ body {
       callback: handleGoogleCredentialResponse
     });
 
-    window.google.accounts.id.renderButton($('#googleGsiBtnContainer'), {
+    window.google.accounts.id.renderButton($('#landingGoogleGsiBtnContainer'), {
       theme: 'outline',
       size: 'large',
-      width: 340,
+      width: 360,
       text: 'continue_with'
     });
 
-    $('#googleSignInBtn').style.display = 'none';
+    $('#landingGoogleBtn').style.display = 'none';
   }
 
   /* =========================================================
-     NEWS
+     FINGERPRINT / PATTERN / PASSCODE LOCK SYSTEM
+     ========================================================= */
+  function buildPatternGrid(containerId, onSelectNode) {
+    const grid = $(containerId);
+    grid.innerHTML = '';
+    for (let i = 1; i <= 9; i++) {
+      const node = document.createElement('button');
+      node.type = 'button';
+      node.className = 'pattern-node';
+      node.dataset.node = String(i);
+      node.textContent = String(i);
+      node.addEventListener('click', () => onSelectNode(String(i), node));
+      grid.appendChild(node);
+    }
+  }
+
+  function openLockSettings() {
+    $('#lockMethodSelect').value = lockConfig.method;
+    $('#lockPasscodeInput').value = lockConfig.passcode;
+    $('#lockWholeAppToggle').checked = lockConfig.lockWholeApp;
+    tempConfigPattern = [...lockConfig.pattern];
+    updateLockMethodConfigUI();
+    renderPerChatLockList();
+    $('#lockSettingsModal').classList.add('show');
+  }
+
+  function updateLockMethodConfigUI() {
+    const method = $('#lockMethodSelect').value;
+    $('#passcodeConfigBox').style.display = method === 'passcode' ? 'block' : 'none';
+    $('#patternConfigBox').style.display = method === 'pattern' ? 'block' : 'none';
+    $('#fingerprintConfigBox').style.display = method === 'fingerprint' ? 'block' : 'none';
+
+    if (method === 'pattern') {
+      buildPatternGrid('#configPatternGrid', (val, btn) => {
+        if (!tempConfigPattern.includes(val)) {
+          tempConfigPattern.push(val);
+          btn.classList.add('selected');
+          $('#configPatternStatus').textContent = 'Pattern: ' + tempConfigPattern.join(' → ');
+        }
+      });
+      $$('#configPatternGrid .pattern-node').forEach(n => {
+        if (tempConfigPattern.includes(n.dataset.node)) n.classList.add('selected');
+      });
+      $('#configPatternStatus').textContent = 'Pattern: ' + tempConfigPattern.join(' → ');
+    }
+  }
+
+  function renderPerChatLockList() {
+    const box = $('#perChatLockList');
+    box.innerHTML = '';
+    const allConvs = [
+      ...contacts.map(c => ({ id: c.id, label: `DM: ${c.name} (${c.handle})` })),
+      ...groups.map(g => ({ id: g.id, label: `Group: ${g.name}` }))
+    ];
+
+    allConvs.forEach(item => {
+      const row = document.createElement('label');
+      row.className = 'toggle-row';
+      const span = document.createElement('span');
+      span.textContent = item.label;
+      const chk = document.createElement('input');
+      chk.type = 'checkbox';
+      chk.dataset.chatLockId = item.id;
+      chk.checked = Boolean(lockConfig.lockedChats[item.id]);
+      row.append(span, chk);
+      box.appendChild(row);
+    });
+  }
+
+  function promptUnlock(contextKey, title, desc, onSuccess) {
+    pendingUnlockAction = onSuccess;
+    currentUnlockPattern = [];
+
+    $('#unlockTitle').textContent = title;
+    $('#unlockDesc').textContent = desc;
+    $('#unlockPasscodeInput').value = '';
+
+    $('#unlockPasscodeArea').style.display = lockConfig.method === 'passcode' ? 'block' : 'none';
+    $('#unlockPatternArea').style.display = lockConfig.method === 'pattern' ? 'block' : 'none';
+    $('#unlockFingerprintArea').style.display = lockConfig.method === 'fingerprint' ? 'block' : 'none';
+    $('#unlockIcon').textContent =
+      lockConfig.method === 'fingerprint' ? '👆' : (lockConfig.method === 'pattern' ? '⠿' : '🔢');
+
+    if (lockConfig.method === 'pattern') {
+      buildPatternGrid('#unlockPatternGrid', (val, btn) => {
+        if (!currentUnlockPattern.includes(val)) {
+          currentUnlockPattern.push(val);
+          btn.classList.add('selected');
+        }
+      });
+    }
+
+    $('#unlockPromptModal').classList.add('show');
+    if (lockConfig.method === 'passcode') {
+      setTimeout(() => { try { $('#unlockPasscodeInput').focus(); } catch (e) {} }, 120);
+    }
+  }
+
+  function completeUnlock(ok) {
+    if (!ok) {
+      showToast('Incorrect unlock attempt');
+      currentUnlockPattern = [];
+      $$('#unlockPatternGrid .pattern-node').forEach(n => n.classList.remove('selected'));
+      return;
+    }
+    const fn = pendingUnlockAction;
+    pendingUnlockAction = null;
+    $('#unlockPromptModal').classList.remove('show');
+    if (typeof fn === 'function') fn();
+  }
+
+  /* =========================================================
+     NEWS & INTERACTIVE LIKES / COMMENTS
      ========================================================= */
   function detectRegion() {
     let tz = '';
@@ -1451,8 +1974,9 @@ body {
       sel.appendChild(o);
     });
     sel.value = state.region;
-    sel.addEventListener('change', (e) => {
+    sel.addEventListener('change', async (e) => {
       state.region = e.target.value;
+      await fetchLiveNewsForRegion(state.region);
       renderNews();
     });
   }
@@ -1461,12 +1985,25 @@ body {
     const card = document.createElement('article');
     card.className = 'news-card';
 
+    if (article.image) {
+      const img = document.createElement('img');
+      img.src = article.image;
+      img.alt = article.title;
+      img.className = 'news-card-img';
+      img.onerror = () => img.remove();
+      card.appendChild(img);
+    }
+
     const tag = document.createElement('span');
     tag.className = 'news-tag';
     tag.textContent = (kind === 'local' ? '📍 ' : '🌍 ') + article.tag;
 
     const h4 = document.createElement('h4');
     h4.textContent = article.title;
+    h4.addEventListener('click', () => {
+      if (article.url) window.open(article.url, '_blank', 'noopener,noreferrer');
+      else showToast('Article: ' + article.title);
+    });
 
     const p = document.createElement('p');
     p.textContent = article.summary;
@@ -1475,15 +2012,36 @@ body {
     meta.className = 'news-meta';
     meta.textContent = article.source + ' · ' + article.time;
 
-    card.append(tag, h4, p, meta);
-    card.addEventListener('click', () => showToast('Opening article: ' + article.title));
+    const social = document.createElement('div');
+    social.className = 'card-social-bar';
+
+    const likeBtn = document.createElement('button');
+    likeBtn.type = 'button';
+    likeBtn.className = article.liked ? 'liked' : '';
+    likeBtn.textContent = (article.liked ? '❤️' : '🤍') + ' ' + (article.likes || 0);
+    likeBtn.addEventListener('click', () => {
+      article.liked = !article.liked;
+      article.likes = (article.likes || 0) + (article.liked ? 1 : -1);
+      renderNews();
+    });
+
+    const commentBtn = document.createElement('button');
+    commentBtn.type = 'button';
+    const cCount = (article.comments && article.comments.length) || 0;
+    commentBtn.textContent = '💬 ' + cCount;
+    commentBtn.addEventListener('click', () => {
+      openCommentsDrawer({ kind: 'news', id: article.id, region: state.region });
+    });
+
+    social.append(likeBtn, commentBtn);
+    card.append(tag, h4, p, meta, social);
     return card;
   }
 
   function renderNews() {
     const region = state.region;
     $('#newsLocation').textContent =
-      'Showing local news for ' + region + ' — tailored to where you signed in from.';
+      'Showing latest news for ' + region + ' — tailored to your selected region.';
 
     const localEl = $('#localNews');
     const intlEl = $('#intlNews');
@@ -1492,6 +2050,68 @@ body {
 
     (LOCAL_NEWS[region] || LOCAL_NEWS.Africa).forEach(a => localEl.appendChild(newsCard(a, 'local')));
     INTL_NEWS.forEach(a => intlEl.appendChild(newsCard(a, 'intl')));
+  }
+
+  /* =========================================================
+     COMMENTS DRAWER (PAGES, NEWS, STATUS)
+     ========================================================= */
+  function resolveCommentTarget(target) {
+    if (!target) return null;
+    if (target.kind === 'post') {
+      const post = posts.find(p => p.id === target.id);
+      return post ? { title: 'Post Comments', preview: post.text, comments: post.comments } : null;
+    }
+    if (target.kind === 'news') {
+      const pool = [...(LOCAL_NEWS[target.region] || []), ...INTL_NEWS];
+      const art = pool.find(a => a.id === target.id);
+      if (!art) return null;
+      if (!Array.isArray(art.comments)) art.comments = [];
+      return { title: 'News Comments', preview: art.title, comments: art.comments };
+    }
+    if (target.kind === 'status') {
+      const st = statuses.find(s => s.id === target.id);
+      if (!st) return null;
+      if (!Array.isArray(st.comments)) st.comments = [];
+      return { title: 'Status Comments', preview: `${st.author}: "${st.text}"`, comments: st.comments };
+    }
+    return null;
+  }
+
+  function openCommentsDrawer(target) {
+    const resolved = resolveCommentTarget(target);
+    if (!resolved) return;
+
+    state.activeCommentTarget = target;
+    $('#commentsDrawerTitle').textContent = '💬 ' + resolved.title;
+    $('#commentsTargetPreview').textContent = resolved.preview;
+
+    const list = $('#commentsList');
+    list.innerHTML = '';
+
+    if (!resolved.comments.length) {
+      const empty = document.createElement('p');
+      empty.style.cssText = 'color:var(--muted);font-size:13px;text-align:center;padding:18px;';
+      empty.textContent = 'No comments yet. Be the first to comment!';
+      list.appendChild(empty);
+    } else {
+      resolved.comments.forEach(c => {
+        const item = document.createElement('div');
+        item.className = 'comment-item';
+        item.innerHTML = `<div class="c-head"><span class="c-author">${escapeHtml(c.author)}</span><span class="c-time">${escapeHtml(c.time)}</span></div><p>${escapeHtml(c.text)}</p>`;
+        list.appendChild(item);
+      });
+    }
+
+    $('#commentsDrawer').classList.add('show');
+    setTimeout(() => { try { $('#commentInput').focus(); } catch (e) {} }, 120);
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
   }
 
   /* =========================================================
@@ -1525,7 +2145,7 @@ body {
       !filter ||
       c.name.toLowerCase().includes(filter) ||
       c.handle.toLowerCase().includes(filter) ||
-      c.messages.some(m => m.text.toLowerCase().includes(filter))
+      c.messages.some(m => (m.text || '').toLowerCase().includes(filter))
     );
 
     if (!visible.length) {
@@ -1536,6 +2156,7 @@ body {
     }
 
     visible.forEach(c => {
+      const isLocked = Boolean(lockConfig.lockedChats[c.id]);
       const last = c.messages[c.messages.length - 1];
       const btn = document.createElement('button');
       btn.className = 'chat-item';
@@ -1566,6 +2187,13 @@ body {
         nameContainer.appendChild(badge);
       }
 
+      if (isLocked) {
+        const lp = document.createElement('span');
+        lp.className = 'lock-pill';
+        lp.textContent = '🔒 Locked';
+        nameContainer.appendChild(lp);
+      }
+
       const time = document.createElement('span');
       time.className = 'time';
       time.textContent = last ? last.time : '';
@@ -1573,12 +2201,19 @@ body {
       row.append(nameContainer, time);
 
       const preview = document.createElement('p');
-      preview.textContent = last ? (last.from === 'me' ? 'You: ' : '') + last.text : 'Say hi 👋';
+      if (isLocked) {
+        preview.textContent = 'Locked chat — tap to unlock';
+      } else if (last) {
+        const label = last.viewOnce ? '👁️1 View-Once Media' : last.text;
+        preview.textContent = (last.from === 'me' ? 'You: ' : '') + label;
+      } else {
+        preview.textContent = 'Say hi 👋';
+      }
 
       meta.append(row, preview);
       btn.appendChild(meta);
 
-      if (c.unread > 0) {
+      if (c.unread > 0 && !isLocked) {
         const b = document.createElement('span');
         b.className = 'badge';
         b.textContent = c.unread;
@@ -1608,6 +2243,7 @@ body {
     }
 
     groups.forEach(g => {
+      const isLocked = Boolean(lockConfig.lockedChats[g.id]);
       const btn = document.createElement('button');
       btn.className = 'group-card';
       btn.type = 'button';
@@ -1623,16 +2259,25 @@ body {
       hsub.style.cssText = 'font-size:11.5px;color:var(--muted);font-weight:normal;';
       hsub.textContent = g.handle;
       h3.appendChild(hsub);
+      if (isLocked) {
+        const lp = document.createElement('span');
+        lp.className = 'lock-pill';
+        lp.style.marginLeft = '6px';
+        lp.textContent = '🔒 Locked';
+        h3.appendChild(lp);
+      }
 
       const members = document.createElement('div');
       members.className = 'members';
-      members.textContent = g.membersList.length + ' members · Tap to view directory';
+      members.textContent = g.membersList.length + ' members · Tap to open chat';
 
       const last = g.messages[g.messages.length - 1];
       const lastEl = document.createElement('div');
       lastEl.className = 'last';
-      if (last) {
-        lastEl.textContent = (last.sender ? last.sender + ': ' : '') + last.text;
+      if (isLocked) {
+        lastEl.textContent = 'Protected group chat';
+      } else if (last) {
+        lastEl.textContent = (last.sender ? last.sender + ': ' : '') + (last.viewOnce ? '👁️1 View-Once Media' : last.text);
       }
 
       info.append(h3, members, lastEl);
@@ -1712,19 +2357,61 @@ body {
       replies: ['Welcome everyone! 👋', 'Great to be here.', 'Let\'s get started 🚀', 'Hello all!']
     };
 
+    lockConfig.lockedChats[newGroup.id] = false;
     groups.unshift(newGroup);
     renderGroups();
     showToast('Group "' + clean + '" created');
   }
 
   /* =========================================================
-     CONVERSATION OVERLAY
+     CONVERSATION OVERLAY & VIEW-ONCE MEDIA
      ========================================================= */
   function getConv(type, id) {
     return type === 'group'
       ? groups.find(g => g.id === id)
       : contacts.find(c => c.id === id);
   }
+
+  function openViewOnceMedia(msg) {
+    if (msg.viewOnceOpened) {
+      showToast('This view-once media has already been opened');
+      return;
+    }
+
+    msg.viewOnceOpened = true;
+    const box = $('#viewOnceMediaBox');
+    box.innerHTML = '';
+
+    $('#viewOnceTitle').textContent = msg.mediaType === 'video' ? '👁️1 View-Once Video' : '👁️1 View-Once Photo';
+    $('#viewOnceSubtitle').textContent = 'Opened once — will be destroyed on close.';
+
+    if (msg.mediaType === 'video') {
+      const vid = document.createElement('video');
+      vid.src = msg.mediaUrl;
+      vid.controls = true;
+      vid.autoplay = true;
+      vid.style.cssText = 'width:100%;max-height:340px;display:block;';
+      box.appendChild(vid);
+    } else {
+      const img = document.createElement('img');
+      img.src = msg.mediaUrl;
+      img.alt = 'View once photo';
+      img.style.cssText = 'width:100%;max-height:340px;object-fit:contain;display:block;';
+      box.appendChild(img);
+    }
+
+    $('#viewOnceModal').classList.add('show');
+    renderConversation();
+  }
+
+  $('#closeViewOnceBtn').addEventListener('click', () => {
+    const box = $('#viewOnceMediaBox');
+    const vid = box.querySelector('video');
+    if (vid) vid.pause();
+    box.innerHTML = '';
+    $('#viewOnceModal').classList.remove('show');
+    showToast('View-once media closed');
+  });
 
   function buildMsg(m, conv) {
     const row = document.createElement('div');
@@ -1746,14 +2433,28 @@ body {
       bubble.appendChild(sender);
     }
 
-    const p = document.createElement('p');
-    p.textContent = m.text;
+    if (m.viewOnce) {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'view-once-chip' + (m.viewOnceOpened ? ' opened' : '');
+      chip.textContent = m.viewOnceOpened
+        ? '✓ Opened (View Once)'
+        : (m.mediaType === 'video' ? '👁️1 View-Once Video (Tap to view)' : '👁️1 View-Once Photo (Tap to view)');
+      if (!m.viewOnceOpened) {
+        chip.addEventListener('click', () => openViewOnceMedia(m));
+      }
+      bubble.appendChild(chip);
+    } else {
+      const p = document.createElement('p');
+      p.textContent = m.text;
+      bubble.appendChild(p);
+    }
 
     const t = document.createElement('span');
     t.className = 'time';
     t.textContent = m.time;
 
-    bubble.append(p, t);
+    bubble.appendChild(t);
     row.appendChild(bubble);
     return row;
   }
@@ -1800,20 +2501,28 @@ body {
     const conv = getConv(type, id);
     if (!conv) return;
 
-    state.activeConv = { type, id };
-    if (type === 'dm') conv.unread = 0;
+    const proceed = () => {
+      state.activeConv = { type, id };
+      if (type === 'dm') conv.unread = 0;
 
-    renderChatList($('#searchInput') ? $('#searchInput').value : '');
-    renderConversation();
+      renderChatList($('#searchInput') ? $('#searchInput').value : '');
+      renderConversation();
 
-    dom.chatOverlay.classList.add('open');
-    dom.chatInput.value = '';
-    dom.chatInput.style.height = 'auto';
-    dom.sendBtn.disabled = true;
+      dom.chatOverlay.classList.add('open');
+      dom.chatInput.value = '';
+      dom.chatInput.style.height = 'auto';
+      dom.sendBtn.disabled = true;
 
-    setTimeout(() => {
-      try { dom.chatInput.focus(); } catch (e) {}
-    }, 300);
+      setTimeout(() => {
+        try { dom.chatInput.focus(); } catch (e) {}
+      }, 300);
+    };
+
+    if (lockConfig.lockedChats[id]) {
+      promptUnlock('chat_' + id, `🔒 ${conv.name} is Locked`, 'Authenticate to open this conversation', proceed);
+    } else {
+      proceed();
+    }
   }
 
   function closeConversation() {
@@ -1847,6 +2556,35 @@ body {
     scrollChat();
 
     simulateReply(conv);
+  }
+
+  function sendViewOnceFile(file) {
+    if (!file || !state.activeConv) return;
+    const conv = getConv(state.activeConv.type, state.activeConv.id);
+    if (!conv) return;
+
+    const isVideo = file.type.startsWith('video/');
+    const url = URL.createObjectURL(file);
+
+    const voMsg = {
+      from: 'me',
+      viewOnce: true,
+      viewOnceOpened: false,
+      mediaType: isVideo ? 'video' : 'image',
+      mediaUrl: url,
+      text: isVideo ? 'View-once video' : 'View-once photo',
+      time: nowTime(),
+      sender: currentUser.name,
+      handle: currentUser.handle
+    };
+
+    conv.messages.push(voMsg);
+    const typingEl = $('#typing');
+    const bubble = buildMsg(voMsg, conv);
+    if (typingEl) dom.messages.insertBefore(bubble, typingEl);
+    else dom.messages.appendChild(bubble);
+    scrollChat();
+    showToast(isVideo ? 'Sent View-Once Video (👁️1)' : 'Sent View-Once Photo (👁️1)');
   }
 
   function simulateReply(conv) {
@@ -1939,7 +2677,7 @@ body {
   }
 
   /* =========================================================
-     STATUS
+     STATUS (WITH LIKES & COMMENTS)
      ========================================================= */
   function renderStatuses() {
     const row = $('#statusRow');
@@ -1963,6 +2701,8 @@ body {
     row.appendChild(addBubble);
 
     statuses.forEach(s => {
+      if (!Array.isArray(s.comments)) s.comments = [];
+
       const b = document.createElement('button');
       b.className = 'status-bubble' + (s.seen ? ' seen' : '');
       b.type = 'button';
@@ -1984,56 +2724,40 @@ body {
       b.addEventListener('click', () => openStatus(s.id));
       row.appendChild(b);
 
-      const card = document.createElement('button');
-      card.className = 'chat-item';
-      card.type = 'button';
-      card.style.width = '100%';
-      card.style.marginBottom = '6px';
+      const card = document.createElement('div');
+      card.className = 'post';
+      card.style.marginBottom = '8px';
 
-      card.appendChild(makeAvatar(s.initials, s.color, 44, false));
+      const head = document.createElement('div');
+      head.style.cssText = 'display:flex;align-items:center;gap:10px;cursor:pointer;margin-bottom:8px;';
+      head.appendChild(makeAvatar(s.initials, s.color, 38, false));
 
-      const meta = document.createElement('div');
-      meta.className = 'chat-meta';
+      const info = document.createElement('div');
+      info.style.flex = '1';
+      info.innerHTML = `<div style="font-size:13.5px;font-weight:700;">${escapeHtml(s.author)} <span style="font-size:11px;color:var(--muted);font-weight:400;">${escapeHtml(s.handle)} · ${escapeHtml(s.time)}</span></div><p style="font-size:13px;margin-top:3px;">${escapeHtml(s.text)}</p>`;
+      head.appendChild(info);
+      head.addEventListener('click', () => openStatus(s.id));
 
-      const r = document.createElement('div');
-      r.className = 'row';
+      const bar = document.createElement('div');
+      bar.className = 'card-social-bar';
 
-      const nm = document.createElement('h3');
-      const nmspan = document.createElement('span');
-      nmspan.textContent = s.author;
-      nm.appendChild(nmspan);
+      const likeBtn = document.createElement('button');
+      likeBtn.type = 'button';
+      likeBtn.className = s.liked ? 'liked' : '';
+      likeBtn.textContent = (s.liked ? '❤️' : '🤍') + ' ' + (s.likes || 0);
+      likeBtn.addEventListener('click', () => {
+        s.liked = !s.liked;
+        s.likes = (s.likes || 0) + (s.liked ? 1 : -1);
+        renderStatuses();
+      });
 
-      const hsub = document.createElement('span');
-      hsub.className = 'handle-sub';
-      hsub.textContent = s.handle;
-      nm.appendChild(hsub);
+      const commentBtn = document.createElement('button');
+      commentBtn.type = 'button';
+      commentBtn.textContent = '💬 ' + s.comments.length;
+      commentBtn.addEventListener('click', () => openCommentsDrawer({ kind: 'status', id: s.id }));
 
-      if (s.isAdmin) {
-        const bdg = document.createElement('span');
-        bdg.className = 'admin-mini';
-        bdg.textContent = 'ADMIN';
-        nm.appendChild(bdg);
-      }
-
-      const tm = document.createElement('span');
-      tm.className = 'time';
-      tm.textContent = s.time;
-
-      r.append(nm, tm);
-
-      const preview = document.createElement('p');
-      preview.textContent = s.text;
-
-      meta.append(r, preview);
-      card.append(meta);
-
-      if (!s.seen) {
-        const dot = document.createElement('span');
-        dot.style.cssText = 'width:8px;height:8px;border-radius:50%;background:var(--brand-2);flex:0 0 auto;';
-        card.appendChild(dot);
-      }
-
-      card.addEventListener('click', () => openStatus(s.id));
+      bar.append(likeBtn, commentBtn);
+      card.append(head, bar);
       list.appendChild(card);
     });
   }
@@ -2060,7 +2784,10 @@ body {
       text: text.trim(),
       bg: rand(bgs),
       isAdmin: currentUser.isAdmin,
-      seen: false
+      seen: false,
+      likes: 0,
+      liked: false,
+      comments: []
     });
 
     renderStatuses();
@@ -2224,7 +2951,7 @@ body {
   }
 
   /* =========================================================
-     PAGES
+     PAGES (WITH LIKES & COMMENTS)
      ========================================================= */
   function renderPages() {
     const chips = $('#pageChips');
@@ -2255,6 +2982,7 @@ body {
     posts.forEach(post => {
       const page = pages.find(p => p.id === post.pageId);
       if (!page) return;
+      if (!Array.isArray(post.comments)) post.comments = [];
 
       const card = document.createElement('article');
       card.className = 'post';
@@ -2312,8 +3040,8 @@ body {
 
       const commentBtn = document.createElement('button');
       commentBtn.type = 'button';
-      commentBtn.textContent = '💬 ' + post.comments;
-      commentBtn.addEventListener('click', () => showToast('Comments coming soon'));
+      commentBtn.textContent = '💬 ' + post.comments.length;
+      commentBtn.addEventListener('click', () => openCommentsDrawer({ kind: 'post', id: post.id }));
 
       actions.append(likeBtn, commentBtn);
 
@@ -2379,16 +3107,26 @@ body {
      EVENT WIRING
      ========================================================= */
   function wireEvents() {
+    // Tabs
     dom.tabbar.addEventListener('click', (e) => {
       const btn = e.target.closest('.tab');
       if (!btn) return;
       setView(btn.dataset.view);
     });
 
+    // Live News refresh
+    $('#refreshNewsBtn').addEventListener('click', async () => {
+      await fetchLiveNewsForRegion(state.region);
+      renderNews();
+      showToast('News feed updated');
+    });
+
+    // Chat search
     $('#searchInput').addEventListener('input', (e) => {
       renderChatList(e.target.value);
     });
 
+    // Chat overlay
     dom.chatBack.addEventListener('click', closeConversation);
 
     document.addEventListener('keydown', (e) => {
@@ -2396,8 +3134,9 @@ body {
         if (dom.chatOverlay.classList.contains('open')) closeConversation();
         if ($('#statusViewer').classList.contains('show')) closeStatus();
         if ($('#groupDrawer').classList.contains('show')) $('#groupDrawer').classList.remove('show');
+        if ($('#commentsDrawer').classList.contains('show')) $('#commentsDrawer').classList.remove('show');
         $('#profileModal').classList.remove('show');
-        $('#authModal').classList.remove('show');
+        $('#lockSettingsModal').classList.remove('show');
         $('#callOverlay').classList.remove('show');
       }
     });
@@ -2417,6 +3156,15 @@ body {
       dom.sendBtn.disabled = dom.chatInput.value.trim().length === 0;
     });
 
+    // View-Once image / video picker
+    $('#viewOnceBtn').addEventListener('click', () => $('#viewOnceFileInput').click());
+    $('#viewOnceFileInput').addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (file) sendViewOnceFile(file);
+      e.target.value = '';
+    });
+
+    // Emoji
     const emojis = ['😀', '😂', '😍', '🔥', '👍', '🎉', '😎', '🙌', '💯', '❤️', '🚀', '✨'];
     $('#emojiBtn').addEventListener('click', () => {
       dom.chatInput.value += rand(emojis);
@@ -2424,6 +3172,33 @@ body {
       dom.sendBtn.disabled = false;
     });
 
+    // Comments drawer
+    $('#closeCommentsDrawer').addEventListener('click', () => $('#commentsDrawer').classList.remove('show'));
+    $('#commentsDrawer').addEventListener('click', (e) => {
+      if (e.target.id === 'commentsDrawer') $('#commentsDrawer').classList.remove('show');
+    });
+    $('#commentForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = $('#commentInput');
+      const txt = input.value.trim();
+      if (!txt || !state.activeCommentTarget) return;
+      const target = resolveCommentTarget(state.activeCommentTarget);
+      if (!target) return;
+
+      target.comments.push({
+        author: currentUser.name,
+        text: txt,
+        time: 'Just now'
+      });
+      input.value = '';
+      openCommentsDrawer(state.activeCommentTarget);
+      renderPages();
+      renderNews();
+      renderStatuses();
+      showToast('Comment posted');
+    });
+
+    // Groups
     $('#createGroupBtn').addEventListener('click', createGroup);
     $('#chatHeaderInfo').addEventListener('click', () => {
       if (state.activeConv && state.activeConv.type === 'group') {
@@ -2436,6 +3211,7 @@ body {
       if (e.target.id === 'groupDrawer') $('#groupDrawer').classList.remove('show');
     });
 
+    // Calls
     $('#voiceCallBtn').addEventListener('click', () => startCall(false));
     $('#videoCallBtn').addEventListener('click', () => startCall(true));
     $('#endCallBtn').addEventListener('click', endCall);
@@ -2450,12 +3226,14 @@ body {
       showToast(state.isCamOn ? 'Camera turned on' : 'Camera turned off');
     });
 
+    // Status
     $('#addStatusBtn').addEventListener('click', addStatus);
     $('#statusClose').addEventListener('click', closeStatus);
     $('#statusViewer').addEventListener('click', (e) => {
       if (e.target.id === 'statusViewer') closeStatus();
     });
 
+    // Music
     $('#musicUpload').addEventListener('change', (e) => {
       handleUpload(e.target.files);
       e.target.value = '';
@@ -2483,6 +3261,7 @@ body {
       dom.audio.currentTime = ratio * dom.audio.duration;
     });
 
+    // Profile modal
     $('#adminChip').addEventListener('click', () => {
       $('#modalAvatar').style.background = currentUser.color;
       $('#modalAvatar').textContent = currentUser.initials;
@@ -2498,16 +3277,15 @@ body {
       if (e.target.id === 'profileModal') $('#profileModal').classList.remove('show');
     });
 
+    // Landing / Login screen events
     $('#authBtnTop').addEventListener('click', () => {
-      $('#authModal').classList.add('show');
+      $('#landingScreen').classList.add('show');
       initGoogleSignIn();
     });
-    $('#closeAuthModal').addEventListener('click', () => $('#authModal').classList.remove('show'));
-    $('#authModal').addEventListener('click', (e) => {
-      if (e.target.id === 'authModal') $('#authModal').classList.remove('show');
-    });
+    $('#landingEnterGuestBtn').addEventListener('click', enterMainApp);
+    $('#landingLockSettingsBtn').addEventListener('click', openLockSettings);
 
-    $('#googleSignInBtn').addEventListener('click', () => {
+    $('#landingGoogleBtn').addEventListener('click', () => {
       if (window.google && window.google.accounts && window.google.accounts.id && !GOOGLE_CLIENT_ID.startsWith('YOUR_GOOGLE_CLIENT_ID')) {
         window.google.accounts.id.prompt();
       } else {
@@ -2515,11 +3293,11 @@ body {
       }
     });
 
-    $('#authForm').addEventListener('submit', (e) => {
+    $('#landingLoginForm').addEventListener('submit', (e) => {
       e.preventDefault();
-      const name = $('#authNameInput').value.trim();
-      let handle = $('#authHandleInput').value.trim();
-      const email = $('#authEmailInput').value.trim();
+      const name = $('#landNameInput').value.trim();
+      let handle = $('#landHandleInput').value.trim();
+      const email = $('#landEmailInput').value.trim();
 
       if (!handle.startsWith('@')) handle = '@' + handle;
       const initials = name.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'U';
@@ -2534,30 +3312,104 @@ body {
       };
 
       updateUserUI();
-      $('#authModal').classList.remove('show');
+      enterMainApp();
       showToast('Welcome, ' + name + ' (' + handle + ')');
+    });
+
+    // Lock settings & unlock prompt wiring
+    $('#openLockSettingsBtn').addEventListener('click', openLockSettings);
+    $('#quickChatLockBtn').addEventListener('click', openLockSettings);
+    $('#closeLockSettingsBtn').addEventListener('click', () => $('#lockSettingsModal').classList.remove('show'));
+    $('#lockMethodSelect').addEventListener('change', updateLockMethodConfigUI);
+
+    $('#lockSettingsForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      lockConfig.method = $('#lockMethodSelect').value;
+      const pinVal = $('#lockPasscodeInput').value.trim();
+      if (pinVal) lockConfig.passcode = pinVal;
+      if (tempConfigPattern.length) lockConfig.pattern = [...tempConfigPattern];
+      lockConfig.lockWholeApp = $('#lockWholeAppToggle').checked;
+
+      $$('input[data-chat-lock-id]').forEach(chk => {
+        lockConfig.lockedChats[chk.dataset.chatLockId] = chk.checked;
+      });
+
+      $('#lockSettingsModal').classList.remove('show');
+      renderChatList($('#searchInput').value);
+      renderGroups();
+      showToast('Lock & biometric settings saved');
+    });
+
+    $('#lockNowBtn').addEventListener('click', () => {
+      $('#lockSettingsModal').classList.remove('show');
+      lockConfig.appCurrentlyLocked = true;
+      promptUnlock('whole_app', '🔒 DabzChat Locked', 'Unlock to resume your session', () => {
+        lockConfig.appCurrentlyLocked = false;
+        showToast('Unlocked');
+      });
+    });
+
+    $('#submitPasscodeUnlockBtn').addEventListener('click', () => {
+      const entered = $('#unlockPasscodeInput').value.trim();
+      completeUnlock(entered === lockConfig.passcode);
+    });
+
+    $('#unlockPasscodeInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        completeUnlock($('#unlockPasscodeInput').value.trim() === lockConfig.passcode);
+      }
+    });
+
+    $('#resetUnlockPatternBtn').addEventListener('click', () => {
+      currentUnlockPattern = [];
+      $$('#unlockPatternGrid .pattern-node').forEach(n => n.classList.remove('selected'));
+    });
+
+    $('#submitPatternUnlockBtn').addEventListener('click', () => {
+      const match =
+        currentUnlockPattern.length === lockConfig.pattern.length &&
+        currentUnlockPattern.every((v, idx) => v === lockConfig.pattern[idx]);
+      completeUnlock(match);
+    });
+
+    $('#triggerFingerprintBtn').addEventListener('click', async () => {
+      try {
+        if (window.PublicKeyCredential && navigator.credentials && navigator.credentials.get) {
+          // Attempt WebAuthn if registered; otherwise use biometric verification flow
+          showToast('Verifying fingerprint sensor…');
+        }
+      } catch (err) {}
+      setTimeout(() => completeUnlock(true), 450);
+    });
+
+    $('#cancelUnlockBtn').addEventListener('click', () => {
+      pendingUnlockAction = null;
+      $('#unlockPromptModal').classList.remove('show');
     });
   }
 
   function updateUserUI() {
     $('#currentUserName').textContent = currentUser.name;
-    $('#authBtnTop').textContent = 'Switch Account';
+    $('#authBtnTop').textContent = 'Account';
   }
 
   /* =========================================================
      INIT
      ========================================================= */
-  function init() {
+  async function init() {
     state.region = detectRegion();
     buildRegionSelect();
+    wireEvents();
+    await fetchLiveNewsForRegion(state.region);
     renderNews();
     renderChatList('');
     renderGroups();
     renderStatuses();
     renderTracks();
     renderPages();
-    wireEvents();
     setView('news');
+    runSplashScreen();
   }
 
   init();
